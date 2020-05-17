@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>You can do it!</title>
+    <!-- Material Icon CDN -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--FontAwesomeIcons CDN-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css"
+          integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+    <!-- Materialize CSS CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/main-body-background.css">
+    <link rel="icon" href="/img/favicon.ico" type="img/ico">
+</head>
+<body>
+<header>
+    <nav>
+        <div class="nav-wrapper teal">
+            <a href="/" class="ml-20px">
+                <i class="material-icons left">arrow_back</i>
+            </a>
+        </div>
+    </nav>
+</header>
+<main>
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <div class="card rnd-c-10 mt">
+                    <div class="card-content">
+                        <div class="row">
+                            <form action="/add-task" th:object="${taskDTO}" method="post">
+                                <h5 class="black-text center">Add new task</h5>
+                                <div class="input-field col s12">
+                                    <textarea id="textarea1" th:field="*{description}"
+                                              class="materialize-textarea"></textarea>
+                                    <label for="textarea1">Task description</label>
+                                    <span class="helper-text red-text" th:errors="*{description}"></span>
+                                </div>
+                                <div class="input-field col s12">
+                                    <input type="text" th:field="*{deadline}" class="datepicker" placeholder="Deadline">
+                                    <span class="helper-text red-text" th:errors="*{deadline}"></span>
+                                </div>
+                                <p>
+                                    <label class="teal-text bold-txt">
+                                        <input name="group1" type="radio" value="HIGH"
+                                               th:value="${T(com.hvs.diploma.enums.TaskPriority).HIGH.toString()}"/>
+                                        <span>High priority</span>
+                                    </label>
+                                </p>
+                                <p>
+                                    <label class="teal-text bold-txt">
+                                        <input name="group1" type="radio" value="MEDIUM" checked
+                                               th:value="${T(com.hvs.diploma.enums.TaskPriority).MEDIUM.toString()}"/>
+                                        <span>Medium priority</span>
+                                    </label>
+                                </p>
+                                <p>
+                                    <label class="teal-text bold-txt">
+                                        <input name="group1" type="radio" value="LOW"
+                                               th:value="${T(com.hvs.diploma.enums.TaskPriority).LOW.toString()}"/>
+                                        <span>Low priority</span>
+                                    </label>
+                                </p>
+                                <div class="row">
+                                    <div class="col s6 m4 l3 xl3 right">
+                                        <button class="btn waves-effect hoverable teal rnd-c waves-light col s12 mt-20px"
+                                                type="submit">Submit
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- jQuery CDN -->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<!-- Materialize JS CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src="/js/scripts.js">
+</script>
+</body>
+</html>

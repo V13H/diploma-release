@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>UserInfo</title>
+</head>
+<body>
+<ul th:each="account:${accounts}">
+    <h5 th:text="'name :'+${account.userName}"></h5>
+    <h5 th:text="'socialId :'+${account.socialId}"></h5>
+    <h5 th:text="'pictureUrl :'+${account.pictureUrl}"></h5>
+    <h5 th:text="'email :'+${account.email}"></h5>
+    <hr>
+
+</ul>
+
+</body>
+</html>

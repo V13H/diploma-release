@@ -1,0 +1,123 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+.pt-20px {
+    padding-top: 20px;
+}
+
+.mt-70 {
+    margin-top: 70px;
+}
+
+.mt {
+    margin-top: 10vh;
+}
+
+.mt-5vh {
+    margin-top: 5vh;
+}
+
+.m-5 {
+    margin: 5px;
+}
+
+.m-30px {
+    margin: 20px 10px;
+}
+
+.rnd-c {
+    border-radius: 70px;
+}
+
+.rnd-c-10 {
+    border-radius: 10px;
+}
+
+.mt-5vh {
+    margin-top: 5vh;
+}
+
+.mt-20px {
+    margin-top: 20px;
+}
+
+.row {
+    margin: 0px;
+}
+
+.pl-10px {
+    padding-left: 15px;
+}
+
+.ml-20px {
+    margin-left: 20px;
+}
+
+.priority-badge {
+    font-size: medium;
+    font-weight: bold;
+    border-radius: 90px;
+
+}
+
+h5 {
+    margin-top: 2px;
+}
+
+.logo {
+    margin: 5px;
+    width: 8vh;
+    height: 7vw;
+}
+
+.ml-9vh {
+    margin-left: 7vw;
+}
+
+.ml-10px {
+    margin-left: 10px;
+}
+
+.ml-2vw {
+    margin-left: 2vw;
+}
+
+.subheader {
+    font-weight: bold !important;
+}
+
+.bold-txt {
+    font-weight: bolder;
+}
+
+.btn-outline {
+    border: solid teal 3px;
+    border-radius: 90px;
+    background-color: white;
+}
+
+.my-badge {
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 70px;
+    padding-left: 8px;
+    padding-right: 8px;
+    color: white;
+
+}
+
+.my-badge-lg {
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 70px;
+    padding: 5px 10px;
+    color: white;
+
+}

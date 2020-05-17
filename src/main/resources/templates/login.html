@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Title of the document</title>
+    <!-- Material Icon CDN -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Materialize CSS CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Your custom styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css"
+          integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+    <link rel="icon" href="/img/favicon.ico" type="img/ico">
+    <link rel="stylesheet" href="/css/material-outline-input.css">
+</head>
+<body>
+<main>
+    <div class="container mt">
+        <div class="row">
+            <div class="col s8 m8 l6 xl4 offset-s2 offset-m2 offset-l3 offset-xl4">
+                <form id="form" method="post">
+                    <div class="input-field">
+                        <input type="email" th:value="${email}" id="email" name="email">
+                        <label for="email">Email</label>
+                        <span class="helper-text red-text" th:text="${emailError}"></span>
+                    </div>
+                    <div class="input-field ">
+                        <input type="password" id="password" name="password">
+                        <label for="password">Password</label>
+                        <span class="helper-text red-text text-darken-2" th:text="${passwordError}"></span>
+                    </div>
+                    <div class="row mt-5vh">
+                        <div class="col s6 ">
+                            <button type="submit" formaction="/signIn"
+                                    class="waves-effect waves-light btn rnd-c">Login
+                            </button>
+                        </div>
+                        <div class="col s6 ">
+                            <a href="/register" class="waves-effect waves-light btn right rnd-c">Register</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col s8 m8 l6 xl4 offset-s2 offset-m2 offset-l3 offset-xl4">
+                <a href="/oauth2/authorization/facebook"
+                   class="col s12 waves-effect waves-light blue btn-large rnd-c m-5">
+                    <i class="fab fa-facebook-f left pl-10px"></i>
+                    Continue with Facebook</a>
+                <a href="/oauth2/authorization/google"
+                   class="col s12 waves-effect waves-light green btn-large rnd-c m-5">
+                    <i class="fab fa-google material-icons left pl-10px" aria-hidden="true"></i>
+                    Continue with Google</a>
+                <a href="/oauth2/authorization/github"
+                   class="col s12 waves-effect black left-align waves-light btn-large rnd-c m-5">
+                    <i class="fab fa-github left pl-10px"></i>
+                    Continue with GitHub</a>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+<!-- jQuery CDN -->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<!-- Materialize JS CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<!--<script>-->
+<!--$("document").ready(function(){-->
+<!--$(".button-collapse").sideNav();-->
+<!--});-->
+<!--</script>-->
+</body>
+</html>
