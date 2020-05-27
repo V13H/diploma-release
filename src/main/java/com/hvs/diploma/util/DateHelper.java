@@ -1,13 +1,11 @@
 package com.hvs.diploma.util;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Calendar;
 
 public class DateHelper {
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     private DateHelper() {
     }
@@ -24,8 +22,6 @@ public class DateHelper {
     }
 
     public static Timestamp lastDayOfCurrentWeek() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_WEEK, 8);
         DayOfWeek lastDay = DayOfWeek.SUNDAY;
         LocalDate now = LocalDate.now();
         int daysToAdd = lastDay.getValue() - now.getDayOfWeek().getValue();
@@ -33,7 +29,15 @@ public class DateHelper {
         return Timestamp.valueOf(LocalDate.of(now.getYear(), now.getMonth(), lastDayOfCurrentWeekValue).atStartOfDay());
     }
 
+
     public static Timestamp maxDate() {
         return Timestamp.valueOf(LocalDate.MAX.atStartOfDay());
+    }
+
+    public static Timestamp firstDayOfCurrentWeek() {
+        LocalDate now = LocalDate.now();
+        DayOfWeek dayOfWeek = now.getDayOfWeek();
+        DayOfWeek firstDay = DayOfWeek.MONDAY;
+        return Timestamp.valueOf(now.minusDays(dayOfWeek.getValue() - firstDay.getValue()).atStartOfDay());
     }
 }

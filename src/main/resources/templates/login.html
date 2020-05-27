@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Title of the document</title>
+    <title>You can do it!</title>
     <!-- Material Icon CDN -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Materialize CSS CDN -->
@@ -15,55 +15,74 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css"
           integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
     <link rel="icon" href="/img/favicon.ico" type="img/ico">
-    <link rel="stylesheet" href="/css/material-outline-input.css">
+    <link rel="stylesheet" href="/css/body-backgrounds.css">
+    <link rel="stylesheet" href="/css/login-additional-styles.css">
+
 </head>
-<body>
+<body class="darts-bg">
 <main>
-    <div class="container mt">
+    <div class="container mt-5vh">
         <div class="row">
-            <div class="col s8 m8 l6 xl4 offset-s2 offset-m2 offset-l3 offset-xl4">
-                <form id="form" method="post">
-                    <div class="input-field">
-                        <input type="email" th:value="${email}" id="email" name="email">
-                        <label for="email">Email</label>
-                        <span class="helper-text red-text" th:text="${emailError}"></span>
-                    </div>
-                    <div class="input-field ">
-                        <input type="password" id="password" name="password">
-                        <label for="password">Password</label>
-                        <span class="helper-text red-text text-darken-2" th:text="${passwordError}"></span>
-                    </div>
-                    <div class="row mt-5vh">
-                        <div class="col s6 ">
-                            <button type="submit" formaction="/signIn"
-                                    class="waves-effect waves-light btn rnd-c">Login
-                            </button>
+            <section>
+                <div class="col s12 m10 l6 xl5">
+                    <h2 class="bold-txt white-text">You can do it!</h2>
+                    <h5 class="subheader white-text">A pretty simple task manager</h5>
+                    <h4 class="subheader white-text">Try it now!</h4>
+                </div>
+            </section>
+            <section>
+                <div class="col s12 m10 l6 xl5 offset-xl1">
+                    <div class="card rnd-c-10 ">
+                        <div class="card-content">
+                            <h5 class="subheader">Sign in</h5>
+                            <form id="form" method="post" th:object="${accountDTO}">
+                                <div class="input-field">
+                                    <input type="email" th:value="${email}" th:field="*{email}" id="email" name="email">
+                                    <label for="email">Email</label>
+                                    <span class="helper-text red-text" th:errors="*{email}"
+                                          th:text="${emailError}"></span>
+                                </div>
+                                <div class="input-field ">
+                                    <input type="password" id="password" th:field="*{password}" name="password">
+                                    <label for="password">Password</label>
+                                    <span class="helper-text red-text text-darken-2" th:errors="*{password}"
+                                          th:text="${passwordError}"></span>
+                                </div>
+                                <div class="row mt-5vh">
+                                    <div class="col s6 ">
+                                        <button type="submit" formaction="/signIn"
+                                                class="waves-effect waves-light btn rnd-c">Login
+                                        </button>
+                                    </div>
+                                    <div class="col s6 ">
+                                        <a href="/register"
+                                           class="waves-effect waves-light btn right rnd-c">Register</a>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col s12 mt-5vh">
+                                        <a href="/oauth2/authorization/facebook"
+                                           class="waves-effect waves-light blue btn-large rnd-c m-5">
+                                            <i class="fab fa-facebook-f left pl-10px"></i>
+                                            Continue with Facebook</a>
+                                        <a href="/oauth2/authorization/google"
+                                           class="waves-effect waves-light green btn-large rnd-c m-5">
+                                            <i class="fab fa-google material-icons left pl-10px" aria-hidden="true"></i>
+                                            Continue with Google</a>
+                                        <a href="/oauth2/authorization/github"
+                                           class="waves-effect black waves-light btn-large rnd-c m-5">
+                                            <i class="fab fa-github left pl-10px"></i>
+                                            Continue with GitHub</a>
+                                    </div>
+                                </div>
+                            </form>
+
                         </div>
-                        <div class="col s6 ">
-                            <a href="/register" class="waves-effect waves-light btn right rnd-c">Register</a>
-                        </div>
                     </div>
-                </form>
-            </div>
+                </div>
+            </section>
         </div>
 
-        <div class="row">
-            <div class="col s8 m8 l6 xl4 offset-s2 offset-m2 offset-l3 offset-xl4">
-                <a href="/oauth2/authorization/facebook"
-                   class="col s12 waves-effect waves-light blue btn-large rnd-c m-5">
-                    <i class="fab fa-facebook-f left pl-10px"></i>
-                    Continue with Facebook</a>
-                <a href="/oauth2/authorization/google"
-                   class="col s12 waves-effect waves-light green btn-large rnd-c m-5">
-                    <i class="fab fa-google material-icons left pl-10px" aria-hidden="true"></i>
-                    Continue with Google</a>
-                <a href="/oauth2/authorization/github"
-                   class="col s12 waves-effect black left-align waves-light btn-large rnd-c m-5">
-                    <i class="fab fa-github left pl-10px"></i>
-                    Continue with GitHub</a>
-            </div>
-
-        </div>
 
     </div>
 </main>

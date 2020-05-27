@@ -1,7 +1,9 @@
 package com.hvs.diploma.validators;
 
 import com.hvs.diploma.dto.AccountDTO;
+import com.hvs.diploma.services.MainService;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -9,6 +11,12 @@ import org.springframework.validation.Validator;
 @Service
 public class RegistrationFormValidator implements Validator {
     org.slf4j.Logger logger = LoggerFactory.getLogger(RegistrationFormValidator.class);
+    private final MainService mainService;
+
+    @Autowired
+    public RegistrationFormValidator(MainService mainService) {
+        this.mainService = mainService;
+    }
 
     @Override
     public boolean supports(Class<?> aClass) {
@@ -68,6 +76,8 @@ public class RegistrationFormValidator implements Validator {
         if (!fieldIsEmpty(errors, email, "email")) {
             if (!isAccordingToValidPattern(email)) {
                 errors.rejectValue("email", "email.pattern");
+            } else if (mainService.findAccountByEmail(email) != null) {
+                errors.rejectValue("email", "email.already-exists");
             }
         }
     }

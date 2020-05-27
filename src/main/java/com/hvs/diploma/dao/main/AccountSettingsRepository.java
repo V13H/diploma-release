@@ -1,4 +1,4 @@
-package com.hvs.diploma.repositories;
+package com.hvs.diploma.dao.main;
 
 import com.hvs.diploma.entities.AccountSettings;
 import org.springframework.data.jpa.repository.JpaRepository;

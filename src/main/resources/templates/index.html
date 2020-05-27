@@ -16,10 +16,11 @@
     <!--<link rel="stylesheet" href="../static/css/main-body-background.css">-->
     <!--<link rel="icon" href="../static/img/favicon.ico" type="img/ico">-->
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/main-body-background.css">
+    <!--<link rel="stylesheet" href="/css/main-body-background.css">-->
+    <link rel="stylesheet" href="/css/body-backgrounds.css">
     <link rel="icon" href="/img/favicon.ico" type="img/ico">
 </head>
-<body>
+<body class="blackboard-texture-bg">
 <header>
     <div class="navbar-fixed">
         <nav class="nav-extended">
@@ -77,106 +78,122 @@
                 </ul>
                 <div class="col s6 l2 xl2">
                     <ul class="sidenav" id="filter-menu">
-                        <form action="/filter" method="post">
-                            <li><a class="subheader black-text">Priority</a></li>
-                            <li><p>
-                                <label class="ml-10px black-text">
-                                    <input type="checkbox" class="filled-in" value="HIGH_PRIORITY"
-                                           th:checked="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).HIGH)}"
-                                           th:value="${T(com.hvs.diploma.enums.TaskPriority).HIGH}"
-                                           name="priority"/>
-                                    <span>High</span>
-                                </label>
-                            </p></li>
-                            <li><p>
-                                <label class="ml-10px black-text">
-                                    <input type="checkbox" class="filled-in" value="MEDIUM_PRIORITY" name="priority"
-                                           th:checked="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).MEDIUM)}"
-                                           th:value="${T(com.hvs.diploma.enums.TaskPriority).MEDIUM}"/>
-                                    <span>Meduim</span>
-                                </label>
-                            </p></li>
-                            <li><p>
-                                <label class="ml-10px black-text">
-                                    <input type="checkbox" class="filled-in" value="LOW_PRIORITY" name="priority"
-                                           th:checked="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).LOW)}"
-                                           th:value="${T(com.hvs.diploma.enums.TaskPriority).LOW}"/>
-                                    <span>Low</span>
-                                </label>
-                            </p></li>
-                            <li>
-                                <div class="divider"></div>
-                            </li>
-                            <li><a href="#" class="subheader black-text">Status</a></li>
-                            <li><p>
-                                <label class="ml-10px black-text">
-                                    <input type="checkbox" class="filled-in" value="ACTIVE" name="status"
-                                           th:checked="${statuses!=null&&#arrays.contains(statuses,T(com.hvs.diploma.enums.TaskStatus).ACTIVE)}"
-                                           th:value="${T(com.hvs.diploma.enums.TaskStatus).ACTIVE}"/>
-                                    <span>Active</span>
-                                </label>
-                            </p></li>
-                            <li><p>
-                                <label class="ml-10px black-text">
-                                    <input type="checkbox" class="filled-in" value="EXPIRED" name="status"
-                                           th:checked="${statuses!=null&&#arrays.contains(statuses,T(com.hvs.diploma.enums.TaskStatus).EXPIRED)}"
-                                           th:value="${T(com.hvs.diploma.enums.TaskStatus).EXPIRED}"/>
-                                    <span>Expired</span>
-                                </label>
-                            </p></li>
-                            <li><p>
-                                <label class="ml-10px black-text">
-                                    <input type="checkbox" class="filled-in" value="DONE" name="status"
-                                           th:checked="${statuses!=null&&#arrays.contains(statuses,T(com.hvs.diploma.enums.TaskStatus).DONE)}"
-                                           th:value="${T(com.hvs.diploma.enums.TaskStatus).DONE}"/>
-                                    <span>Done</span>
-                                </label>
-                            </p></li>
-                            <li>
-                                <div class="divider"></div>
-                            </li>
-                            <li><a href="#" class="subheader black-text">Date</a></li>
-                            <li><p>
-                                <label class="ml-10px black-text">
-                                    <input type="checkbox" class="filled-in" name="date"
-                                           th:value="${#dates.format(today,'yyyy-MM-dd HH:mm:ss')}"
-                                           th:checked="${deadlines!=null&&#arrays.contains(deadlines,today)}"/>
+                        <form action="/filter" method="post" class="mt-5vh">
+                            <ul class="collapsible expandable">
+                                <li>
+                                    <div class="collapsible-header"><i class="material-icons">trending_up</i>Priority
+                                    </div>
+                                    <div class="collapsible-body">
+                                        <ul>
+                                            <li><p>
+                                                <label class="ml-10px black-text">
+                                                    <input type="checkbox" class="filled-in" value="HIGH_PRIORITY"
+                                                           th:checked="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).HIGH)}"
+                                                           th:value="${T(com.hvs.diploma.enums.TaskPriority).HIGH}"
+                                                           name="priority"/>
+                                                    <span>High</span>
+                                                </label>
+                                            </p></li>
+                                            <li><p>
+                                                <label class="ml-10px black-text">
+                                                    <input type="checkbox" class="filled-in" value="MEDIUM_PRIORITY"
+                                                           name="priority"
+                                                           th:checked="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).MEDIUM)}"
+                                                           th:value="${T(com.hvs.diploma.enums.TaskPriority).MEDIUM}"/>
+                                                    <span>Meduim</span>
+                                                </label>
+                                            </p></li>
+                                            <li><p>
+                                                <label class="ml-10px black-text">
+                                                    <input type="checkbox" class="filled-in" value="LOW_PRIORITY"
+                                                           name="priority"
+                                                           th:checked="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).LOW)}"
+                                                           th:value="${T(com.hvs.diploma.enums.TaskPriority).LOW}"/>
+                                                    <span>Low</span>
+                                                </label>
+                                            </p></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="collapsible-header"><i class="material-icons">playlist_add_check</i>Status
+                                    </div>
+                                    <div class="collapsible-body">
+                                        <ul>
+                                            <li><p>
+                                                <label class="ml-10px black-text">
+                                                    <input type="checkbox" class="filled-in" value="ACTIVE"
+                                                           name="status"
+                                                           th:checked="${statuses!=null&&#arrays.contains(statuses,T(com.hvs.diploma.enums.TaskStatus).ACTIVE)}"
+                                                           th:value="${T(com.hvs.diploma.enums.TaskStatus).ACTIVE}"/>
+                                                    <span>Active</span>
+                                                </label>
+                                            </p></li>
+                                            <li><p>
+                                                <label class="ml-10px black-text">
+                                                    <input type="checkbox" class="filled-in" value="EXPIRED"
+                                                           name="status"
+                                                           th:checked="${statuses!=null&&#arrays.contains(statuses,T(com.hvs.diploma.enums.TaskStatus).EXPIRED)}"
+                                                           th:value="${T(com.hvs.diploma.enums.TaskStatus).EXPIRED}"/>
+                                                    <span>Expired</span>
+                                                </label>
+                                            </p></li>
+                                            <li><p>
+                                                <label class="ml-10px black-text">
+                                                    <input type="checkbox" class="filled-in" value="DONE" name="status"
+                                                           th:checked="${statuses!=null&&#arrays.contains(statuses,T(com.hvs.diploma.enums.TaskStatus).DONE)}"
+                                                           th:value="${T(com.hvs.diploma.enums.TaskStatus).DONE}"/>
+                                                    <span>Done</span>
+                                                </label>
+                                            </p></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="collapsible-header"><i class="material-icons">date_range</i>Date</div>
+                                    <div class="collapsible-body">
+                                        <ul>
+                                            <li><p>
+                                                <label class="ml-10px black-text">
+                                                    <input type="checkbox" class="filled-in" name="date"
+                                                           th:value="${#dates.format(today,'yyyy-MM-dd HH:mm:ss')}"
+                                                           th:checked="${deadlines!=null&&#arrays.contains(deadlines,today)}"/>
 
-                                    <span>Today</span>
-                                </label>
-                            </p></li>
-                            <li><p>
-                                <label class="ml-10px black-text">
-                                    <input type="checkbox" class="filled-in" name="date"
-                                           th:value="${#dates.format(tomorrow,'yyyy-MM-dd HH:mm:ss')}"
-                                           th:checked="${deadlines!=null&&#arrays.contains(deadlines,tomorrow)}"/>
+                                                    <span>Today</span>
+                                                </label>
+                                            </p></li>
+                                            <li><p>
+                                                <label class="ml-10px black-text">
+                                                    <input type="checkbox" class="filled-in" name="date"
+                                                           th:value="${#dates.format(tomorrow,'yyyy-MM-dd HH:mm:ss')}"
+                                                           th:checked="${deadlines!=null&&#arrays.contains(deadlines,tomorrow)}"/>
 
-                                    <span>Tomorrow</span>
-                                </label>
-                            </p></li>
-                            <li><p>
-                                <label class="ml-10px black-text">
-                                    <input type="checkbox" class="filled-in" name="date"
-                                           th:value="${#dates.format(thisWeek,'yyyy-MM-dd HH:mm:ss')}"
-                                           th:checked="${deadlines!=null&&#arrays.contains(deadlines,thisWeek)}"/>
+                                                    <span>Tomorrow</span>
+                                                </label>
+                                            </p></li>
+                                            <li><p>
+                                                <label class="ml-10px black-text">
+                                                    <input type="checkbox" class="filled-in" name="date"
+                                                           th:value="${#dates.format(thisWeek,'yyyy-MM-dd HH:mm:ss')}"
+                                                           th:checked="${deadlines!=null&&#arrays.contains(deadlines,thisWeek)}"/>
 
-                                    <span>This week</span>
-                                </label>
-                            </p></li>
-                            <li>
-                                <div class="divider"></div>
-                            </li>
-                            <li>
+                                                    <span>This week</span>
+                                                </label>
+                                            </p></li>
+                                        </ul>
+                                    </div>
+                                </li>
                                 <div class="row">
-                                    <div class="col s6">
-                                        <button class="btn waves-effect waves-light ml-10px" type="submit"
+                                    <div class="col s6 mt-5vh">
+                                        <a href="/reset" class="btn waves-effect waves-light ml-10px rnd-c">Reset</a>
+                                    </div>
+                                    <div class="col s6 mt-5vh">
+                                        <button class="btn btn waves-effect waves-light ml-10px rnd-c" type="submit"
                                                 name="action">Done
                                         </button>
                                     </div>
-                                    <div class="col s6">
-                                        <a href="/reset" class="btn waves-effect waves-light ml-10px">Reset</a></div>
                                 </div>
-                            </li>
+                            </ul>
                         </form>
                     </ul>
                     <a href="#" data-target="filter-menu" class="sidenav-trigger btn mt-5vh col s12">
@@ -192,63 +209,90 @@
                       th:text="'Order : '+${order}"></span>
             </div>
             <div class="row pt-20px m-30px">
-            <span class="my-badge black-text"
-                  th:if="${priorities!=null||statuses!=null||dateFilterParams!=null}">Filters : </span>
-                <span class="my-badge red mt-5vh"
-                      th:if="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).HIGH)}"
-                      th:text="'High priority'">
-            </span>
-                <span class="my-badge blue mt-5vh"
-                      th:if="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).LOW)}"
-                      th:text="'Low priority'"></span>
-                <span class="my-badge orange mt-5vh"
-                      th:if="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).MEDIUM)}"
-                      th:text="'Medium priority'">
-            </span>
-                <span class="my-badge blue mt-5vh"
-                      th:if="${statuses!=null&&#arrays.contains(statuses,T(com.hvs.diploma.enums.TaskStatus).ACTIVE)}"
-                      th:text="'Active'"></span>
-                <span class="my-badge red mt-5vh"
-                      th:if="${statuses!=null&&#arrays.contains(statuses,T(com.hvs.diploma.enums.TaskStatus).EXPIRED)}"
-                      th:text="'Expired'">
-            </span>
-                <span class="my-badge green mt-5vh"
-                      th:if="${statuses!=null&&#arrays.contains(statuses,T(com.hvs.diploma.enums.TaskStatus).DONE)}"
-                      th:text="'Done'">
-            </span>
-                <span class="my-badge green mt-5vh" th:if="${deadlines!=null&&
-            #arrays.contains(deadlines,today)}" th:text="'Today'"></span>
-                <span class="my-badge grey mt-5vh" th:if="${deadlines!=null&&
-            #arrays.contains(deadlines,tomorrow)}" th:text="'Tomorrow'">
-            </span>
-                <span class="my-badge blue mt-5vh" th:if="${deadlines!=null&&
-            #arrays.contains(deadlines,thisWeek)&&today!=thisWeek}" th:text="'This week'"></span>
+                <div class="chip white-text red"
+                     th:if="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).HIGH)}">
+                    High priority
+                    <a href="/filter?criterion=priority&value=HIGH"
+                       class="white-text"><i class="close material-icons">close</i></a>
+                </div>
+                <div class="chip white-text orange"
+                     th:if="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).MEDIUM)}">
+                    Medium priority
+                    <a href="/filter?criterion=priority&value=MEDIUM"
+                       class="white-text"><i class="close material-icons">close</i></a>
+                </div>
+                <div class="chip white-text blue"
+                     th:if="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).LOW)}">
+                    Low priority
+                    <a href="/filter?criterion=priority&value=LOW"
+                       class="white-text"><i class="close material-icons">close</i></a>
+                </div>
+
+                <!--<span class="my-badge white-text"-->
+                <!--th:if="${priorities!=null||statuses!=null||dateFilterParams!=null}">Filters : </span>-->
+                <!--<span class="my-badge  red mt-5vh"-->
+                <!--th:if="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).HIGH)}"-->
+                <!--th:text="'High priority'">-->
+                <!--</span>-->
+                <!--<span class="my-badge blue mt-5vh"-->
+                <!--th:if="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).LOW)}"-->
+                <!--th:text="'Low priority'"></span>-->
+                <!--<span class="my-badge orange mt-5vh"-->
+                <!--th:if="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).MEDIUM)}"-->
+                <!--th:text="'Medium priority'">-->
+                <!--</span>-->
+                <!--<span class="my-badge blue mt-5vh"-->
+                <!--th:if="${statuses!=null&&#arrays.contains(statuses,T(com.hvs.diploma.enums.TaskStatus).ACTIVE)}"-->
+                <!--th:text="'Active'"></span>-->
+                <!--<span class="my-badge red mt-5vh"-->
+                <!--th:if="${statuses!=null&&#arrays.contains(statuses,T(com.hvs.diploma.enums.TaskStatus).EXPIRED)}"-->
+                <!--th:text="'Expired'">-->
+                <!--</span>-->
+                <!--<span class="my-badge green mt-5vh"-->
+                <!--th:if="${statuses!=null&&#arrays.contains(statuses,T(com.hvs.diploma.enums.TaskStatus).DONE)}"-->
+                <!--th:text="'Done'">-->
+                <!--</span>-->
+                <!--<span class="my-badge green mt-5vh" th:if="${deadlines!=null&&-->
+                <!--#arrays.contains(deadlines,today)}" th:text="'Today'"></span>-->
+                <!--<span class="my-badge grey mt-5vh" th:if="${deadlines!=null&&-->
+                <!--#arrays.contains(deadlines,tomorrow)}" th:text="'Tomorrow'">-->
+                <!--</span>-->
+                <!--<span class="my-badge blue mt-5vh" th:if="${deadlines!=null&&-->
+                <!--#arrays.contains(deadlines,thisWeek)&&today!=thisWeek}" th:text="'This week'"></span>-->
             </div>
             <h5 class="center white-text mt-5vh" th:if="${#lists.isEmpty(tasks)}" th:text="${message}"></h5>
             <ul th:if="${not #lists.isEmpty(tasks)}" th:each="task:${tasks}">
-                <div class="card horizontal rnd-c-10">
+                <div class="card horizontal rnd-c-10" th:classappend="${task.status.cssClass}">
                     <div class="card-stacked small">
                         <div class="card-content">
-                  <span class="badge white-text priority-badge"
+                  <span class="right white-text my-badge-lg badge-borders"
                         th:classappend="${task.priority.cssClass}"
                         th:text="${task.priority.valueToTemplate}"></span>
-                            <h5 th:text="${#dates.dayOfWeekName(task.deadline)}+', '+${#dates.format(task.deadline,'dd MMMM yyyy')}">
+                            <h5 class="subheader"
+                                th:text="${#dates.dayOfWeekName(task.deadline)}+', '+${#dates.format(task.deadline,'dd MMMM yyyy')}">
                                 Deadline</h5>
                             <h5 th:text="${task.taskDescription}"></h5>
                         </div>
                         <div class="card-action">
                             <a href="#"
-                               th:href="'/mark-as-done?id='+${task.id}+'&page='+${#lists.size(tasks)>1?page:(page-1)}+
-                              '&sortBy='+${sortBy}+'&order='+${order}"
+                               th:if="${task.status eq T(com.hvs.diploma.enums.TaskStatus).ACTIVE}"
+                               th:href="'/mark-as-done?id='+${task.id}+'&page='+${#lists.size(tasks)>1?page:(page-1)}"
                                class="btn rnd-c waves-effect hoverable green">
                                 <i class="material-icons left">check</i>
                                 Mark as done</a>
                             <a href="#"
-                               th:href="'/delete?id='+${task.id}+'&page='+${#lists.size(tasks)>1?page:(page-1)}+
-                              '&sortBy='+${sortBy}+'&order='+${order}"
+                               th:if="${task.status eq T(com.hvs.diploma.enums.TaskStatus).EXPIRED}"
+                               th:href="'/retry?id='+${task.id}+'&page='+${#lists.size(tasks)>1?page:(page-1)}"
+                               class="btn rnd-c waves-effect hoverable blue">
+                                <i class="material-icons left">replay</i>
+                                Retry</a>
+                            <a href="#"
+                               th:if="${task.status eq T(com.hvs.diploma.enums.TaskStatus).ACTIVE}"
+                               th:href="'/delete?id='+${task.id}+'&page='+${#lists.size(tasks)>1?page:(page-1)}"
                                class="btn rnd-c waves-effect hoverable red ml-20px">
                                 <i class="material-icons left">delete</i>
                                 Delete</a>
+
                         </div>
                     </div>
                 </div>
@@ -268,17 +312,17 @@
         <div class="row">
             <ul class="pagination" th:if="${pagesCount!=0&&tasksCount>5}">
                 <li class="waves-effect"><a th:if="${page>0}" th:href="'/?page='+${page-1}">
-                    <i class="material-icons">chevron_left</i>
+                    <i class="material-icons white-text">chevron_left</i>
                 </a></li>
                 <li class="waves-effect" th:classappend="${i==page+1?'active teal':''}"
                     th:each="i:${#numbers.sequence(1,pagesCount)}">
                     <!--<a th:text="${i}" th:href="'/?page='+${i-1}"></a>-->
-                    <a th:text="${i}" th:href="@{/(page=${i-1},sortBy=${sortBy},order=${order})}"></a>
+                    <a class="white-text" th:text="${i}" th:href="@{/(page=${i-1})}"></a>
                 </li>
                 <li class="waves-effect">
                     <!--<a th:if="${page!=(pagesCount-1)}" th:href="'/?page='+${page+1}"><i class="material-icons">chevron_right</i></a></li>-->
-                    <a th:if="${page!=(pagesCount-1)}" th:href="@{/(page=${page+1},sortBy=${sortBy},order=${order})}"><i
-                            class="material-icons">chevron_right</i></a></li>
+                    <a th:if="${page!=(pagesCount-1)}" th:href="'/?page='+${page+1}"><i
+                            class="material-icons white-text">chevron_right</i></a></li>
             </ul>
         </div>
     </div>

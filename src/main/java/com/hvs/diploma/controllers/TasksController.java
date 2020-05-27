@@ -1,5 +1,6 @@
 package com.hvs.diploma.controllers;
 
+import com.hvs.diploma.dao.sms.TurboSmsMessageRepository;
 import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.dto.TaskDTO;
 import com.hvs.diploma.entities.Account;
@@ -40,19 +41,20 @@ public class TasksController {
     org.slf4j.Logger logger = LoggerFactory.getLogger(TasksController.class);
     private final AddTaskValidator validator;
     private final MainService mainService;
-    private String testSessionScope = "Just created";
-
+    private boolean isTasksDeadlinesChecked;
     private Account currentUser;
     private String sortBy = "deadline";
     private String sortOrder = "Ascending";
-    private TaskPriority[] priorityFilterParams;
-    private TaskStatus[] statusFilterParams;
-    private Timestamp[] deadlineFilterParams;
+    private List<TaskPriority> priorityFilterParams;
+    private List<TaskStatus> statusFilterParams;
+    private List<Timestamp> deadlineFilterParams;
+    private final TurboSmsMessageRepository smsMessageRepository;
 
     @Autowired
-    public TasksController(AddTaskValidator validator, MainService mainService) {
+    public TasksController(AddTaskValidator validator, MainService mainService, TurboSmsMessageRepository smsMessageRepository) {
         this.validator = validator;
         this.mainService = mainService;
+        this.smsMessageRepository = smsMessageRepository;
     }
 
     @GetMapping("/add-task")
@@ -102,18 +104,27 @@ public class TasksController {
         long count;
         page = checkPageParam(page);
         List<Task> tasks;
+        //looking for tasks with expired deadlines and updating their status
+        if (!isTasksDeadlinesChecked) {
+            checkDeadlines(userAccount);
+        }
+        //checking filter parameters and get tasks from db
         if (priorityFilterParams == null && statusFilterParams == null && deadlineFilterParams == null) {
             count = mainService.countTasksByStatusIsNot(userAccount, TaskStatus.DONE);
             tasks = mainService.getAllUndoneTasksForAccount(userAccount, getPageable(count, size, page, sortBy, sortOrder));
         } else {
+            logger.warn("hasFilterParams");
             count = mainService.countTasksByFilterParams(userAccount, priorityFilterParams, statusFilterParams, deadlineFilterParams);
             tasks = mainService.getTasksByFilterParameters(userAccount,
                     getPageable(count, size, page, sortBy, sortOrder), priorityFilterParams, statusFilterParams, deadlineFilterParams);
         }
+
+        logger.warn("sortBy: " + sortBy + "  order: " + sortOrder);
         long pagesCount = count % 5 == 0 ? count / 5 : count / 5 + 1;
-        sortBy = sortBy.equalsIgnoreCase("priorityValue") ? "Priority" : "Deadline";
+        String sortByToDisplay = sortBy.equalsIgnoreCase("priorityValue") ? "Priority" : "Deadline";
         String emptyListMessage = mainService.countTasksByOwner(userAccount) == 0 ? "You don`t have tasks yet" : "Tasks not found";
         boolean setAddButtonPulse = emptyListMessage.equals("You don`t have tasks yet");
+        //filling in the model
         model.addAttribute("setPulse", setAddButtonPulse);
         model.addAttribute("message", emptyListMessage);
         model.addAttribute("today", DateHelper.today());
@@ -124,22 +135,45 @@ public class TasksController {
         model.addAttribute("account", userAccount);
         model.addAttribute("page", page);
         model.addAttribute("tasks", tasks);
-        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortBy", sortByToDisplay);
         model.addAttribute("order", sortOrder);
         model.addAttribute("priorities", priorityFilterParams);
         model.addAttribute("statuses", statusFilterParams);
         model.addAttribute("deadlines", deadlineFilterParams);
+
         return "index";
+    }
+
+    private void checkDeadlines(Account userAccount) {
+        mainService.checkDeadlines(userAccount);
+        isTasksDeadlinesChecked = true;
     }
 
     @PostMapping("/filter")
     public void filter(HttpServletResponse response,
-                       @RequestParam(required = false) TaskPriority[] priority,
-                       @RequestParam(required = false) TaskStatus[] status,
-                       @RequestParam(required = false) Timestamp[] date) throws IOException {
+                       @RequestParam(required = false) List<TaskPriority> priority,
+                       @RequestParam(required = false) List<TaskStatus> status,
+                       @RequestParam(required = false) List<Timestamp> date) throws IOException {
         priorityFilterParams = priority;
         statusFilterParams = status;
         deadlineFilterParams = date;
+        response.sendRedirect("/");
+    }
+
+    //called when user clicks on 'close' icon
+    @GetMapping("/filter")
+    public void editFilterParams(HttpServletResponse response, @RequestParam String criterion, @RequestParam String value) throws IOException {
+        logger.warn("Before: " + priorityFilterParams);
+        if (criterion.equals("priority")) {
+            TaskPriority criterionToRemove = null;
+            for (TaskPriority priorityFilterParam : priorityFilterParams) {
+                if (priorityFilterParam.toString().equals(value)) {
+                    criterionToRemove = priorityFilterParam;
+                }
+            }
+            priorityFilterParams.remove(criterionToRemove);
+        }
+        logger.warn("After: " + priorityFilterParams);
         response.sendRedirect("/");
     }
 
@@ -164,20 +198,24 @@ public class TasksController {
 
     @GetMapping("/mark-as-done")
     public void markAsDone(@RequestParam Long id, @RequestParam Integer page,
-                           @RequestParam(required = false) String sortBy,
-                           @RequestParam(required = false) String order,
                            HttpServletResponse response) throws IOException {
         mainService.markTaskAsDoneById(id);
         page = checkPageParam(page);
-        response.sendRedirect("/?page=" + page + "&sortBy=" + sortBy + "&sortOrder=" + order);
+        response.sendRedirect("/?page=" + page);
+    }
+
+    @GetMapping("/retry")
+    public void retry(@RequestParam Long id, @RequestParam Integer page, HttpServletResponse response) {
+        //TODO show user modal window with date input to set new deadline to expired task
     }
 
     @GetMapping("/sort")
-    public String sort(@RequestParam String by, @RequestParam String order,
-                       @RequestParam(required = false, defaultValue = "0") Integer page) {
+    public void sort(@RequestParam String by, @RequestParam String order,
+                     @RequestParam(required = false, defaultValue = "0") Integer page,
+                     HttpServletResponse response) throws IOException {
         sortBy = by;
         sortOrder = order;
-        return "redirect:/";
+        response.sendRedirect("/");
     }
 
     private Integer checkPageParam(Integer page) {
@@ -198,21 +236,18 @@ public class TasksController {
 
     private Account loadAccountInfo(Principal principal) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Account userAccount;
         if (currentUser == null) {
             if (principal instanceof OAuth2AuthenticationToken) {
                 OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
                 AccountDTO accountDTO = new AccountDTO();
                 Account account = accountDTO.getAccount(token);
-                userAccount = mainService.findAccountBySocialId(account.getSocialId());
+                currentUser = mainService.findAccountBySocialId(account.getSocialId());
             } else {
                 User user = (User) authentication.getPrincipal();
-                userAccount = mainService.findAccountByEmail(user.getUsername());
+                currentUser = mainService.findAccountByEmail(user.getUsername());
             }
-            return userAccount;
-        } else {
-            return currentUser;
         }
-//        return userAccount;
+        return currentUser;
     }
+
 }

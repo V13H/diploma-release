@@ -15,6 +15,10 @@ $(document).ready(function () {
     $('.modal').modal();
 });
 $(document).ready(function () {
+    $('.collapsible').collapsible();
+});
+
+$(document).ready(function () {
     var currentDate = new Date();
     var month = currentDate.getMonth();
     var day = currentDate.getDate();

@@ -13,10 +13,10 @@
     <!-- Materialize CSS CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/main-body-background.css">
+    <link rel="stylesheet" href="/css/body-backgrounds.css">
     <link rel="icon" href="/img/favicon.ico" type="img/ico">
 </head>
-<body>
+<body class="blackboard-texture-bg">
 <header>
     <nav>
         <div class="nav-wrapper teal">
@@ -34,7 +34,7 @@
                     <div class="card-content">
                         <div class="row">
                             <form action="/add-task" th:object="${taskDTO}" method="post">
-                                <h5 class="black-text center">Add new task</h5>
+                                <h5 class="black-text subheader center">Add new task</h5>
                                 <div class="input-field col s12">
                                     <textarea id="textarea1" th:field="*{description}"
                                               class="materialize-textarea"></textarea>

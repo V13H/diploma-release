@@ -32,6 +32,9 @@ main {
     margin: 20px 10px;
 }
 
+.h-30vh {
+    height: 30vh;
+}
 .rnd-c {
     border-radius: 70px;
 }
@@ -60,12 +63,7 @@ main {
     margin-left: 20px;
 }
 
-.priority-badge {
-    font-size: medium;
-    font-weight: bold;
-    border-radius: 90px;
 
-}
 
 h5 {
     margin-top: 2px;
@@ -97,11 +95,7 @@ h5 {
     font-weight: bolder;
 }
 
-.btn-outline {
-    border: solid teal 3px;
-    border-radius: 90px;
-    background-color: white;
-}
+
 
 .my-badge {
     font-size: 1rem;
@@ -119,5 +113,28 @@ h5 {
     border-radius: 70px;
     padding: 5px 10px;
     color: white;
+    border: solid;
+    border-width: 3px;
+    border-color: whitesmoke;
+}
+
+.priority-badge {
+    font-size: medium;
+    font-weight: bold;
+    border-radius: 90px;
 
 }
+
+.forestgreen {
+    background-color: limegreen;
+}
+
+.failed-bg {
+    background: white url("../img/failed.jpg") no-repeat top center;
+}
+
+.done-bg {
+    background: white url("../img/done.jpg") no-repeat top center;
+}
+
+

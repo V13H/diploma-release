@@ -1,7 +1,7 @@
 package com.hvs.diploma.security;
 
+import com.hvs.diploma.dao.main.AccountRepository;
 import com.hvs.diploma.entities.Account;
-import com.hvs.diploma.repositories.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

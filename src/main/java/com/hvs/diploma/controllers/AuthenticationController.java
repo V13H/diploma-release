@@ -1,25 +1,26 @@
 package com.hvs.diploma.controllers;
 
+import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.entities.AccountSettings;
 import com.hvs.diploma.entities.Task;
 import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.enums.TaskStatus;
-import com.hvs.diploma.exceptions.AccountNotFoundException;
-import com.hvs.diploma.exceptions.LoginFormEmptyInputException;
 import com.hvs.diploma.services.MainService;
 import com.hvs.diploma.util.DateHelper;
+import com.hvs.diploma.validators.LoginFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+import javax.validation.Valid;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Calendar;
@@ -29,37 +30,32 @@ import java.util.List;
 @Controller
 public class AuthenticationController {
     private final MainService mainService;
+    private final LoginFormValidator loginFormValidator;
 
     @Autowired
-    public AuthenticationController(MainService mainService) {
+    public AuthenticationController(MainService mainService, LoginFormValidator loginFormValidator) {
         this.mainService = mainService;
+        this.loginFormValidator = loginFormValidator;
     }
 
 
     @GetMapping("/login")
-    public String getLoginPage() {
+    public String getLoginPage(Model model) {
+        model.addAttribute("accountDTO", new AccountDTO());
         return "/login";
     }
 
-
     @PostMapping("/signIn")
-    public String signIn(@RequestParam String email, @RequestParam String password, Model model,
-                         HttpServletRequest request) throws IOException, AccountNotFoundException {
-        if (email.isEmpty() || password.isEmpty()) {
-            throw new LoginFormEmptyInputException(email, password);
-        } else if (mainService.findAccountByEmail(email) != null) {
-            try {
-                request.login(email, password);
-            } catch (ServletException e) {
-                model.addAttribute("email", email);
-                model.addAttribute("passwordError", "Invalid password");
-                return "/login";
-            }
-            return "redirect:/";
+    public String signIn(@Valid @ModelAttribute("accountDTO") AccountDTO accountDTO,
+                         BindingResult bindingResult,
+                         HttpServletRequest request) throws ServletException {
+        loginFormValidator.validate(accountDTO, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "/login";
         } else {
-            throw new AccountNotFoundException("User with specific email doesn`t exists", "login", "emailError");
+            request.login(accountDTO.getEmail(), accountDTO.getPassword());
+            return "redirect:/";
         }
-
     }
 
     @PostConstruct
@@ -90,7 +86,7 @@ public class AuthenticationController {
             task.setStatus(TaskStatus.ACTIVE);
             task.setTaskDescription("Task #" + i);
             task.setCreationDate(Date.valueOf(LocalDate.now()));
-            task.setDeadline(new GregorianCalendar(2020, Calendar.MAY, 17).getTime());
+            task.setDeadline(DateHelper.today());
             mainService.saveTask(task);
         }
         for (int i = 6; i <= 10; i++) {
@@ -100,15 +96,15 @@ public class AuthenticationController {
             task.setStatus(TaskStatus.ACTIVE);
             task.setTaskDescription("Task #" + i);
             task.setCreationDate(Date.valueOf(LocalDate.now()));
-            task.setDeadline(new GregorianCalendar(2020, Calendar.MAY, 18).getTime());
+            task.setDeadline(DateHelper.tomorrow());
             mainService.saveTask(task);
         }
-        for (int i = 11; i <= 15; i++) {
+        for (int i = 19; i <= 24; i++) {
             Task task = new Task();
             task.setOwner(account);
             setRandomPriority(i, task);
             task.setStatus(TaskStatus.ACTIVE);
-            task.setTaskDescription("Task #" + i);
+            task.setTaskDescription("Task #" + i + "Some kind of description");
             task.setCreationDate(Date.valueOf(LocalDate.now()));
             task.setDeadline(new GregorianCalendar(2020, Calendar.MAY, DateHelper.tomorrow().getDay() + i).getTime());
             mainService.saveTask(task);

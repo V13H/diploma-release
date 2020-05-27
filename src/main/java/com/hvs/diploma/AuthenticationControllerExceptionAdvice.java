@@ -39,7 +39,6 @@ public class AuthenticationControllerExceptionAdvice {
         }
         return modelAndView;
     }
-
     private ModelAndView handleException(Exception e, String viewName, String attributeName) {
         ModelAndView modelAndView = new ModelAndView(viewName);
         modelAndView.addObject(attributeName, e.getMessage());

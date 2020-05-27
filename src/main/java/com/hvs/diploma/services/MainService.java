@@ -1,25 +1,29 @@
 package com.hvs.diploma.services;
 
+import com.hvs.diploma.controllers.TasksController;
+import com.hvs.diploma.dao.main.AccountRepository;
+import com.hvs.diploma.dao.main.AccountSettingsRepository;
+import com.hvs.diploma.dao.main.TaskRepository;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.entities.AccountSettings;
 import com.hvs.diploma.entities.Task;
 import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.enums.TaskStatus;
-import com.hvs.diploma.repositories.AccountRepository;
-import com.hvs.diploma.repositories.AccountSettingsRepository;
-import com.hvs.diploma.repositories.TaskRepository;
 import com.hvs.diploma.util.DateHelper;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
 public class MainService {
-    private static final Timestamp[] DEFAULT_DATE_FILTER_PARAMS = new Timestamp[]{DateHelper.today(), DateHelper.maxDate()};
+    org.slf4j.Logger logger = LoggerFactory.getLogger(TasksController.class);
     private static final TaskStatus[] DEFAULT_STATUS_FILTER_PARAMS = new TaskStatus[]{TaskStatus.ACTIVE, TaskStatus.EXPIRED};
     private static final TaskPriority[] DEFAULT_PRIORITY_FILTER_PARAMS = new TaskPriority[]
             {TaskPriority.HIGH, TaskPriority.MEDIUM, TaskPriority.LOW};
@@ -68,43 +72,47 @@ public class MainService {
 
     @Transactional(readOnly = true)
     public List<Task> getTasksByFilterParameters(Account owner, Pageable pageable,
-                                                 TaskPriority[] priorities,
-                                                 TaskStatus[] statuses,
-                                                 Timestamp[] dates) {
+                                                 List<TaskPriority> priorities,
+                                                 List<TaskStatus> statuses,
+                                                 List<Timestamp> dates) {
         if (priorities == null) {
-            priorities = DEFAULT_PRIORITY_FILTER_PARAMS;
+            priorities = new ArrayList<>();
+            Collections.addAll(priorities, DEFAULT_PRIORITY_FILTER_PARAMS);
         }
         if (statuses == null) {
-            statuses = DEFAULT_STATUS_FILTER_PARAMS;
+            statuses = new ArrayList<>();
+            Collections.addAll(statuses, DEFAULT_STATUS_FILTER_PARAMS);
         }
         if (dates == null) {
-            dates = DEFAULT_DATE_FILTER_PARAMS;
+            return taskRepository.findAllByOwnerAndPriorityInAndStatusIn(owner, priorities, statuses, pageable);
+        } else if (dates.contains(DateHelper.lastDayOfCurrentWeek())) {
+            logger.warn("dates: " + dates);
+            logger.warn("firstDay: " + DateHelper.firstDayOfCurrentWeek());
+            logger.warn("lastDay: " + DateHelper.lastDayOfCurrentWeek());
+            return taskRepository.findAllByOwnerAndPriorityInAndStatusInAndDeadlineBetween(owner, priorities,
+                    statuses, pageable, DateHelper.firstDayOfCurrentWeek(), DateHelper.lastDayOfCurrentWeek());
         }
-        return taskRepository.findTasksByOwnerAndPriorityInAndStatusInAndDeadlineIn(owner, priorities, statuses, dates, pageable);
+
+        return taskRepository.findAllByOwnerAndPriorityInAndStatusInAndDeadlineIn(owner, priorities, statuses, dates, pageable);
     }
 
-    @Transactional(readOnly = true)
-    public List<Task> filteredList(Account owner, TaskPriority[] priorities, TaskStatus[] statuses,
-                                   Timestamp[] dates) {
-        if (priorities == null) {
-            priorities = DEFAULT_PRIORITY_FILTER_PARAMS;
-        }
-        if (statuses == null) {
-            statuses = DEFAULT_STATUS_FILTER_PARAMS;
-        }
-        return taskRepository.findTasksByOwnerAndPriorityInAndStatusInAndDeadlineIn(owner, priorities, statuses, dates);
-    }
 
     @Transactional(readOnly = true)
-    public long countTasksByFilterParams(Account owner, TaskPriority[] priorities, TaskStatus[] statuses, Timestamp[] dates) {
+    public long countTasksByFilterParams(Account owner, List<TaskPriority> priorities, List<TaskStatus> statuses, List<Timestamp> dates) {
         if (priorities == null) {
-            priorities = DEFAULT_PRIORITY_FILTER_PARAMS;
+            priorities = new ArrayList<>();
+            Collections.addAll(priorities, DEFAULT_PRIORITY_FILTER_PARAMS);
         }
         if (statuses == null) {
-            statuses = DEFAULT_STATUS_FILTER_PARAMS;
+            statuses = new ArrayList<>();
+            Collections.addAll(statuses, DEFAULT_STATUS_FILTER_PARAMS);
+
         }
         if (dates == null) {
-            dates = DEFAULT_DATE_FILTER_PARAMS;
+            return taskRepository.countTasksByOwnerAndPriorityInAndStatusIn(owner, priorities, statuses);
+        } else if (dates.contains(DateHelper.lastDayOfCurrentWeek())) {
+            return taskRepository.countTasksByOwnerAndPriorityInAndStatusInAndDeadlineBetween(owner, priorities,
+                    statuses, DateHelper.firstDayOfCurrentWeek(), DateHelper.lastDayOfCurrentWeek());
         }
         return taskRepository.countTasksByOwnerAndPriorityInAndStatusInAndDeadlineIn(owner, priorities, statuses, dates);
     }
@@ -133,6 +141,20 @@ public class MainService {
     public void markTaskAsDoneById(Long id) {
         Task tasksById = taskRepository.findTasksById(id);
         tasksById.setStatus(TaskStatus.DONE);
+    }
+
+    @Transactional
+    public void retry(Long id) {
+        Task task = taskRepository.findTasksById(id);
+
+    }
+
+    @Transactional
+    public void checkDeadlines(Account account) {
+        List<Task> expiredTasks = taskRepository.findAllByOwnerAndDeadlineBefore(account, DateHelper.today());
+        for (Task expiredTask : expiredTasks) {
+            expiredTask.setStatus(TaskStatus.EXPIRED);
+        }
     }
 
     @Transactional

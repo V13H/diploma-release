@@ -31,4 +31,12 @@ public class Task {
     @JoinColumn(name = "account_id", nullable = false)
     private Account owner;
 
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", priority=" + priority +
+                ", status=" + status +
+                '}';
+    }
 }

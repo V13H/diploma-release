@@ -24,6 +24,7 @@ public class Account {
     private String email;
     private String password;
     private String phoneNumber;
+    private boolean hasWatchedGreetingsMessage;
     @Enumerated(EnumType.STRING)
     private UserRole role;
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
