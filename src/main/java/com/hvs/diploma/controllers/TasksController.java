@@ -58,7 +58,7 @@ public class TasksController {
     @GetMapping("/add-task")
     public String getAddNewTaskForm(Model model) {
         model.addAttribute("taskDTO", new TaskDTO());
-        return "/add-task";
+        return "add-task";
     }
 
     @PostMapping("/add-task")
@@ -68,7 +68,7 @@ public class TasksController {
                           @RequestParam String group1) {
         validator.validate(taskDTO, bindingResult);
         if (bindingResult.hasErrors()) {
-            return "/add-task";
+            return "add-task";
         } else {
             taskDTO.setPriority(group1);
             Task task = taskDTO.buildTaskInstance();
@@ -196,7 +196,7 @@ public class TasksController {
         model.addAttribute("restartMode", true);
         model.addAttribute("action", "/restart-task");
         model.addAttribute("title", "Restart task");
-        return "/add-task";
+        return "add-task";
 
     }
 

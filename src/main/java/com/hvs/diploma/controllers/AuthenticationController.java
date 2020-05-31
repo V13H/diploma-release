@@ -51,7 +51,7 @@ public class AuthenticationController {
                          HttpServletRequest request) throws ServletException {
         loginFormValidator.validate(accountDTO, bindingResult);
         if (bindingResult.hasErrors()) {
-            return "/login";
+            return "login";
         } else {
             request.login(accountDTO.getEmail(), accountDTO.getPassword());
             return "redirect:/";

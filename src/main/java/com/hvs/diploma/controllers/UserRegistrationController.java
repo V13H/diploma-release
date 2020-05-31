@@ -42,7 +42,7 @@ public class UserRegistrationController {
     @GetMapping()
     public String getRegistrationPage(Model model) {
         model.addAttribute("accountDTO", new AccountDTO());
-        return "/register";
+        return "register";
     }
 
     @PostMapping("/createAccount")
@@ -50,7 +50,7 @@ public class UserRegistrationController {
                                   BindingResult bindingResult, HttpServletRequest request,
                                   Model model) throws ServletException, IOException {
         if (bindingResult.hasErrors()) {
-            return "/register";
+            return "register";
         } else {
             Account account = Account.accountOfDto(accountDTO);
             account.setPassword(encoder.encode(accountDTO.getPassword()));
