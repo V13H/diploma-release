@@ -24,7 +24,7 @@ public class Account {
     private String email;
     private String password;
     private String phoneNumber;
-    private boolean hasWatchedGreetingsMessage;
+    private boolean hasWatchedGreetingsMessage = false;
     @Enumerated(EnumType.STRING)
     private UserRole role;
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
@@ -42,4 +42,7 @@ public class Account {
         return account;
     }
 
+    public boolean hasWatchedGreetingsMessage() {
+        return hasWatchedGreetingsMessage;
+    }
 }

@@ -67,18 +67,10 @@ public class AuthenticationController {
         account.setPassword("$2y$12$EVY0bHxVz2Q9NyVlnij9/.B0gdsmb0AR0GF29vhOsiTRYtn0exlr6");
         account.setPictureUrl("/img/anonymous-user-svg.svg");
         account.setUserName("junior@gmail.com");
+        account.setHasWatchedGreetingsMessage(true);
 //        account.setSettings(settings);
         mainService.saveAccount(account);
 
-
-//        Account user = new Account();
-//        user.setEmail("user@gmail.com");
-//        user.setPictureUrl("/img/anonymous-user-svg.svg");
-//        user.setPassword("$2y$12$EVY0bHxVz2Q9NyVlnij9/.B0gdsmb0AR0GF29vhOsiTRYtn0exlr6");
-//        user.setUserName("user@gmail.com");
-//        settings.setAccount(user);
-//        user.setSettings(settings);
-//        mainService.saveAccount(user);
         for (int i = 1; i <= 5; i++) {
             Task task = new Task();
             task.setOwner(account);
@@ -109,17 +101,7 @@ public class AuthenticationController {
             task.setDeadline(new GregorianCalendar(2020, Calendar.MAY, DateHelper.tomorrow().getDay() + i).getTime());
             mainService.saveTask(task);
         }
-//        for (int i = 16; i <=20 ; i++) {
-//            Task task = new Task();
-//            task.setOwner(account);
-//            task.setPriority(TaskPriority.HIGH);
-//            task.setStatus(TaskStatus.EXPIRED);
-//            task.setPriorityValue(1);
-//            task.setTaskDescription("Task #"+i);
-//            task.setCreationDate(Date.valueOf(LocalDate.now()));
-//            task.setDeadline(new GregorianCalendar(2020, Calendar.MARCH,i).getTime());
-//            accountService.saveTask(task);
-//        }
+
     }
 
     @GetMapping("/users")

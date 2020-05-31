@@ -31,15 +31,17 @@
                         You can do it!</a>
                     <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                     <ul class="right hide-on-med-and-down">
-                        <li class="active"><a><i class="material-icons left">playlist_add_check</i>Tasks</a></li>
-                        <li><a><i class="material-icons left">settings</i>Settings</a></li>
-                        <li><a><i class="material-icons left">help</i>About</a></li>
+                        <li class="active"><a href="/"><i class="material-icons left">playlist_add_check</i>Tasks</a>
+                        </li>
+                        <li><a href="/settings"><i class="material-icons left">settings</i>Settings</a></li>
+                        <li><a href="/about"><i class="material-icons left">help</i>About</a></li>
                         <li><a href="/logout"><i class="material-icons left">exit_to_app</i>Logout</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
     </div>
+    <!--Side nav-->
     <ul class="sidenav teal" id="mobile-demo">
         <li>
         <li>
@@ -54,18 +56,20 @@
             </div>
         </li>
         </li>
-        <li class="active"><a class="white-text"><i
+        <li class="active"><a href="/" class="white-text"><i
                 class="material-icons left white-text">playlist_add_check</i>Tasks</a></li>
-        <li><a class="white-text"><i class="material-icons left white-text">settings</i>Settings</a></li>
-        <li><a class="white-text"><i class="material-icons left white-text">help</i>Help</a></li>
+        <li><a href="/settings" class="white-text"><i class="material-icons left white-text">settings</i>Settings</a>
+        </li>
+        <li><a href="/about" class="white-text"><i class="material-icons left white-text">help</i>Help</a></li>
         <li><a class="white-text" href="/logout"><i class="material-icons left white-text">exit_to_app</i>Logout</a>
         </li>
     </ul>
 </header>
 <main>
-    <!-- Your content here -->
+    <!-- Main -->
     <div class="container">
         <div class="row">
+            <!--Sort and filter-->
             <div class="row">
                 <a class='dropdown-trigger btn mt-5vh col s6 l2 xl2' href='#' data-target='dropdown1'>
                     <i class="material-icons right">arrow_drop_down</i>Sort by
@@ -156,7 +160,7 @@
                                             <li><p>
                                                 <label class="ml-10px black-text">
                                                     <input type="checkbox" class="filled-in" name="date"
-                                                           th:value="${#dates.format(today,'yyyy-MM-dd HH:mm:ss')}"
+                                                           th:value="${T(com.hvs.diploma.enums.TaskDeadlines).TODAY}"
                                                            th:checked="${deadlines!=null&&#arrays.contains(deadlines,today)}"/>
 
                                                     <span>Today</span>
@@ -165,7 +169,7 @@
                                             <li><p>
                                                 <label class="ml-10px black-text">
                                                     <input type="checkbox" class="filled-in" name="date"
-                                                           th:value="${#dates.format(tomorrow,'yyyy-MM-dd HH:mm:ss')}"
+                                                           th:value="${T(com.hvs.diploma.enums.TaskDeadlines).TOMORROW}"
                                                            th:checked="${deadlines!=null&&#arrays.contains(deadlines,tomorrow)}"/>
 
                                                     <span>Tomorrow</span>
@@ -174,7 +178,7 @@
                                             <li><p>
                                                 <label class="ml-10px black-text">
                                                     <input type="checkbox" class="filled-in" name="date"
-                                                           th:value="${#dates.format(thisWeek,'yyyy-MM-dd HH:mm:ss')}"
+                                                           th:value="${T(com.hvs.diploma.enums.TaskDeadlines).THIS_WEEK}"
                                                            th:checked="${deadlines!=null&&#arrays.contains(deadlines,thisWeek)}"/>
 
                                                     <span>This week</span>
@@ -200,6 +204,7 @@
                         <i class="fas fa-filter left"></i>Filter</a>
                 </div>
             </div>
+            <!--Sort badges-->
             <div class="row pt-20px">
             <span class="my-badge-lg teal mt-5vh"
                   th:if="${sortBy!=null}"
@@ -208,6 +213,7 @@
                       th:if="${order!=null}"
                       th:text="'Order : '+${order}"></span>
             </div>
+            <!--Filter params chips-->
             <div class="row pt-20px m-30px">
                 <div class="chip white-text red"
                      th:if="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).HIGH)}">
@@ -227,40 +233,63 @@
                     <a href="/filter?criterion=priority&value=LOW"
                        class="white-text"><i class="close material-icons">close</i></a>
                 </div>
+                <div class="chip white-text blue"
+                     th:if="${statuses!=null&&#arrays.contains(statuses,T(com.hvs.diploma.enums.TaskStatus).ACTIVE)}">
+                    Active
+                    <a href="/filter?criterion=status&value=ACTIVE"
+                       class="white-text"><i class="close material-icons">close</i></a>
+                </div>
+                <div class="chip white-text red"
+                     th:if="${statuses!=null&&#arrays.contains(statuses,T(com.hvs.diploma.enums.TaskStatus).EXPIRED)}">
+                    Expired
+                    <a href="/filter?criterion=status&value=EXPIRED"
+                       class="white-text"><i class="close material-icons">close</i></a>
+                </div>
+                <div class="chip white-text green"
+                     th:if="${statuses!=null&&#arrays.contains(statuses,T(com.hvs.diploma.enums.TaskStatus).DONE)}">
+                    Done
+                    <a href="/filter?criterion=status&value=DONE"
+                       class="white-text"><i class="close material-icons">close</i></a>
+                </div>
+                <div class="chip white-text green"
+                     th:if="${deadlines!=null&&#arrays.contains(deadlines,today)}">
+                    Today
+                    <a th:href="@{/filter(criterion='deadline',value=${today})}"
+                       class="white-text"><i class="close material-icons">close</i></a>
+                </div>
+                <div class="chip white-text grey"
+                     th:if="${deadlines!=null&&#arrays.contains(deadlines,tomorrow)&&tomorrow!=thisWeek}">
+                    Tomorrow
+                    <a th:href="@{/filter(criterion='deadline',value=${tomorrow})}"
+                       class="white-text"><i class="close material-icons">close</i></a>
+                </div>
+                <div class="chip white-text blue"
+                     th:if="${deadlines!=null&&#arrays.contains(deadlines,thisWeek)}">
+                    This week
+                    <a th:href="@{/filter(criterion='deadline',value=${thisWeek})}"
+                       class="white-text"><i class="close material-icons">close</i></a>
+                </div>
+                <div class="chip black-text white"
+                     th:if="${filterParamsExists}">
+                    Clear all
+                    <a th:href="@{/reset}"
+                       class="black-text"><i class="close material-icons">close</i></a>
+                </div>
 
-                <!--<span class="my-badge white-text"-->
-                <!--th:if="${priorities!=null||statuses!=null||dateFilterParams!=null}">Filters : </span>-->
-                <!--<span class="my-badge  red mt-5vh"-->
-                <!--th:if="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).HIGH)}"-->
-                <!--th:text="'High priority'">-->
-                <!--</span>-->
-                <!--<span class="my-badge blue mt-5vh"-->
-                <!--th:if="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).LOW)}"-->
-                <!--th:text="'Low priority'"></span>-->
-                <!--<span class="my-badge orange mt-5vh"-->
-                <!--th:if="${priorities!=null&&#arrays.contains(priorities,T(com.hvs.diploma.enums.TaskPriority).MEDIUM)}"-->
-                <!--th:text="'Medium priority'">-->
-                <!--</span>-->
-                <!--<span class="my-badge blue mt-5vh"-->
-                <!--th:if="${statuses!=null&&#arrays.contains(statuses,T(com.hvs.diploma.enums.TaskStatus).ACTIVE)}"-->
-                <!--th:text="'Active'"></span>-->
-                <!--<span class="my-badge red mt-5vh"-->
-                <!--th:if="${statuses!=null&&#arrays.contains(statuses,T(com.hvs.diploma.enums.TaskStatus).EXPIRED)}"-->
-                <!--th:text="'Expired'">-->
-                <!--</span>-->
-                <!--<span class="my-badge green mt-5vh"-->
-                <!--th:if="${statuses!=null&&#arrays.contains(statuses,T(com.hvs.diploma.enums.TaskStatus).DONE)}"-->
-                <!--th:text="'Done'">-->
-                <!--</span>-->
-                <!--<span class="my-badge green mt-5vh" th:if="${deadlines!=null&&-->
-                <!--#arrays.contains(deadlines,today)}" th:text="'Today'"></span>-->
-                <!--<span class="my-badge grey mt-5vh" th:if="${deadlines!=null&&-->
-                <!--#arrays.contains(deadlines,tomorrow)}" th:text="'Tomorrow'">-->
-                <!--</span>-->
-                <!--<span class="my-badge blue mt-5vh" th:if="${deadlines!=null&&-->
-                <!--#arrays.contains(deadlines,thisWeek)&&today!=thisWeek}" th:text="'This week'"></span>-->
             </div>
             <h5 class="center white-text mt-5vh" th:if="${#lists.isEmpty(tasks)}" th:text="${message}"></h5>
+            <!-- Greetings modal -->
+            <div id="greetingsModal" class="modal" th:if="${greetingsMessage!=null}">
+                <div class="modal-content">
+                    <h4 class="center">Welcome!</h4>
+                    <p th:text="${greetingsMessage}"></p>
+                </div>
+                <div class="modal-footer">
+                    <a href="/" class="modal-close waves-effect waves-green btn-flat">To Settings</a>
+                    <a href="/modal-dismiss" class="modal-close waves-effect waves-green btn-flat">Got it!</a>
+                </div>
+            </div>
+            <!--Task list-->
             <ul th:if="${not #lists.isEmpty(tasks)}" th:each="task:${tasks}">
                 <div class="card horizontal rnd-c-10" th:classappend="${task.status.cssClass}">
                     <div class="card-stacked small">
@@ -280,10 +309,9 @@
                                class="btn rnd-c waves-effect hoverable green">
                                 <i class="material-icons left">check</i>
                                 Mark as done</a>
-                            <a href="#"
+                            <a th:href="@{/retry(taskId=${task.id})}"
                                th:if="${task.status eq T(com.hvs.diploma.enums.TaskStatus).EXPIRED}"
-                               th:href="'/retry?id='+${task.id}+'&page='+${#lists.size(tasks)>1?page:(page-1)}"
-                               class="btn rnd-c waves-effect hoverable blue">
+                               class="modal-trigger btn rnd-c waves-effect hoverable blue">
                                 <i class="material-icons left">replay</i>
                                 Retry</a>
                             <a href="#"
@@ -298,8 +326,9 @@
                 </div>
         </div>
 
-        </ul>
 
+        </ul>
+        <!--Add task FAB-->
         <div class="fixed-action-btn">
             <a class="btn-floating teal waves-effect hoverable btn-large"
                th:classappend="${#lists.isEmpty(tasks)&&setPulse==true?'pulse':''}"
@@ -308,6 +337,7 @@
             </a>
         </div>
     </div>
+    <!--Pagination section-->
     <div class="container">
         <div class="row">
             <ul class="pagination" th:if="${pagesCount!=0&&tasksCount>5}">

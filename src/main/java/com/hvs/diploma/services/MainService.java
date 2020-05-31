@@ -7,6 +7,7 @@ import com.hvs.diploma.dao.main.TaskRepository;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.entities.AccountSettings;
 import com.hvs.diploma.entities.Task;
+import com.hvs.diploma.enums.TaskDeadlines;
 import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.enums.TaskStatus;
 import com.hvs.diploma.util.DateHelper;
@@ -16,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -74,47 +74,58 @@ public class MainService {
     public List<Task> getTasksByFilterParameters(Account owner, Pageable pageable,
                                                  List<TaskPriority> priorities,
                                                  List<TaskStatus> statuses,
-                                                 List<Timestamp> dates) {
-        if (priorities == null) {
+                                                 List<TaskDeadlines> dates) {
+        if (!parametersExists(priorities)) {
             priorities = new ArrayList<>();
             Collections.addAll(priorities, DEFAULT_PRIORITY_FILTER_PARAMS);
         }
-        if (statuses == null) {
+        if (!parametersExists(statuses)) {
             statuses = new ArrayList<>();
             Collections.addAll(statuses, DEFAULT_STATUS_FILTER_PARAMS);
         }
-        if (dates == null) {
+        if (!parametersExists(dates)) {
             return taskRepository.findAllByOwnerAndPriorityInAndStatusIn(owner, priorities, statuses, pageable);
-        } else if (dates.contains(DateHelper.lastDayOfCurrentWeek())) {
-            logger.warn("dates: " + dates);
-            logger.warn("firstDay: " + DateHelper.firstDayOfCurrentWeek());
-            logger.warn("lastDay: " + DateHelper.lastDayOfCurrentWeek());
+        } else if (dates.contains(TaskDeadlines.THIS_WEEK) && dates.contains(TaskDeadlines.TOMORROW)) {
+            return taskRepository.findAllByOwnerAndPriorityInAndStatusInAndDeadlineBetween(owner, priorities,
+                    statuses, pageable, DateHelper.firstDayOfCurrentWeek(), DateHelper.tomorrow());
+        } else if (dates.contains(TaskDeadlines.THIS_WEEK) && !dates.contains(TaskDeadlines.TOMORROW)) {
             return taskRepository.findAllByOwnerAndPriorityInAndStatusInAndDeadlineBetween(owner, priorities,
                     statuses, pageable, DateHelper.firstDayOfCurrentWeek(), DateHelper.lastDayOfCurrentWeek());
+        } else {
+            return taskRepository.findAllByOwnerAndPriorityInAndStatusInAndDeadlineIn(owner, priorities,
+                    statuses, TaskDeadlines.getValues(dates), pageable);
         }
 
-        return taskRepository.findAllByOwnerAndPriorityInAndStatusInAndDeadlineIn(owner, priorities, statuses, dates, pageable);
+    }
+    @Transactional(readOnly = true)
+    public Task findTaskById(Long id) {
+        return taskRepository.findTasksById(id);
     }
 
-
     @Transactional(readOnly = true)
-    public long countTasksByFilterParams(Account owner, List<TaskPriority> priorities, List<TaskStatus> statuses, List<Timestamp> dates) {
-        if (priorities == null) {
+    public long countTasksByFilterParams(Account owner, List<TaskPriority> priorities,
+                                         List<TaskStatus> statuses, List<TaskDeadlines> dates) {
+        if (!parametersExists(priorities)) {
             priorities = new ArrayList<>();
             Collections.addAll(priorities, DEFAULT_PRIORITY_FILTER_PARAMS);
         }
-        if (statuses == null) {
+        if (!parametersExists(statuses)) {
             statuses = new ArrayList<>();
             Collections.addAll(statuses, DEFAULT_STATUS_FILTER_PARAMS);
 
         }
-        if (dates == null) {
+        if (!parametersExists(dates)) {
             return taskRepository.countTasksByOwnerAndPriorityInAndStatusIn(owner, priorities, statuses);
-        } else if (dates.contains(DateHelper.lastDayOfCurrentWeek())) {
+        } else if (dates.contains(TaskDeadlines.THIS_WEEK) && dates.contains(TaskDeadlines.TOMORROW)) {
+            return taskRepository.countTasksByOwnerAndPriorityInAndStatusInAndDeadlineBetween(owner, priorities,
+                    statuses, DateHelper.firstDayOfCurrentWeek(), DateHelper.tomorrow());
+        } else if (dates.contains(TaskDeadlines.THIS_WEEK) && !dates.contains(TaskDeadlines.TOMORROW)) {
             return taskRepository.countTasksByOwnerAndPriorityInAndStatusInAndDeadlineBetween(owner, priorities,
                     statuses, DateHelper.firstDayOfCurrentWeek(), DateHelper.lastDayOfCurrentWeek());
+        } else {
+            return taskRepository.countTasksByOwnerAndPriorityInAndStatusInAndDeadlineIn(owner, priorities,
+                    statuses, TaskDeadlines.getValues(dates));
         }
-        return taskRepository.countTasksByOwnerAndPriorityInAndStatusInAndDeadlineIn(owner, priorities, statuses, dates);
     }
 
     @Transactional(readOnly = true)
@@ -144,9 +155,10 @@ public class MainService {
     }
 
     @Transactional
-    public void retry(Long id) {
-        Task task = taskRepository.findTasksById(id);
-
+    public void retry(Long taskId, java.util.Date newDeadline) {
+        Task task = taskRepository.findTasksById(taskId);
+        task.setDeadline(newDeadline);
+        task.setStatus(TaskStatus.ACTIVE);
     }
 
     @Transactional
@@ -160,5 +172,9 @@ public class MainService {
     @Transactional
     public void saveSettings(AccountSettings accountSettings) {
         accountSettingsRepository.save(accountSettings);
+    }
+
+    private boolean parametersExists(List filterParams) {
+        return filterParams != null && !filterParams.isEmpty();
     }
 }

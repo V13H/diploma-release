@@ -2,11 +2,10 @@ package com.hvs.diploma.dto;
 
 import com.hvs.diploma.entities.Task;
 import com.hvs.diploma.enums.TaskPriority;
+import com.hvs.diploma.util.DateHelper;
 import lombok.*;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 @Getter
 @Setter
@@ -16,7 +15,7 @@ public class TaskDTO {
     private String description;
     private String priority;
     private String deadline;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH);
+    private long id;
 
     @SneakyThrows
     public Task buildTaskInstance() {
@@ -24,12 +23,13 @@ public class TaskDTO {
         task.setTaskDescription(description);
         task.setPriority(TaskPriority.valueOf(priority));
         task.setPriorityValue(TaskPriority.valueOf(priority).getPriorityValue());
-        task.setDeadline(dateFormat.parse(deadline));
+        task.setDeadline(DateHelper.simpleDateFormat().parse(deadline));
         return task;
     }
 
     @SneakyThrows
     public Date getDeadlineDate() {
-        return dateFormat.parse(deadline);
+        return DateHelper.simpleDateFormat().parse(deadline);
     }
+
 }

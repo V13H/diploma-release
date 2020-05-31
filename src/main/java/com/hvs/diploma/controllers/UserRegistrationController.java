@@ -1,11 +1,8 @@
 package com.hvs.diploma.controllers;
 
-import com.hvs.diploma.dao.sms.TurboSmsMessageRepository;
 import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.services.MainService;
-import com.hvs.diploma.turbo_sms.TurboSmsMessage;
-import com.hvs.diploma.turbo_sms.TurboSmsMessageBuilder;
 import com.hvs.diploma.validators.RegistrationFormValidator;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +25,13 @@ public class UserRegistrationController {
     private final BCryptPasswordEncoder encoder;
     private final MainService mainService;
     org.slf4j.Logger logger = LoggerFactory.getLogger(UserRegistrationController.class);
-    private final TurboSmsMessageRepository repository;
+//    private final TurboSmsMessageRepository repository;
 
     @Autowired
-    public UserRegistrationController(MainService mainService, BCryptPasswordEncoder encoder, RegistrationFormValidator validator, TurboSmsMessageRepository repository) {
+    public UserRegistrationController(MainService mainService, BCryptPasswordEncoder encoder, RegistrationFormValidator validator) {
         this.mainService = mainService;
         this.encoder = encoder;
         this.validator = validator;
-        this.repository = repository;
     }
 
     @InitBinder
@@ -61,13 +57,6 @@ public class UserRegistrationController {
             account.setPictureUrl("/img/anonymous-user-svg.svg");
             mainService.saveAccount(account);
             model.addAttribute("account", account);
-            TurboSmsMessageBuilder messageBuilder = new TurboSmsMessageBuilder("Faceless");
-            messageBuilder
-                    .message("Greetings," + account.getUserName())
-                    .phoneNumber(account);
-            TurboSmsMessage turboSmsMessage = messageBuilder.build();
-            logger.warn(turboSmsMessage.toString());
-//            repository.save(turboSmsMessage);
             request.login(account.getEmail(), accountDTO.getPassword());
             return "redirect:/";
         }

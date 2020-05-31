@@ -1,14 +1,14 @@
 package com.hvs.diploma.controllers;
 
-import com.hvs.diploma.dao.sms.TurboSmsMessageRepository;
 import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.dto.TaskDTO;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.entities.Task;
+import com.hvs.diploma.enums.TaskDeadlines;
 import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.enums.TaskStatus;
+import com.hvs.diploma.pojo.SortAndFilterParams;
 import com.hvs.diploma.services.MainService;
-import com.hvs.diploma.util.DateHelper;
 import com.hvs.diploma.validators.AddTaskValidator;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
-import java.sql.Timestamp;
 import java.util.List;
 
 @Controller
@@ -43,18 +42,13 @@ public class TasksController {
     private final MainService mainService;
     private boolean isTasksDeadlinesChecked;
     private Account currentUser;
-    private String sortBy = "deadline";
-    private String sortOrder = "Ascending";
-    private List<TaskPriority> priorityFilterParams;
-    private List<TaskStatus> statusFilterParams;
-    private List<Timestamp> deadlineFilterParams;
-    private final TurboSmsMessageRepository smsMessageRepository;
+    private SortAndFilterParams sortAndFilterParams = new SortAndFilterParams();
+//    private final TurboSmsMessageRepository smsMessageRepository;
 
     @Autowired
-    public TasksController(AddTaskValidator validator, MainService mainService, TurboSmsMessageRepository smsMessageRepository) {
+    public TasksController(AddTaskValidator validator, MainService mainService) {
         this.validator = validator;
         this.mainService = mainService;
-        this.smsMessageRepository = smsMessageRepository;
     }
 
     @GetMapping("/add-task")
@@ -73,24 +67,12 @@ public class TasksController {
             return "/add-task";
         } else {
             taskDTO.setPriority(group1);
-            logger.warn("DTO values below:");
-            logger.warn("Deadline " + taskDTO.getDeadline());
-            logger.warn("TaskDescription :" + taskDTO.getDescription());
-            logger.warn("Priority :" + taskDTO.getPriority());
-            logger.warn("///////////////");
-            logger.warn("Entity values below:");
             Task task = taskDTO.buildTaskInstance();
-            logger.warn("Description: " + task.getTaskDescription());
-            logger.warn("Deadline: " + task.getDeadline().toString());
-            logger.warn("Priority: " + task.getPriority());
-            logger.warn("Priority value :" + task.getPriorityValue());
-            logger.warn("Status :" + task.getStatus());
             Account owner = mainService.findAccountByEmail(principal.getName());
             if (owner == null) {
                 owner = mainService.findAccountBySocialId(principal.getName());
             }
             task.setOwner(owner);
-            logger.warn("Owner :" + principal.toString());
             mainService.saveTask(task);
             return "redirect:/";
         }
@@ -99,89 +81,85 @@ public class TasksController {
     @GetMapping("/")
     public String getHomePage(Model model, Principal principal,
                               @RequestParam(required = false, defaultValue = "0") Integer page) {
-        Account userAccount = loadAccountInfo(principal);
+        loadAccountInfo(principal);
         int size = 5;
         long count;
         page = checkPageParam(page);
         List<Task> tasks;
         //looking for tasks with expired deadlines and updating their status
         if (!isTasksDeadlinesChecked) {
-            checkDeadlines(userAccount);
+            checkDeadlines(currentUser);
         }
-        //checking filter parameters and get tasks from db
-        if (priorityFilterParams == null && statusFilterParams == null && deadlineFilterParams == null) {
-            count = mainService.countTasksByStatusIsNot(userAccount, TaskStatus.DONE);
-            tasks = mainService.getAllUndoneTasksForAccount(userAccount, getPageable(count, size, page, sortBy, sortOrder));
+        logger.warn(sortAndFilterParams.toString());
+        //checking filter parameters and getting tasks from db
+        if (!sortAndFilterParams.isFilterParamsSpecified()) {
+            count = mainService.countTasksByStatusIsNot(currentUser, TaskStatus.DONE);
+            tasks = mainService.getAllUndoneTasksForAccount(currentUser, getPageable(count, size, page));
         } else {
-            logger.warn("hasFilterParams");
-            count = mainService.countTasksByFilterParams(userAccount, priorityFilterParams, statusFilterParams, deadlineFilterParams);
-            tasks = mainService.getTasksByFilterParameters(userAccount,
-                    getPageable(count, size, page, sortBy, sortOrder), priorityFilterParams, statusFilterParams, deadlineFilterParams);
+            count = mainService.countTasksByFilterParams(currentUser,
+                    sortAndFilterParams.getPriorities(), sortAndFilterParams.getStatuses(), sortAndFilterParams.getDeadlines());
+            tasks = mainService.getTasksByFilterParameters(currentUser,
+                    getPageable(count, size, page),
+                    sortAndFilterParams.getPriorities(), sortAndFilterParams.getStatuses(), sortAndFilterParams.getDeadlines());
         }
 
-        logger.warn("sortBy: " + sortBy + "  order: " + sortOrder);
         long pagesCount = count % 5 == 0 ? count / 5 : count / 5 + 1;
-        String sortByToDisplay = sortBy.equalsIgnoreCase("priorityValue") ? "Priority" : "Deadline";
-        String emptyListMessage = mainService.countTasksByOwner(userAccount) == 0 ? "You don`t have tasks yet" : "Tasks not found";
+        String sortByToDisplay = sortAndFilterParams.getSortByToDisplay();
+        String emptyListMessage = sortAndFilterParams.getEmptyListMessage(count);
+        String greetingsMessage = getGreetingsMessage(currentUser);
         boolean setAddButtonPulse = emptyListMessage.equals("You don`t have tasks yet");
         //filling in the model
+        model.addAttribute("greetingsMessage", greetingsMessage);
+        model.addAttribute("filterParamsExists", sortAndFilterParams.isFilterParamsSpecified());
         model.addAttribute("setPulse", setAddButtonPulse);
         model.addAttribute("message", emptyListMessage);
-        model.addAttribute("today", DateHelper.today());
-        model.addAttribute("tomorrow", DateHelper.tomorrow());
-        model.addAttribute("thisWeek", DateHelper.lastDayOfCurrentWeek());
+        model.addAttribute("today", TaskDeadlines.TODAY);
+        model.addAttribute("tomorrow", TaskDeadlines.TOMORROW);
+        model.addAttribute("thisWeek", TaskDeadlines.THIS_WEEK);
         model.addAttribute("pagesCount", pagesCount);
         model.addAttribute("tasksCount", count);
-        model.addAttribute("account", userAccount);
+        model.addAttribute("account", currentUser);
         model.addAttribute("page", page);
         model.addAttribute("tasks", tasks);
         model.addAttribute("sortBy", sortByToDisplay);
-        model.addAttribute("order", sortOrder);
-        model.addAttribute("priorities", priorityFilterParams);
-        model.addAttribute("statuses", statusFilterParams);
-        model.addAttribute("deadlines", deadlineFilterParams);
+        model.addAttribute("order", sortAndFilterParams.getSortOrder());
+        model.addAttribute("priorities", sortAndFilterParams.getPriorities());
+        model.addAttribute("statuses", sortAndFilterParams.getStatuses());
+        model.addAttribute("deadlines", sortAndFilterParams.getDeadlines());
 
         return "index";
     }
 
+    //if task`s deadline > DateHelper.today() sets it`s status to EXPIRED
     private void checkDeadlines(Account userAccount) {
         mainService.checkDeadlines(userAccount);
         isTasksDeadlinesChecked = true;
     }
 
+    //sets sort parameters to SortAndFilterParams instance
     @PostMapping("/filter")
     public void filter(HttpServletResponse response,
                        @RequestParam(required = false) List<TaskPriority> priority,
                        @RequestParam(required = false) List<TaskStatus> status,
-                       @RequestParam(required = false) List<Timestamp> date) throws IOException {
-        priorityFilterParams = priority;
-        statusFilterParams = status;
-        deadlineFilterParams = date;
+                       @RequestParam(required = false) List<TaskDeadlines> date) throws IOException {
+        sortAndFilterParams.setPriorities(priority);
+        sortAndFilterParams.setStatuses(status);
+        sortAndFilterParams.setDeadlines(date);
         response.sendRedirect("/");
     }
 
-    //called when user clicks on 'close' icon
+    //called when user clicks on chip`s 'close' icon
+    //removes chosen parameter from SortAndFilterParams instance
     @GetMapping("/filter")
-    public void editFilterParams(HttpServletResponse response, @RequestParam String criterion, @RequestParam String value) throws IOException {
-        logger.warn("Before: " + priorityFilterParams);
-        if (criterion.equals("priority")) {
-            TaskPriority criterionToRemove = null;
-            for (TaskPriority priorityFilterParam : priorityFilterParams) {
-                if (priorityFilterParam.toString().equals(value)) {
-                    criterionToRemove = priorityFilterParam;
-                }
-            }
-            priorityFilterParams.remove(criterionToRemove);
-        }
-        logger.warn("After: " + priorityFilterParams);
+    public void removeFilterParam(HttpServletResponse response,
+                                  @RequestParam String criterion, @RequestParam String value) throws IOException {
+        sortAndFilterParams.removeFilterParameter(criterion, value);
         response.sendRedirect("/");
     }
 
     @GetMapping("/reset")
-    public void reset(HttpServletResponse response) throws IOException {
-        priorityFilterParams = null;
-        statusFilterParams = null;
-        deadlineFilterParams = null;
+    public void resetFilterParams(HttpServletResponse response) throws IOException {
+        sortAndFilterParams.resetFilterParams();
         response.sendRedirect("/");
     }
 
@@ -205,36 +183,44 @@ public class TasksController {
     }
 
     @GetMapping("/retry")
-    public void retry(@RequestParam Long id, @RequestParam Integer page, HttpServletResponse response) {
-        //TODO show user modal window with date input to set new deadline to expired task
+    public String showRestartTaskForm(@RequestParam Long taskId, Model model) {
+        TaskDTO taskDTO = mainService.findTaskById(taskId).toDTO();
+        //set deadline to null just to not display it in template
+        taskDTO.setDeadline(null);
+        logger.warn("taskDTO: " + taskDTO.toString());
+        model.addAttribute("taskDTO", taskDTO);
+        model.addAttribute("restartMode", true);
+        model.addAttribute("action", "/restart-task");
+        model.addAttribute("title", "Restart task");
+        return "/add-task";
+
     }
 
+    @PostMapping("/restart-task")
+    public void restartTask(@ModelAttribute("taskDTO") TaskDTO taskDTO, HttpServletResponse response) throws IOException {
+        mainService.retry(taskDTO.getId(), taskDTO.getDeadlineDate());
+        response.sendRedirect("/");
+    }
+
+    //sets sort parameters to SortAndFilterParams instance
     @GetMapping("/sort")
     public void sort(@RequestParam String by, @RequestParam String order,
                      @RequestParam(required = false, defaultValue = "0") Integer page,
                      HttpServletResponse response) throws IOException {
-        sortBy = by;
-        sortOrder = order;
+        sortAndFilterParams.setSortBy(by);
+        sortAndFilterParams.setSortOrder(order);
         response.sendRedirect("/");
     }
 
-    private Integer checkPageParam(Integer page) {
-        if (page < 0) {
-            page = 0;
-        }
-        return page;
+    @GetMapping("/modal-dismiss")
+    public void dismissGreetingsModal(HttpServletResponse response) throws IOException {
+        currentUser.setHasWatchedGreetingsMessage(true);
+        mainService.saveAccount(currentUser);
+        response.sendRedirect("/");
     }
 
-    private Pageable getPageable(long count, int size, int page, String sortBy, String order) {
-        Sort.Direction direction = order.equalsIgnoreCase("Ascending") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        long pagesCount = count % 5 == 0 ? count / 5 : count / 5 + 1;
-        if (page > pagesCount - 1) {
-            page = (int) pagesCount - 1;
-        }
-        return PageRequest.of(checkPageParam(page), size, Sort.by(direction, sortBy));
-    }
 
-    private Account loadAccountInfo(Principal principal) {
+    private void loadAccountInfo(Principal principal) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (currentUser == null) {
             if (principal instanceof OAuth2AuthenticationToken) {
@@ -247,7 +233,34 @@ public class TasksController {
                 currentUser = mainService.findAccountByEmail(user.getUsername());
             }
         }
-        return currentUser;
     }
 
+    private Integer checkPageParam(Integer page) {
+        if (page < 0) {
+            page = 0;
+        }
+        return page;
+    }
+
+    private Pageable getPageable(long count, int size, int page) {
+        Sort.Direction direction = sortAndFilterParams.getSortOrder()
+                .equalsIgnoreCase("Ascending") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        long pagesCount = count % 5 == 0 ? count / 5 : count / 5 + 1;
+        if (page > pagesCount - 1) {
+            page = (int) pagesCount - 1;
+        }
+        return PageRequest.of(checkPageParam(page), size, Sort.by(direction, sortAndFilterParams.getSortBy()));
+    }
+
+    private String getGreetingsMessage(Account account) {
+        if (!account.hasWatchedGreetingsMessage()) {
+            return "Greetings," + account.getUserName() + ".We are glad to see you here." +
+                    "By default SMS-notifications are disabled.Check out \"Settings\" and specify your phone number" +
+                    " if you want to receive notifications about your tasks." +
+                    "Once you enable SMS-notifications you`ll be able to set notification time for each task individually." +
+                    "Good luck,have fun:)";
+        } else {
+            return null;
+        }
+    }
 }

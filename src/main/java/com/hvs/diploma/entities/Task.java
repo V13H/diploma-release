@@ -1,5 +1,6 @@
 package com.hvs.diploma.entities;
 
+import com.hvs.diploma.dto.TaskDTO;
 import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.enums.TaskStatus;
 import lombok.Getter;
@@ -38,5 +39,14 @@ public class Task {
                 ", priority=" + priority +
                 ", status=" + status +
                 '}';
+    }
+
+    public TaskDTO toDTO() {
+        TaskDTO taskDTO = new TaskDTO();
+        taskDTO.setPriority(this.priority.toString());
+        taskDTO.setDeadline(this.deadline.toString());
+        taskDTO.setDescription(this.taskDescription);
+        taskDTO.setId(this.id);
+        return taskDTO;
     }
 }

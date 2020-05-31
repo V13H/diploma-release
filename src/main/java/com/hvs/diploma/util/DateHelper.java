@@ -1,9 +1,11 @@
 package com.hvs.diploma.util;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class DateHelper {
 
@@ -40,4 +42,13 @@ public class DateHelper {
         DayOfWeek firstDay = DayOfWeek.MONDAY;
         return Timestamp.valueOf(now.minusDays(dayOfWeek.getValue() - firstDay.getValue()).atStartOfDay());
     }
+
+    public static SimpleDateFormat simpleDateFormat() {
+        return new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH);
+    }
+
+    public static SimpleDateFormat sqlFormat() {
+        return new SimpleDateFormat("yyyy-mm-dd hh:mm:ss", Locale.ENGLISH);
+    }
+
 }

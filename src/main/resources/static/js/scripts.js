@@ -11,9 +11,7 @@ $(document).ready(function () {
 $(document).ready(function () {
     $('.sidenav').sidenav();
 });
-$(document).ready(function () {
-    $('.modal').modal();
-});
+
 $(document).ready(function () {
     $('.collapsible').collapsible();
 });
@@ -28,3 +26,20 @@ $(document).ready(function () {
         defaultDate: new Date(year, month, day)
     });
 });
+$(document).ready(function () {
+    $('.modal').modal()
+});
+$(document).ready(function () {
+    // $('.my-modal').modal({
+    //     dismissible:false
+    // })
+    // $('.my-modal').modal('open');
+    $('#greetingsModal').modal({
+        dismissible: false
+    });
+    $('#greetingsModal').modal('open')
+});
+
+
+
+

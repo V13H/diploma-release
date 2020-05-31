@@ -33,47 +33,41 @@
                 <div class="card rnd-c-10 mt">
                     <div class="card-content">
                         <div class="row">
-                            <form action="/add-task" th:action="@{${action}}"
-                                  th:object="${taskDTO}" method="post">
-                                <!--The input below is added just to retrieve task`s id at /restart-task-->
-                                <input hidden th:field="*{id}">
-                                <h5 class="black-text subheader center" th:text="${title}">Add new task</h5>
+                            <form action="/restart-task" th:object="${taskDTO}" method="post">
+                                <h5 class="black-text subheader center"
+                                >Restart task</h5>
+                                <input th:field="*{id}" hidden>
                                 <div class="input-field col s12">
-                                    <textarea id="textarea1" th:field="*{description}"
-                                              th:disabled="${restartMode==true}"
+                                    <textarea th:disabled="${restartMode==true}" id="textarea1"
+                                              th:field="*{description}"
                                               th:value="*{description}"
                                               class="materialize-textarea"></textarea>
                                     <label for="textarea1">Task description</label>
-                                    <span class="helper-text red-text" th:errors="*{description}"></span>
+                                    <span class="helper-text red-text"></span>
                                 </div>
                                 <div class="input-field col s12">
-                                    <input type="text" th:field="*{deadline}" class="datepicker" placeholder="Deadline">
+                                    <input type="text" th:field="*{deadline}"
+                                           class="datepicker" placeholder="Set up new deadline">
                                     <span class="helper-text red-text" th:errors="*{deadline}"></span>
                                 </div>
                                 <p>
                                     <label class="teal-text bold-txt">
-                                        <input name="group1" type="radio" value="HIGH"
-                                               th:disabled="${restartMode==true}"
-                                               th:checked="${taskDTO.priority eq 'HIGH'}"
-                                               th:value="${T(com.hvs.diploma.enums.TaskPriority).HIGH.toString()}"/>
+                                        <input disabled name="group1" type="radio" value="HIGH"
+                                               th:checked="${taskDTO.priority eq 'HIGH'}"/>
                                         <span>High priority</span>
                                     </label>
                                 </p>
                                 <p>
                                     <label class="teal-text bold-txt">
-                                        <input name="group1" type="radio" value="MEDIUM" checked
-                                               th:disabled="${restartMode==true}"
-                                               th:checked="${taskDTO.priority eq 'MEDIUM'}"
-                                               th:value="${T(com.hvs.diploma.enums.TaskPriority).MEDIUM.toString()}"/>
+                                        <input disabled name="group1" type="radio" value="MEDIUM" checked
+                                               th:checked="${taskDTO.priority eq 'MEDIUM'}"/>
                                         <span>Medium priority</span>
                                     </label>
                                 </p>
                                 <p>
                                     <label class="teal-text bold-txt">
-                                        <input name="group1" type="radio" value="LOW"
-                                               th:disabled="${restartMode==true}"
-                                               th:checked="${taskDTO.priority eq 'LOW'}"
-                                               th:value="${T(com.hvs.diploma.enums.TaskPriority).LOW.toString()}"/>
+                                        <input disabled name="group1" type="radio" value="LOW"
+                                               th:checked="${taskDTO.priority eq 'LOW'}"/>
                                         <span>Low priority</span>
                                     </label>
                                 </p>

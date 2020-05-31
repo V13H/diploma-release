@@ -70,7 +70,6 @@ public class AccountDTO {
 
     private Account getGoogleAuthBasedAccount(Map<String, Object> userAttributes) {
         Account account = new Account();
-
         account.setUserName((String) userAttributes.get("name"));
         account.setPictureUrl((String) userAttributes.get("picture"));
         account.setSocialId((String) userAttributes.get("sub"));
