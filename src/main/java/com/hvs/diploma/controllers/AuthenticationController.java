@@ -42,7 +42,7 @@ public class AuthenticationController {
     @GetMapping("/login")
     public String getLoginPage(Model model) {
         model.addAttribute("accountDTO", new AccountDTO());
-        return "/login";
+        return "login";
     }
 
     @PostMapping("/signIn")
