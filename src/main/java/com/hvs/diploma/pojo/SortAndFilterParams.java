@@ -6,6 +6,9 @@ import com.hvs.diploma.enums.TaskStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,6 +17,8 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Component
+@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class SortAndFilterParams {
     private List<TaskPriority> priorities;
     private List<TaskStatus> statuses;

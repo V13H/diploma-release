@@ -7,12 +7,12 @@ import com.hvs.diploma.entities.Task;
 import com.hvs.diploma.enums.TaskDeadlines;
 import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.enums.TaskStatus;
+import com.hvs.diploma.pojo.CurrentSessionAccount;
 import com.hvs.diploma.pojo.SortAndFilterParams;
 import com.hvs.diploma.services.MainService;
 import com.hvs.diploma.validators.AddTaskValidator;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -35,20 +35,24 @@ import java.security.Principal;
 import java.util.List;
 
 @Controller
-@Scope(value = "session")
+//@Scope(value = "session")
 public class TasksController {
     org.slf4j.Logger logger = LoggerFactory.getLogger(TasksController.class);
     private final AddTaskValidator validator;
     private final MainService mainService;
     private boolean isTasksDeadlinesChecked;
-    private Account currentUser;
-    private SortAndFilterParams sortAndFilterParams = new SortAndFilterParams();
+    //    private Account currentUser;
+    private final CurrentSessionAccount currentSessionAccount;
+    private final SortAndFilterParams sortAndFilterParams;
 //    private final TurboSmsMessageRepository smsMessageRepository;
 
     @Autowired
-    public TasksController(AddTaskValidator validator, MainService mainService) {
+    public TasksController(AddTaskValidator validator, MainService mainService, CurrentSessionAccount currentSessionAccount,
+                           SortAndFilterParams sortAndFilterParams) {
         this.validator = validator;
         this.mainService = mainService;
+        this.currentSessionAccount = currentSessionAccount;
+        this.sortAndFilterParams = sortAndFilterParams;
     }
 
     @GetMapping("/add-task")
@@ -88,17 +92,17 @@ public class TasksController {
         List<Task> tasks;
         //looking for tasks with expired deadlines and updating their status
         if (!isTasksDeadlinesChecked) {
-            checkDeadlines(currentUser);
+            checkDeadlines(currentSessionAccount.getAccount());
         }
         logger.warn(sortAndFilterParams.toString());
         //checking filter parameters and getting tasks from db
         if (!sortAndFilterParams.isFilterParamsSpecified()) {
-            count = mainService.countTasksByStatusIsNot(currentUser, TaskStatus.DONE);
-            tasks = mainService.getAllUndoneTasksForAccount(currentUser, getPageable(count, size, page));
+            count = mainService.countTasksByStatusIsNot(currentSessionAccount.getAccount(), TaskStatus.DONE);
+            tasks = mainService.getAllUndoneTasksForAccount(currentSessionAccount.getAccount(), getPageable(count, size, page));
         } else {
-            count = mainService.countTasksByFilterParams(currentUser,
+            count = mainService.countTasksByFilterParams(currentSessionAccount.getAccount(),
                     sortAndFilterParams.getPriorities(), sortAndFilterParams.getStatuses(), sortAndFilterParams.getDeadlines());
-            tasks = mainService.getTasksByFilterParameters(currentUser,
+            tasks = mainService.getTasksByFilterParameters(currentSessionAccount.getAccount(),
                     getPageable(count, size, page),
                     sortAndFilterParams.getPriorities(), sortAndFilterParams.getStatuses(), sortAndFilterParams.getDeadlines());
         }
@@ -106,7 +110,7 @@ public class TasksController {
         long pagesCount = count % 5 == 0 ? count / 5 : count / 5 + 1;
         String sortByToDisplay = sortAndFilterParams.getSortByToDisplay();
         String emptyListMessage = sortAndFilterParams.getEmptyListMessage(count);
-        String greetingsMessage = getGreetingsMessage(currentUser);
+        String greetingsMessage = getGreetingsMessage(currentSessionAccount.getAccount());
         boolean setAddButtonPulse = emptyListMessage.equals("You don`t have tasks yet");
         //filling in the model
         model.addAttribute("greetingsMessage", greetingsMessage);
@@ -118,7 +122,7 @@ public class TasksController {
         model.addAttribute("thisWeek", TaskDeadlines.THIS_WEEK);
         model.addAttribute("pagesCount", pagesCount);
         model.addAttribute("tasksCount", count);
-        model.addAttribute("account", currentUser);
+        model.addAttribute("account", currentSessionAccount.getAccount());
         model.addAttribute("page", page);
         model.addAttribute("tasks", tasks);
         model.addAttribute("sortBy", sortByToDisplay);
@@ -214,23 +218,23 @@ public class TasksController {
 
     @GetMapping("/modal-dismiss")
     public void dismissGreetingsModal(HttpServletResponse response) throws IOException {
-        currentUser.setHasWatchedGreetingsMessage(true);
-        mainService.saveAccount(currentUser);
+        currentSessionAccount.getAccount().setHasWatchedGreetingsMessage(true);
+        mainService.saveAccount(currentSessionAccount.getAccount());
         response.sendRedirect("/");
     }
 
 
     private void loadAccountInfo(Principal principal) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (currentUser == null) {
+        if (currentSessionAccount.getAccount() == null) {
             if (principal instanceof OAuth2AuthenticationToken) {
                 OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
                 AccountDTO accountDTO = new AccountDTO();
                 Account account = accountDTO.getAccount(token);
-                currentUser = mainService.findAccountBySocialId(account.getSocialId());
+                currentSessionAccount.setAccount(mainService.findAccountBySocialId(account.getSocialId()));
             } else {
                 User user = (User) authentication.getPrincipal();
-                currentUser = mainService.findAccountByEmail(user.getUsername());
+                currentSessionAccount.setAccount(mainService.findAccountByEmail(user.getUsername()));
             }
         }
     }
