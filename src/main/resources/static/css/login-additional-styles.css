@@ -1,0 +1,7 @@
+.col.s12 > .btn-large {
+    width: 100%;
+}
+
+.col.s6 > .btn {
+    width: 70%;
+}
