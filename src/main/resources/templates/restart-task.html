@@ -29,51 +29,48 @@
 <main>
     <div class="container">
         <div class="row">
-            <div class="col s12">
+            <div class="col s12 m10 l8 xl8 offset-m1 offset-l2 offset-xl2">
                 <div class="card rnd-c-10 mt">
                     <div class="card-content">
                         <div class="row">
-                            <form action="/restart-task" th:object="${taskDTO}" method="post">
+                            <form action="/retry" th:object="${taskDTO}" method="post">
                                 <h5 class="black-text subheader center"
                                 >Restart task</h5>
                                 <input th:field="*{id}" hidden>
-                                <div class="input-field col s12">
-                                    <textarea th:disabled="${restartMode==true}" id="textarea1"
+                                <input th:field="*{description}" hidden>
+                                <div class="chip white-text right"
+                                     th:classappend="${priorityBadgeColor}" th:text="${priority}">
+                                    High priority
+                                </div>
+                                <div class="col s12">
+                                    <div class="input-field">
+                                    <textarea disabled id="textarea1"
                                               th:field="*{description}"
-                                              th:value="*{description}"
                                               class="materialize-textarea"></textarea>
-                                    <label for="textarea1">Task description</label>
-                                    <span class="helper-text red-text"></span>
+                                        <label for="textarea1">Task description</label>
+                                        <span class="helper-text red-text"></span>
+                                    </div>
                                 </div>
-                                <div class="input-field col s12">
-                                    <input type="text" th:field="*{deadline}"
-                                           class="datepicker" placeholder="Set up new deadline">
-                                    <span class="helper-text red-text" th:errors="*{deadline}"></span>
+                                <div class="col s12 l4 xl4">
+                                    <div class="input-field ">
+                                        <input type="text" th:field="*{deadline}" class="datepicker"
+                                               placeholder="New deadline date">
+                                        <span class="helper-text red-text" th:errors="*{deadline}"></span>
+                                    </div>
                                 </div>
-                                <p>
-                                    <label class="teal-text bold-txt">
-                                        <input disabled name="group1" type="radio" value="HIGH"
-                                               th:checked="${taskDTO.priority eq 'HIGH'}"/>
-                                        <span>High priority</span>
-                                    </label>
-                                </p>
-                                <p>
-                                    <label class="teal-text bold-txt">
-                                        <input disabled name="group1" type="radio" value="MEDIUM" checked
-                                               th:checked="${taskDTO.priority eq 'MEDIUM'}"/>
-                                        <span>Medium priority</span>
-                                    </label>
-                                </p>
-                                <p>
-                                    <label class="teal-text bold-txt">
-                                        <input disabled name="group1" type="radio" value="LOW"
-                                               th:checked="${taskDTO.priority eq 'LOW'}"/>
-                                        <span>Low priority</span>
-                                    </label>
-                                </p>
+                                <div class="col s12 l4 xl4">
+                                    <div class="input-field ">
+                                        <input type="text" class="timepicker" placeholder="Notify me via SMS at:"
+                                               th:field="*{notificationTime}">
+                                        <span class="helper-text red-text" th:errors="*{notificationTime}"></span>
+                                    </div>
+                                </div>
+
+
                                 <div class="row">
-                                    <div class="col s6 m4 l3 xl3 right">
-                                        <button class="btn waves-effect hoverable teal rnd-c waves-light col s12 mt-20px"
+                                    <div class="col s12">
+                                        <button class="btn waves-effect hoverable teal rnd-c waves-light col s4
+                                         m4 l3 xl3 right mt-20px"
                                                 type="submit">Submit
                                         </button>
                                     </div>

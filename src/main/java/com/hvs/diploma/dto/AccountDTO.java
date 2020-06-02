@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 
 import java.util.HashMap;
@@ -20,6 +21,7 @@ public class AccountDTO {
     private String confirmPassword;
     private String phoneNumber;
     private String userName;
+    org.slf4j.Logger logger = LoggerFactory.getLogger(AccountDTO.class);
 
     public Account getAccount(OAuth2AuthenticationToken token) {
         Account account = new Account();
@@ -41,8 +43,7 @@ public class AccountDTO {
     private Account getFacebookAuthBasedAccount(Map<String, Object> userAttributes) {
 
         Account account = new Account();
-
-        account.setUserName((String) userAttributes.get("name"));
+        account.setUserName(userAttributes.get("name").toString().split(" ")[0]);
         Map<String, Object> picParams = (Map<String, Object>) ((HashMap) userAttributes.get("picture")).get("data");
         String picUrl = (String) picParams.get("url");
         account.setPictureUrl(picUrl);
@@ -53,7 +54,6 @@ public class AccountDTO {
 
     private Account getGithubAuthBasedAccount(Map<String, Object> userAttributes) {
         Account account = new Account();
-
         if (userAttributes != null) {
             String name = (String) userAttributes.get("name");
             account.setUserName(name);
@@ -70,7 +70,7 @@ public class AccountDTO {
 
     private Account getGoogleAuthBasedAccount(Map<String, Object> userAttributes) {
         Account account = new Account();
-        account.setUserName((String) userAttributes.get("name"));
+        account.setUserName((String) userAttributes.get("given_name"));
         account.setPictureUrl((String) userAttributes.get("picture"));
         account.setSocialId((String) userAttributes.get("sub"));
         account.setEmail(userAttributes.get("email").toString());

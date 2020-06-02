@@ -10,7 +10,7 @@ import com.hvs.diploma.entities.Task;
 import com.hvs.diploma.enums.TaskDeadlines;
 import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.enums.TaskStatus;
-import com.hvs.diploma.util.DateHelper;
+import com.hvs.diploma.util.DateTimeHelper;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -87,10 +87,10 @@ public class MainService {
             return taskRepository.findAllByOwnerAndPriorityInAndStatusIn(owner, priorities, statuses, pageable);
         } else if (dates.contains(TaskDeadlines.THIS_WEEK) && dates.contains(TaskDeadlines.TOMORROW)) {
             return taskRepository.findAllByOwnerAndPriorityInAndStatusInAndDeadlineBetween(owner, priorities,
-                    statuses, pageable, DateHelper.firstDayOfCurrentWeek(), DateHelper.tomorrow());
+                    statuses, pageable, DateTimeHelper.firstDayOfCurrentWeek(), DateTimeHelper.tomorrow());
         } else if (dates.contains(TaskDeadlines.THIS_WEEK) && !dates.contains(TaskDeadlines.TOMORROW)) {
             return taskRepository.findAllByOwnerAndPriorityInAndStatusInAndDeadlineBetween(owner, priorities,
-                    statuses, pageable, DateHelper.firstDayOfCurrentWeek(), DateHelper.lastDayOfCurrentWeek());
+                    statuses, pageable, DateTimeHelper.firstDayOfCurrentWeek(), DateTimeHelper.lastDayOfCurrentWeek());
         } else {
             return taskRepository.findAllByOwnerAndPriorityInAndStatusInAndDeadlineIn(owner, priorities,
                     statuses, TaskDeadlines.getValues(dates), pageable);
@@ -118,10 +118,10 @@ public class MainService {
             return taskRepository.countTasksByOwnerAndPriorityInAndStatusIn(owner, priorities, statuses);
         } else if (dates.contains(TaskDeadlines.THIS_WEEK) && dates.contains(TaskDeadlines.TOMORROW)) {
             return taskRepository.countTasksByOwnerAndPriorityInAndStatusInAndDeadlineBetween(owner, priorities,
-                    statuses, DateHelper.firstDayOfCurrentWeek(), DateHelper.tomorrow());
+                    statuses, DateTimeHelper.firstDayOfCurrentWeek(), DateTimeHelper.tomorrow());
         } else if (dates.contains(TaskDeadlines.THIS_WEEK) && !dates.contains(TaskDeadlines.TOMORROW)) {
             return taskRepository.countTasksByOwnerAndPriorityInAndStatusInAndDeadlineBetween(owner, priorities,
-                    statuses, DateHelper.firstDayOfCurrentWeek(), DateHelper.lastDayOfCurrentWeek());
+                    statuses, DateTimeHelper.firstDayOfCurrentWeek(), DateTimeHelper.lastDayOfCurrentWeek());
         } else {
             return taskRepository.countTasksByOwnerAndPriorityInAndStatusInAndDeadlineIn(owner, priorities,
                     statuses, TaskDeadlines.getValues(dates));
@@ -162,8 +162,13 @@ public class MainService {
     }
 
     @Transactional
+    public void updateUserPassword(String userEmail, String newPassword) {
+        Account accountByEmail = findAccountByEmail(userEmail);
+        accountByEmail.setPassword(newPassword);
+    }
+    @Transactional
     public void checkDeadlines(Account account) {
-        List<Task> expiredTasks = taskRepository.findAllByOwnerAndDeadlineBefore(account, DateHelper.today());
+        List<Task> expiredTasks = taskRepository.findAllByOwnerAndDeadlineBefore(account, DateTimeHelper.today());
         for (Task expiredTask : expiredTasks) {
             expiredTask.setStatus(TaskStatus.EXPIRED);
         }

@@ -33,7 +33,7 @@ public class Account {
 //    private AccountSettings settings = new AccountSettings();
 
 
-    public static Account accountOfDto(AccountDTO accountDTO) {
+    public static Account accountOfDTO(AccountDTO accountDTO) {
         Account account = new Account();
         account.setEmail(accountDTO.getEmail());
         account.setPassword(accountDTO.getPassword());
@@ -42,6 +42,13 @@ public class Account {
         return account;
     }
 
+    public AccountDTO toDTO() {
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setEmail(this.email);
+        accountDTO.setPassword(this.password);
+        accountDTO.setPhoneNumber(this.phoneNumber);
+        return accountDTO;
+    }
     public boolean hasWatchedGreetingsMessage() {
         return hasWatchedGreetingsMessage;
     }

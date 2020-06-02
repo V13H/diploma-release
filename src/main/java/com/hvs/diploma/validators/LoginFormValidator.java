@@ -2,22 +2,31 @@ package com.hvs.diploma.validators;
 
 import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.entities.Account;
+import com.hvs.diploma.enums.ErrorCode;
 import com.hvs.diploma.services.MainService;
+import com.hvs.diploma.util.ValidatorHelper;
+import com.hvs.diploma.validators.account_dto_validators.EmailValidator;
+import com.hvs.diploma.validators.account_dto_validators.PasswordValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+//DONE
 @Service
 public class LoginFormValidator implements Validator {
+    private final EmailValidator emailValidator;
+    private final PasswordValidator passwordValidator;
     private final MainService mainService;
     private final BCryptPasswordEncoder encoder;
 
     @Autowired
-    public LoginFormValidator(MainService mainService, BCryptPasswordEncoder encoder) {
+    public LoginFormValidator(MainService mainService, BCryptPasswordEncoder encoder, EmailValidator emailValidator, PasswordValidator passwordValidator) {
         this.mainService = mainService;
         this.encoder = encoder;
+        this.emailValidator = emailValidator;
+        this.passwordValidator = passwordValidator;
     }
 
     @Override
@@ -28,19 +37,26 @@ public class LoginFormValidator implements Validator {
     @Override
     public void validate(Object o, Errors errors) {
         AccountDTO accountDTO = (AccountDTO) o;
-        if (accountDTO.getEmail().isEmpty()) {
-            errors.rejectValue("email", "email.empty");
-        }
-        if (accountDTO.getPassword().isEmpty()) {
-            errors.rejectValue("password", "password.empty");
-        }
-        Account accountByEmail = mainService.findAccountByEmail(accountDTO.getEmail());
-        if (accountByEmail == null) {
-            errors.rejectValue("email", "login.user-not-found");
-        } else {
-            if (!encoder.matches(accountDTO.getPassword(), accountByEmail.getPassword())) {
-                errors.rejectValue("password", "login.invalid-password");
+        String email = accountDTO.getEmail();
+        String password = accountDTO.getPassword();
+
+        boolean emailIsEmpty = ValidatorHelper.isRequiredFieldEmpty(email, "email", errors);
+        boolean passwordIsEmpty = ValidatorHelper.isRequiredFieldEmpty(password, "password", errors);
+
+        if (!emailIsEmpty && !passwordIsEmpty) {
+            emailValidator.validate(o, errors);
+            Account account = loadAccount(accountDTO);
+            if (account == null) {
+                errors.rejectValue("email", ErrorCode.USER_NOT_FOUND.getValue());
+            } else {
+                if (!encoder.matches(accountDTO.getPassword(), account.getPassword())) {
+                    errors.rejectValue("password", ErrorCode.INVALID_PASSWORD.getValue());
+                }
             }
         }
+    }
+
+    private Account loadAccount(AccountDTO accountDTO) {
+        return mainService.findAccountByEmail(accountDTO.getEmail());
     }
 }

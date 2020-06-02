@@ -6,8 +6,9 @@ import com.hvs.diploma.entities.AccountSettings;
 import com.hvs.diploma.entities.Task;
 import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.enums.TaskStatus;
+import com.hvs.diploma.pojo.CurrentAccount;
 import com.hvs.diploma.services.MainService;
-import com.hvs.diploma.util.DateHelper;
+import com.hvs.diploma.util.DateTimeHelper;
 import com.hvs.diploma.validators.LoginFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,11 +32,13 @@ import java.util.List;
 public class AuthenticationController {
     private final MainService mainService;
     private final LoginFormValidator loginFormValidator;
+    private final CurrentAccount currentAccount;
 
     @Autowired
-    public AuthenticationController(MainService mainService, LoginFormValidator loginFormValidator) {
+    public AuthenticationController(MainService mainService, LoginFormValidator loginFormValidator, CurrentAccount currentAccount) {
         this.mainService = mainService;
         this.loginFormValidator = loginFormValidator;
+        this.currentAccount = currentAccount;
     }
 
 
@@ -54,7 +57,30 @@ public class AuthenticationController {
             return "login";
         } else {
             request.login(accountDTO.getEmail(), accountDTO.getPassword());
+            currentAccount.setAccount(mainService.findAccountByEmail(accountDTO.getEmail()));
             return "redirect:/";
+        }
+    }
+
+
+
+    @GetMapping("/users")
+    public String getUsersDataList(Model model) {
+        List<Account> allAccounts = mainService.findAllAccounts();
+        model.addAttribute("accounts", allAccounts);
+        return "users";
+    }
+
+    private void setRandomPriority(int i, Task task) {
+        if (i % 3 == 0) {
+            task.setPriority(TaskPriority.HIGH);
+            task.setPriorityValue(3);
+        } else if (i % 2 == 0) {
+            task.setPriority(TaskPriority.LOW);
+            task.setPriorityValue(1);
+        } else {
+            task.setPriority(TaskPriority.MEDIUM);
+            task.setPriorityValue(2);
         }
     }
 
@@ -78,7 +104,7 @@ public class AuthenticationController {
             task.setStatus(TaskStatus.ACTIVE);
             task.setTaskDescription("Task #" + i);
             task.setCreationDate(Date.valueOf(LocalDate.now()));
-            task.setDeadline(DateHelper.today());
+            task.setDeadline(DateTimeHelper.today());
             mainService.saveTask(task);
         }
         for (int i = 6; i <= 10; i++) {
@@ -88,7 +114,7 @@ public class AuthenticationController {
             task.setStatus(TaskStatus.ACTIVE);
             task.setTaskDescription("Task #" + i);
             task.setCreationDate(Date.valueOf(LocalDate.now()));
-            task.setDeadline(DateHelper.tomorrow());
+            task.setDeadline(DateTimeHelper.tomorrow());
             mainService.saveTask(task);
         }
         for (int i = 19; i <= 24; i++) {
@@ -98,29 +124,9 @@ public class AuthenticationController {
             task.setStatus(TaskStatus.ACTIVE);
             task.setTaskDescription("Task #" + i + "Some kind of description");
             task.setCreationDate(Date.valueOf(LocalDate.now()));
-            task.setDeadline(new GregorianCalendar(2020, Calendar.MAY, DateHelper.tomorrow().getDay() + i).getTime());
+            task.setDeadline(new GregorianCalendar(2020, Calendar.MAY, DateTimeHelper.tomorrow().getDay() + i).getTime());
             mainService.saveTask(task);
         }
 
-    }
-
-    @GetMapping("/users")
-    public String getUsersDataList(Model model) {
-        List<Account> allAccounts = mainService.findAllAccounts();
-        model.addAttribute("accounts", allAccounts);
-        return "users";
-    }
-
-    private void setRandomPriority(int i, Task task) {
-        if (i % 3 == 0) {
-            task.setPriority(TaskPriority.HIGH);
-            task.setPriorityValue(3);
-        } else if (i % 2 == 0) {
-            task.setPriority(TaskPriority.LOW);
-            task.setPriorityValue(1);
-        } else {
-            task.setPriority(TaskPriority.MEDIUM);
-            task.setPriorityValue(2);
-        }
     }
 }

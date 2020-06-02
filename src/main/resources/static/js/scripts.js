@@ -23,7 +23,8 @@ $(document).ready(function () {
     var year = currentDate.getFullYear();
     $('.datepicker').datepicker({
         minDate: new Date(year, month, day),
-        defaultDate: new Date(year, month, day)
+        defaultDate: new Date(year, month, day),
+        format: 'dd.mm.yyyy'
     });
 });
 $(document).ready(function () {
@@ -38,6 +39,11 @@ $(document).ready(function () {
         dismissible: false
     });
     $('#greetingsModal').modal('open')
+});
+$(document).ready(function () {
+    $('.timepicker').timepicker({
+        twelveHour: false
+    });
 });
 
 

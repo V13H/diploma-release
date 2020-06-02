@@ -2,6 +2,7 @@ package com.hvs.diploma.controllers;
 
 import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.entities.Account;
+import com.hvs.diploma.pojo.CurrentAccount;
 import com.hvs.diploma.services.MainService;
 import com.hvs.diploma.validators.RegistrationFormValidator;
 import org.slf4j.LoggerFactory;
@@ -18,9 +19,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 
+//DONE
 @Controller
 @RequestMapping("/register")
 public class UserRegistrationController {
+    private final CurrentAccount currentAccount;
     private final RegistrationFormValidator validator;
     private final BCryptPasswordEncoder encoder;
     private final MainService mainService;
@@ -28,10 +31,11 @@ public class UserRegistrationController {
 //    private final TurboSmsMessageRepository repository;
 
     @Autowired
-    public UserRegistrationController(MainService mainService, BCryptPasswordEncoder encoder, RegistrationFormValidator validator) {
+    public UserRegistrationController(MainService mainService, BCryptPasswordEncoder encoder, RegistrationFormValidator validator, CurrentAccount currentAccount) {
         this.mainService = mainService;
         this.encoder = encoder;
         this.validator = validator;
+        this.currentAccount = currentAccount;
     }
 
     @InitBinder
@@ -52,12 +56,13 @@ public class UserRegistrationController {
         if (bindingResult.hasErrors()) {
             return "register";
         } else {
-            Account account = Account.accountOfDto(accountDTO);
+            Account account = Account.accountOfDTO(accountDTO);
             account.setPassword(encoder.encode(accountDTO.getPassword()));
             account.setPictureUrl("/img/anonymous-user-svg.svg");
             mainService.saveAccount(account);
             model.addAttribute("account", account);
             request.login(account.getEmail(), accountDTO.getPassword());
+            currentAccount.setAccount(account);
             return "redirect:/";
         }
     }

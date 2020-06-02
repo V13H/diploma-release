@@ -33,50 +33,51 @@
                 <div class="card rnd-c-10 mt">
                     <div class="card-content">
                         <div class="row">
-                            <form action="/add-task" th:action="@{${action}}"
+                            <form action="/add-task"
                                   th:object="${taskDTO}" method="post">
                                 <!--The input below is added just to retrieve task`s id at /restart-task-->
-                                <input hidden th:field="*{id}">
                                 <h5 class="black-text subheader center" th:text="${title}">Add new task</h5>
                                 <div class="input-field col s12">
                                     <textarea id="textarea1" th:field="*{description}"
-                                              th:disabled="${restartMode==true}"
                                               th:value="*{description}"
                                               class="materialize-textarea"></textarea>
                                     <label for="textarea1">Task description</label>
                                     <span class="helper-text red-text" th:errors="*{description}"></span>
                                 </div>
-                                <div class="input-field col s12">
-                                    <input type="text" th:field="*{deadline}" class="datepicker" placeholder="Deadline">
+                                <div class="input-field col s12 l4 xl4">
+                                    <input type="text" th:field="*{deadline}" class="datepicker"
+                                           placeholder="Deadline date">
                                     <span class="helper-text red-text" th:errors="*{deadline}"></span>
                                 </div>
-                                <p>
-                                    <label class="teal-text bold-txt">
-                                        <input name="group1" type="radio" value="HIGH"
-                                               th:disabled="${restartMode==true}"
-                                               th:checked="${taskDTO.priority eq 'HIGH'}"
-                                               th:value="${T(com.hvs.diploma.enums.TaskPriority).HIGH.toString()}"/>
-                                        <span>High priority</span>
-                                    </label>
-                                </p>
-                                <p>
-                                    <label class="teal-text bold-txt">
-                                        <input name="group1" type="radio" value="MEDIUM" checked
-                                               th:disabled="${restartMode==true}"
-                                               th:checked="${taskDTO.priority eq 'MEDIUM'}"
-                                               th:value="${T(com.hvs.diploma.enums.TaskPriority).MEDIUM.toString()}"/>
-                                        <span>Medium priority</span>
-                                    </label>
-                                </p>
-                                <p>
-                                    <label class="teal-text bold-txt">
-                                        <input name="group1" type="radio" value="LOW"
-                                               th:disabled="${restartMode==true}"
-                                               th:checked="${taskDTO.priority eq 'LOW'}"
-                                               th:value="${T(com.hvs.diploma.enums.TaskPriority).LOW.toString()}"/>
-                                        <span>Low priority</span>
-                                    </label>
-                                </p>
+                                <div class="input-field col s12 l4 xl4">
+                                    <input type="text" class="timepicker" placeholder="Notify me via SMS at:"
+                                           th:field="*{notificationTime}">
+                                    <span class="helper-text red-text" th:errors="*{notificationTime}"></span>
+                                </div>
+                                <div class="col s12">
+                                    <p>
+                                        <label class="teal-text bold-txt">
+                                            <input name="group1" type="radio" value="HIGH"
+                                                   th:value="${T(com.hvs.diploma.enums.TaskPriority).HIGH.toString()}"/>
+                                            <span>High priority</span>
+                                        </label>
+                                    </p>
+                                    <p>
+                                        <label class="teal-text bold-txt">
+                                            <input name="group1" type="radio" value="MEDIUM"
+                                                   checked
+                                                   th:value="${T(com.hvs.diploma.enums.TaskPriority).MEDIUM.toString()}"/>
+                                            <span>Medium priority</span>
+                                        </label>
+                                    </p>
+                                    <p>
+                                        <label class="teal-text bold-txt">
+                                            <input name="group1" type="radio" value="LOW"
+                                                   th:value="${T(com.hvs.diploma.enums.TaskPriority).LOW.toString()}"/>
+                                            <span>Low priority</span>
+                                        </label>
+                                    </p>
+                                </div>
                                 <div class="row">
                                     <div class="col s6 m4 l3 xl3 right">
                                         <button class="btn waves-effect hoverable teal rnd-c waves-light col s12 mt-20px"
