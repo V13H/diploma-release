@@ -2,6 +2,7 @@ package com.hvs.diploma.security;
 
 import com.hvs.diploma.dao.main.AccountRepository;
 import com.hvs.diploma.entities.Account;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,6 +17,7 @@ import java.util.Set;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
+    org.slf4j.Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
     private final AccountRepository repository;
 
     @Autowired
@@ -30,7 +32,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("User with specified email doesn`t exists");
         }
         Set<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority("USER"));
+        authorities.add(new SimpleGrantedAuthority(account.getRole().toString()));
+        logger.warn("udsi: loadUserByUsername called");
+        logger.warn("udsi: loadUserByUsername called" + authorities.toString());
         return new User(account.getEmail(), account.getPassword(), authorities);
     }
 }

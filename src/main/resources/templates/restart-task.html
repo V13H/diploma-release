@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>You can do it!</title>
+    <title>Restart task</title>
     <!-- Material Icon CDN -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--FontAwesomeIcons CDN-->
@@ -61,7 +61,7 @@
                                 <div class="col s12 l4 xl4">
                                     <div class="input-field ">
                                         <input type="text" class="timepicker" placeholder="Notify me via SMS at:"
-                                               th:field="*{notificationTime}">
+                                               th:if="${notificationsEnabled}" th:field="*{notificationTime}">
                                         <span class="helper-text red-text" th:errors="*{notificationTime}"></span>
                                     </div>
                                 </div>

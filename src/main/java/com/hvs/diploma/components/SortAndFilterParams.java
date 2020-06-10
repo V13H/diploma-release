@@ -1,4 +1,4 @@
-package com.hvs.diploma.pojo;
+package com.hvs.diploma.components;
 
 import com.hvs.diploma.enums.TaskDeadlines;
 import com.hvs.diploma.enums.TaskPriority;

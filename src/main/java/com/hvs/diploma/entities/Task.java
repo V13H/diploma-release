@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
@@ -23,6 +24,7 @@ public class Task {
     private Date creationDate;
     @Temporal(TemporalType.DATE)
     private Date deadline;
+    private Timestamp notificationDate;
     @Enumerated(EnumType.STRING)
     private TaskPriority priority;
     private int priorityValue;

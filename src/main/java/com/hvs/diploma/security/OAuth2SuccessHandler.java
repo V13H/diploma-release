@@ -1,9 +1,10 @@
 package com.hvs.diploma.security;
 
+import com.hvs.diploma.components.CurrentAccount;
 import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.entities.Account;
-import com.hvs.diploma.pojo.CurrentAccount;
-import com.hvs.diploma.services.MainService;
+import com.hvs.diploma.enums.UserRole;
+import com.hvs.diploma.services.data_access_services.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -36,7 +37,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         if (mainService.findAccountBySocialId(accountEntity.getSocialId()) == null) {
             mainService.saveAccount(accountEntity);
         }
-        currentAccount.setAccount(accountEntity);
+        accountEntity.setRole(UserRole.ROLE_COMMON_USER);
+        currentAccount.setAccountEntity(accountEntity);
         httpServletResponse.sendRedirect("/");
     }
 }

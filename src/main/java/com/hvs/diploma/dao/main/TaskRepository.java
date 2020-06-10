@@ -34,7 +34,8 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
                                                                      List<TaskStatus> statuses,
                                                                      Timestamp from, Timestamp to);
 
-    long countTasksByOwnerAndPriorityInAndStatusIn(Account owner, List<TaskPriority> priorities, List<TaskStatus> statuses);
+    long countTasksByOwnerAndPriorityInAndStatusIn(Account owner, List<TaskPriority> priorities,
+                                                   List<TaskStatus> statuses);
 
     long countTasksByOwnerAndPriorityInAndStatusInAndDeadlineIn(Account owner, List<TaskPriority> priorities,
                                                                 List<TaskStatus> statuses, List<Timestamp> deadlines);

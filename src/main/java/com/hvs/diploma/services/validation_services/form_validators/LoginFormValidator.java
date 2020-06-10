@@ -1,12 +1,12 @@
-package com.hvs.diploma.validators;
+package com.hvs.diploma.services.validation_services.form_validators;
 
 import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.enums.ErrorCode;
-import com.hvs.diploma.services.MainService;
+import com.hvs.diploma.services.data_access_services.MainService;
+import com.hvs.diploma.services.validation_services.account_dto_validators.EmailValidator;
+import com.hvs.diploma.services.validation_services.account_dto_validators.PasswordValidator;
 import com.hvs.diploma.util.ValidatorHelper;
-import com.hvs.diploma.validators.account_dto_validators.EmailValidator;
-import com.hvs.diploma.validators.account_dto_validators.PasswordValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

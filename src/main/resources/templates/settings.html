@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Title of the document</title>
+    <title>Settings</title>
     <!-- Material Icon CDN -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Materialize CSS CDN -->
@@ -30,9 +30,10 @@
                     <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                     <ul class="right hide-on-med-and-down">
                         <li><a href="/"><i class="material-icons left">playlist_add_check</i>Tasks</a></li>
+                        <li><a href="/admin" th:if="${isAdmin}"
+                        ><i class="material-icons left">laptop</i>Admin dashboard</a></li>
                         <li class="active"><a href="/settings"><i class="material-icons left">settings</i>Settings</a>
                         </li>
-                        <li><a href="/about"><i class="material-icons left">help</i>About</a></li>
                         <li><a href="/logout"><i class="material-icons left">exit_to_app</i>Logout</a></li>
                     </ul>
                 </div>
@@ -42,9 +43,10 @@
     <ul class="sidenav teal" id="mobile-demo">
         <li><a class="white-text" href="/"><i
                 class="material-icons left white-text">playlist_add_check</i>Tasks</a></li>
+        <li><a href="/admin" th:if="${isAdmin}"
+        ><i class="material-icons left">laptop</i>Admin dashboard</a></li>
         <li class="active"><a href="/settings" class="white-text"><i class="material-icons left white-text">settings</i>Settings</a>
         </li>
-        <li><a href="/about" class="white-text"><i class="material-icons left white-text">help</i>Help</a></li>
         <li><a class="white-text" href="/logout"><i class="material-icons left white-text">exit_to_app</i>Logout</a>
         </li>
     </ul>
@@ -52,49 +54,45 @@
 <main>
     <div class="row">
         <div class="col s12">
-            <div class="col s10 m6 l4 xl3">
-                <form th:if="${hasPassword}" action="/update-password"
+            <div class="col s10 m4 l4 xl3 offset-m1 offset-l2 offset-xl2" th:if="${hasPassword}">
+                <form action="/update-password"
                       th:object="${accountDTO}" method="post">
                     <h4>Change password</h4>
                     <div class="input-field ">
                         <input type="password"
                                th:field="*{password}" id="password">
                         <label for="password">New passsword</label>
-                        <span class="helper-text red-text"></span>
+                        <span th:errors="*{password}" class="helper-text red-text"></span>
+                        <span th:text="${passwordAttr}" class="helper-text green-text"></span>
                     </div>
                     <div class="input-field ">
                         <input type="password"
                                th:field="*{confirmPassword}" id="newPassword">
                         <label for="newPassword">Confirm password</label>
-                        <span class="helper-text red-text"></span>
+                        <span th:errors="*{confirmPassword}" class="helper-text red-text"></span>
+
                     </div>
                     <button type="submit" class="waves-effect waves-light btn">save
                     </button>
                 </form>
             </div>
-            <div class="col s10 m6 l4 xl3">
-                <form action="/set-custom-sort-and-filter-params">
-
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col s12">
-            <div class="col s10 m6 l4 xl3">
-                <form action="/enable-notifications" th:object="${accountDTO}">
-                    <h4>Enable SMS notifications</h4>
+            <div class="col s10 m4 l4 xl3 offset-m1 offset-l2 offset-xl2">
+                <form action="/update-phone" th:object="${accountDTO}"
+                      method="post">
+                    <h4 th:text="${hasPhone?'Change phone number':'Add phone number'}">Change phone number</h4>
                     <div class="input-field">
                         <input type="tel" th:field="*{phoneNumber}" id="phone" name="phone">
                         <label for="phone">Phone number</label>
-                        <span class="helper-text red-text"></span>
+                        <span th:errors="*{phoneNumber}" class="helper-text red-text"></span>
+                        <span th:text="${phoneAttr}" class="helper-text green-text"></span>
                     </div>
-                    <button type="submit" class="waves-effect waves-light btn">Turn on notifications
+                    <button type="submit" class="waves-effect waves-light btn">Save
                     </button>
                 </form>
             </div>
         </div>
     </div>
+
 </main>
 
 <!-- jQuery CDN -->

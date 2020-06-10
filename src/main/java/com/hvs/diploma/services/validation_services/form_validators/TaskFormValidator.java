@@ -1,9 +1,9 @@
-package com.hvs.diploma.validators;
+package com.hvs.diploma.services.validation_services.form_validators;
 
 import com.hvs.diploma.dto.TaskDTO;
+import com.hvs.diploma.services.validation_services.task_dto_validators.DeadlineValidator;
+import com.hvs.diploma.services.validation_services.task_dto_validators.TimeValidator;
 import com.hvs.diploma.util.ValidatorHelper;
-import com.hvs.diploma.validators.task_dto_validators.DeadlineValidator;
-import com.hvs.diploma.validators.task_dto_validators.NotificationTimeValidator;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,12 +12,12 @@ import org.springframework.validation.Validator;
 
 @Service
 public class TaskFormValidator implements Validator {
-    private final NotificationTimeValidator notificationTimeValidator;
+    private final TimeValidator timeValidator;
     private final DeadlineValidator deadlineValidator;
 
     @Autowired
-    public TaskFormValidator(NotificationTimeValidator notificationTimeValidator, DeadlineValidator deadlineValidator) {
-        this.notificationTimeValidator = notificationTimeValidator;
+    public TaskFormValidator(TimeValidator timeValidator, DeadlineValidator deadlineValidator) {
+        this.timeValidator = timeValidator;
         this.deadlineValidator = deadlineValidator;
     }
 
@@ -32,6 +32,6 @@ public class TaskFormValidator implements Validator {
         TaskDTO task = (TaskDTO) o;
         ValidatorHelper.isRequiredFieldEmpty(task.getDescription(), "description", errors);
         deadlineValidator.validate(task, errors);
-        notificationTimeValidator.validate(task, errors);
+        timeValidator.validate(task, errors);
     }
 }

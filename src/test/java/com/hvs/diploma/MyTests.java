@@ -1,18 +1,20 @@
 package com.hvs.diploma;
 
+import com.hvs.diploma.services.validation_services.task_dto_validators.TimeValidator;
 import com.hvs.diploma.util.DateTimeHelper;
-import com.hvs.diploma.validators.task_dto_validators.NotificationTimeValidator;
 import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MyTests {
-    private NotificationTimeValidator notificationTimeValidator = new NotificationTimeValidator();
+    private TimeValidator timeValidator = new TimeValidator();
     private static final String TIME_PATTERN = "^[0-9]{2}[:][0-9]{2}";
     private static final String DATE_PATTERN = "^[0-9]{2}[.][0-9]{2}[.][0-9]{4}";
 
@@ -24,6 +26,7 @@ class MyTests {
         int hours = Integer.parseInt(split[0]);
         int minutes = Integer.parseInt(split[1]);
         LocalDateTime localDateTime = now.atTime(hours, minutes);
+        System.out.println(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
         System.out.println(localDateTime);
     }
 
@@ -62,7 +65,10 @@ class MyTests {
     }
 
     @Test
-    void validDayValue() {
-
+    void randomNum() {
+        for (int i = 0; i < 9; i++) {
+            Double random = Math.random() * 10000;
+            System.out.println(i + 1 + ": " + random.intValue());
+        }
     }
 }

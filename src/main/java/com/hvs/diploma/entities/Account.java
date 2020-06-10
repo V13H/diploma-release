@@ -2,11 +2,13 @@ package com.hvs.diploma.entities;
 
 import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.enums.UserRole;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,11 +26,16 @@ public class Account {
     private String email;
     private String password;
     private String phoneNumber;
-    private boolean hasWatchedGreetingsMessage = false;
     @Enumerated(EnumType.STRING)
     private UserRole role;
+    private Timestamp registrationDate;
+    private Timestamp lastSeen;
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Task> tasks = new ArrayList<>();
+    //Excluded getter for field below because Lombok generates weird getter`s names
+    //so I decided to write this getters by myself
+    @Getter(AccessLevel.NONE)
+    private boolean hasWatchedGreetingsMessage = false;
 //    @OneToOne(mappedBy = "account",cascade = CascadeType.ALL)
 //    private AccountSettings settings = new AccountSettings();
 
@@ -51,5 +58,13 @@ public class Account {
     }
     public boolean hasWatchedGreetingsMessage() {
         return hasWatchedGreetingsMessage;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "userName='" + userName + '\'' +
+                ", role=" + role +
+                '}';
     }
 }

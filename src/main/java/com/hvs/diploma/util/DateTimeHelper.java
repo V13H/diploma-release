@@ -41,8 +41,8 @@ public class DateTimeHelper {
     }
 
     public static SimpleDateFormat simpleDateFormat() {
-        String pattern = "dd.MM.yyyy";
-        return new SimpleDateFormat(pattern, Locale.ENGLISH);
+        String datePattern = "dd.MM.yyyy";
+        return new SimpleDateFormat(datePattern, Locale.ENGLISH);
     }
 
     public static boolean hasValidFormat(String value, String pattern) {
@@ -62,6 +62,13 @@ public class DateTimeHelper {
         } else {
             throw new ParseException("Invalid time format", 1);
         }
+    }
+
+    public static Timestamp buildTimestampInstance(String date, String time) throws ParseException {
+        LocalDate localDate = parseDate(date);
+        LocalTime localTime = parseTime(time);
+        LocalDateTime dateTime = LocalDateTime.of(localDate, localTime);
+        return Timestamp.valueOf(dateTime);
     }
 
     public static LocalDate parseDate(String date) throws ParseException, IllegalArgumentException {

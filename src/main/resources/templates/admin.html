@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css"
+          integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/body-backgrounds.css">
+    <link rel="icon" href="/img/favicon.ico" type="img/ico">
+</head>
+<body>
+<header>
+    <div class="navbar-fixed teal">
+        <nav class="nav-extended teal">
+            <div class="nav-wrapper teal">
+                <div class="container">
+                    <img src="/img/check-white-green-svg.svg" class="brand-logo responsive-img logo" alt="">
+                    <a href="#!" class="brand-logo ml-9vh hide-on-med-and-down">
+                        You can do it!</a>
+                    <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                    <ul class="right hide-on-med-and-down">
+                        <li><a href="/"><i class="material-icons left">playlist_add_check</i>Tasks</a>
+                        </li>
+                        <li class="active"><a href="/admin-dashboard"><i class="material-icons left">
+                            laptop</i>Admin dashboard</a></li>
+                        <li><a href="/settings"><i class="material-icons left">settings</i>Settings</a></li>
+                        <li><a href="/logout"><i class="material-icons left">exit_to_app</i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <!--Side nav-->
+    <ul class="sidenav teal" id="mobile-demo">
+        <li>
+        <li>
+            <div class="user-view green accent-3">
+                <div class="background">
+                    <img src="../static/img/3606323.jpg">
+                </div>
+                <a href="#user"><img class="circle" th:src="${account.pictureUrl}"
+                                     src="../static/img/anonymous-user-svg.svg"></a>
+                <a href="#name"><span class="white-text name" th:text="${account.userName}"></span></a>
+                <a href="#email"><span class="white-text email" th:text="${account.email}"></span></a>
+            </div>
+        </li>
+        </li>
+        <li><a href="/" class="white-text"><i
+                class="material-icons left white-text">playlist_add_check</i>Tasks</a></li>
+        <li class="active"><a href="/admin-dashboard"><i class="material-icons left">
+            laptop</i>Admin dashboard</a></li>
+        <li><a href="/settings" class="white-text"><i class="material-icons left white-text">settings</i>Settings</a>
+        </li>
+        <li><a class="white-text" href="/logout"><i class="material-icons left white-text">exit_to_app</i>Logout</a>
+        </li>
+    </ul>
+</header>
+<main>
+
+    <div class="container">
+        <div class="row">
+            <div class="col s12 mt-5vh">
+                <div class="col s8 m4 l4 xl4 ">
+                    <ul class="collection">
+                        <li class="collection-item">
+                            <span th:text="'Users count :'"></span>
+                            <span class="bold-txt" th:text="${usersCount}"></span>
+                        </li>
+                        <li class="collection-item">
+                            <span th:text="'Tasks count :'"></span>
+                            <span class="bold-txt" th:text="${tasksCount}"></span>
+                        </li>
+                        <li class="collection-item">
+                            <span th:text="'Turbo SMS balance :'"></span>
+                            <span class="bold-txt" th:text="${balance}+' credits'"></span>
+                        </li>
+
+                    </ul>
+                </div>
+                <div class="col s12 m8 l8 xl8">
+                    <ul class="collection with-header">
+                        <li class="collection-header"><h5>Users</h5></li>
+                        <li class="collection-item avatar" th:each="user:${users}">
+                            <img th:src="${user.pictureUrl}" class="circle"
+                                 alt="avatar" src="/img/anonymous-user-svg.svg">
+                            <span class="bold-txt" th:text="${user.userName}"></span>
+                            <p th:text="'Email:'+${user.email}"></p>
+                            <a class="secondary-content btn " th:href="@{/admin/details(id=${user.id})}">
+                                Details
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="pagination" th:if="${usersCount>10&&pagesCount!=0}">
+                        <li class="waves-effect" th:each="i:${#numbers.sequence(1,pagesCount)}"
+                            th:classappend="${page+1==i?'active teal':''}">
+                            <a th:href="@{/admin/(page=${i}-1)}" th:text="${i}"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--    <div class="container">-->
+    <!--        <div class="row">-->
+    <!--            <div class="col s12 m8 l4 xl4">-->
+    <!--                <p th:text="${'Turbo SMS cretids balance: '+balance}"></p>-->
+    <!--                <p th:text="${'Users registered: '+usersCount}"></p>-->
+    <!--            </div>-->
+    <!--            <div class="col s12 m8 l8 xl8">-->
+    <!--                <table>-->
+    <!--                    <thead>-->
+    <!--                    <tr>-->
+    <!--                        <th>Id</th>-->
+    <!--                        <th>Added</th>-->
+    <!--                        <th>Cost</th>-->
+    <!--                        <th>Balance</th>-->
+    <!--                    </tr>-->
+    <!--                    </thead>-->
+    <!--                    <tbody>-->
+    <!--                    <tr th:each="message:${messages}">-->
+    <!--                        <td th:text="${message.getId()}"></td>-->
+    <!--                        <td th:text="${message.getAdded()}"></td>-->
+    <!--                        <td th:text="${message.getCost()}"></td>-->
+    <!--                        <td th:text="${message.getBalance()}"></td>-->
+    <!--                    </tr>-->
+    <!--                    </tbody>-->
+    <!--                </table>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--    </div>-->
+</main>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src="/js/scripts.js"></script>
+</body>
+</html>

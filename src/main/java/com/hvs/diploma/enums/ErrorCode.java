@@ -13,6 +13,7 @@ public enum ErrorCode {
     EMAIL_EXISTS("email.already-exists"),
     PASSWORDS_MATCH_ERROR("passwords.match.error"),
     PHONE_PATTERN("phone.pattern"),
+    PHONE_EXISTS("phone.exists"),
     USER_NOT_FOUND("login.user-not-found"),
     INVALID_PASSWORD("login.invalid-password"),
     INVALID_TIME_FORMAT("time.invalid-format"),

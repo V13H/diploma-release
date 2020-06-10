@@ -13,11 +13,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final UserDetailsService userService;
+    private final CustomLogoutHandler logoutHandler;
 
     @Autowired
-    public SecurityConfig(OAuth2SuccessHandler oAuth2SuccessHandler, UserDetailsService userDetailsServiceImpl) {
+    public SecurityConfig(OAuth2SuccessHandler oAuth2SuccessHandler, UserDetailsService userDetailsServiceImpl, CustomLogoutHandler logoutHandler) {
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
         this.userService = userDetailsServiceImpl;
+        this.logoutHandler = logoutHandler;
     }
 
     @Bean
@@ -39,8 +41,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/")
                 .authenticated()
-                .antMatchers("/static/**")
+                .antMatchers("/static/**", "/templates/error/**")
                 .permitAll()
+                .antMatchers("/admin")
+                .hasRole("ADMIN")
+                .antMatchers("/support")
+                .hasRole("COMMON_USER")
                 .and()
                 .oauth2Login()
                 .loginPage("/login")
@@ -56,6 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout()
                 .logoutUrl("/logout")
+                .addLogoutHandler(logoutHandler)
                 .logoutSuccessUrl("/login")
                 .invalidateHttpSession(true)
                 .permitAll()

@@ -31,10 +31,6 @@ $(document).ready(function () {
     $('.modal').modal()
 });
 $(document).ready(function () {
-    // $('.my-modal').modal({
-    //     dismissible:false
-    // })
-    // $('.my-modal').modal('open');
     $('#greetingsModal').modal({
         dismissible: false
     });
@@ -44,6 +40,9 @@ $(document).ready(function () {
     $('.timepicker').timepicker({
         twelveHour: false
     });
+});
+$(document).ready(function () {
+    $('.tabs').tabs();
 });
 
 

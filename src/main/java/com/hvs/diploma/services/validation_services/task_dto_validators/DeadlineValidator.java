@@ -1,4 +1,4 @@
-package com.hvs.diploma.validators.task_dto_validators;
+package com.hvs.diploma.services.validation_services.task_dto_validators;
 
 import com.hvs.diploma.dto.TaskDTO;
 import com.hvs.diploma.enums.ErrorCode;

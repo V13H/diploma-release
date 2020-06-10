@@ -17,3 +17,23 @@
     -o-background-size: cover;
     background-size: cover;
 }
+
+.page-not-found-bg {
+    height: 100%;
+    width: 100%;
+    background: url("../img/404-error-bg.jpg") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.forbidden-bg {
+    height: 100%;
+    width: 100%;
+    background: url("../img/403-error-bg.jpg") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}

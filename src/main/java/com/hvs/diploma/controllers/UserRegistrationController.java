@@ -1,10 +1,10 @@
 package com.hvs.diploma.controllers;
 
+import com.hvs.diploma.components.CurrentAccount;
 import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.entities.Account;
-import com.hvs.diploma.pojo.CurrentAccount;
-import com.hvs.diploma.services.MainService;
-import com.hvs.diploma.validators.RegistrationFormValidator;
+import com.hvs.diploma.services.data_access_services.MainService;
+import com.hvs.diploma.services.validation_services.form_validators.RegistrationFormValidator;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,6 +18,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 //DONE
 @Controller
@@ -59,10 +61,11 @@ public class UserRegistrationController {
             Account account = Account.accountOfDTO(accountDTO);
             account.setPassword(encoder.encode(accountDTO.getPassword()));
             account.setPictureUrl("/img/anonymous-user-svg.svg");
+            account.setRegistrationDate(Timestamp.valueOf(LocalDateTime.now()));
             mainService.saveAccount(account);
             model.addAttribute("account", account);
             request.login(account.getEmail(), accountDTO.getPassword());
-            currentAccount.setAccount(account);
+            currentAccount.setAccountEntity(account);
             return "redirect:/";
         }
     }

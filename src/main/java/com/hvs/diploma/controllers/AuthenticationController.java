@@ -1,15 +1,13 @@
 package com.hvs.diploma.controllers;
 
+import com.hvs.diploma.components.CurrentAccount;
+import com.hvs.diploma.components.for_tests.EntityInitializer;
 import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.entities.Account;
-import com.hvs.diploma.entities.AccountSettings;
-import com.hvs.diploma.entities.Task;
-import com.hvs.diploma.enums.TaskPriority;
-import com.hvs.diploma.enums.TaskStatus;
-import com.hvs.diploma.pojo.CurrentAccount;
-import com.hvs.diploma.services.MainService;
-import com.hvs.diploma.util.DateTimeHelper;
-import com.hvs.diploma.validators.LoginFormValidator;
+import com.hvs.diploma.enums.UserRole;
+import com.hvs.diploma.services.data_access_services.MainService;
+import com.hvs.diploma.services.validation_services.form_validators.LoginFormValidator;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,10 +20,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 @Controller
@@ -33,6 +27,9 @@ public class AuthenticationController {
     private final MainService mainService;
     private final LoginFormValidator loginFormValidator;
     private final CurrentAccount currentAccount;
+    org.slf4j.Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
+    @Autowired
+    private EntityInitializer initializer;
 
     @Autowired
     public AuthenticationController(MainService mainService, LoginFormValidator loginFormValidator, CurrentAccount currentAccount) {
@@ -53,15 +50,21 @@ public class AuthenticationController {
                          BindingResult bindingResult,
                          HttpServletRequest request) throws ServletException {
         loginFormValidator.validate(accountDTO, bindingResult);
+        logger.warn("authContr signIn called: ");
         if (bindingResult.hasErrors()) {
             return "login";
         } else {
             request.login(accountDTO.getEmail(), accountDTO.getPassword());
-            currentAccount.setAccount(mainService.findAccountByEmail(accountDTO.getEmail()));
-            return "redirect:/";
+            Account accountByEmail = mainService.findAccountByEmail(accountDTO.getEmail());
+            currentAccount.setAccountEntity(accountByEmail);
+            if (accountByEmail.getRole().equals(UserRole.ROLE_ADMIN)) {
+                return "redirect:/admin/";
+            } else {
+                return "redirect:/";
+            }
+
         }
     }
-
 
 
     @GetMapping("/users")
@@ -71,62 +74,10 @@ public class AuthenticationController {
         return "users";
     }
 
-    private void setRandomPriority(int i, Task task) {
-        if (i % 3 == 0) {
-            task.setPriority(TaskPriority.HIGH);
-            task.setPriorityValue(3);
-        } else if (i % 2 == 0) {
-            task.setPriority(TaskPriority.LOW);
-            task.setPriorityValue(1);
-        } else {
-            task.setPriority(TaskPriority.MEDIUM);
-            task.setPriorityValue(2);
-        }
-    }
+
 
     @PostConstruct
-    private void initData() {
-        AccountSettings settings = new AccountSettings("priorityValue", "ascending");
-        Account account = new Account();
-        settings.setAccount(account);
-        account.setEmail("junior@gmail.com");
-        account.setPassword("$2y$12$EVY0bHxVz2Q9NyVlnij9/.B0gdsmb0AR0GF29vhOsiTRYtn0exlr6");
-        account.setPictureUrl("/img/anonymous-user-svg.svg");
-        account.setUserName("junior@gmail.com");
-        account.setHasWatchedGreetingsMessage(true);
-//        account.setSettings(settings);
-        mainService.saveAccount(account);
-
-        for (int i = 1; i <= 5; i++) {
-            Task task = new Task();
-            task.setOwner(account);
-            setRandomPriority(i, task);
-            task.setStatus(TaskStatus.ACTIVE);
-            task.setTaskDescription("Task #" + i);
-            task.setCreationDate(Date.valueOf(LocalDate.now()));
-            task.setDeadline(DateTimeHelper.today());
-            mainService.saveTask(task);
-        }
-        for (int i = 6; i <= 10; i++) {
-            Task task = new Task();
-            task.setOwner(account);
-            setRandomPriority(i, task);
-            task.setStatus(TaskStatus.ACTIVE);
-            task.setTaskDescription("Task #" + i);
-            task.setCreationDate(Date.valueOf(LocalDate.now()));
-            task.setDeadline(DateTimeHelper.tomorrow());
-            mainService.saveTask(task);
-        }
-        for (int i = 19; i <= 24; i++) {
-            Task task = new Task();
-            task.setOwner(account);
-            setRandomPriority(i, task);
-            task.setStatus(TaskStatus.ACTIVE);
-            task.setTaskDescription("Task #" + i + "Some kind of description");
-            task.setCreationDate(Date.valueOf(LocalDate.now()));
-            task.setDeadline(new GregorianCalendar(2020, Calendar.MAY, DateTimeHelper.tomorrow().getDay() + i).getTime());
-            mainService.saveTask(task);
-        }
-
+    private void initTestData() {
+        initializer.initData();
     }
 }

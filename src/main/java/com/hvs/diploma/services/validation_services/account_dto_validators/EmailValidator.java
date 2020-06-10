@@ -1,4 +1,4 @@
-package com.hvs.diploma.validators.account_dto_validators;
+package com.hvs.diploma.services.validation_services.account_dto_validators;
 
 import com.hvs.diploma.dto.AccountDTO;
 import org.springframework.stereotype.Service;
