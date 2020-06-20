@@ -36,7 +36,7 @@
                     <div class="card-content">
                         <span class="card-title">Registration form</span>
                         <div class="row">
-                            <form action="/register/createAccount" id="createAccount"
+                            <form action="/register/createAccount"
                                   class="m-30px" th:object="${accountDTO}" method="post">
 
                                 <div class="col s12 m6">
@@ -74,12 +74,12 @@
                                         <span class="helper-text red-text" th:errors="*{confirmPassword}"></span>
                         </div>
                     </div>
-                                <input type="submit" hidden id="create">
+                                <input type="submit" id="save">
                             </form>
                         </div>
                     </div>
                     <div class="card-action">
-                        <label for="create"
+                        <label for="save"
                                class="waves-effect btn waves-light">Create account</label>
                     </div>
                 </div>
