@@ -52,6 +52,7 @@ public class UserRegistrationController {
     public String registerAccount(@Valid @ModelAttribute("accountDTO") AccountDTO accountDTO,
                                   BindingResult bindingResult, HttpServletRequest request,
                                   Model model) throws ServletException, IOException {
+        validator.validate(accountDTO, bindingResult);
         if (bindingResult.hasErrors()) {
             return "register";
         } else {
