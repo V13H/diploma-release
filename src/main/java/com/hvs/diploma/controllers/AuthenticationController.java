@@ -1,7 +1,6 @@
 package com.hvs.diploma.controllers;
 
 import com.hvs.diploma.components.CurrentAccount;
-import com.hvs.diploma.components.for_tests.EntityInitializer;
 import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.enums.UserRole;
@@ -17,14 +16,14 @@ import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Controller
 public class AuthenticationController {
     private final MainService mainService;
     private final LoginFormValidator loginFormValidator;
     private final CurrentAccount currentAccount;
-    @Autowired
-    private EntityInitializer initializer;
 
     @Autowired
     public AuthenticationController(MainService mainService, LoginFormValidator loginFormValidator, CurrentAccount currentAccount) {
@@ -54,7 +53,16 @@ public class AuthenticationController {
     }
 
     @PostConstruct
-    private void initTestData() {
-        initializer.initData();
+    private void initAdminAccount() {
+        Account account = new Account();
+        account.setEmail("admin@gmail.com");
+        account.setPassword("$2y$12$EVY0bHxVz2Q9NyVlnij9/.B0gdsmb0AR0GF29vhOsiTRYtn0exlr6");
+        account.setPictureUrl("/img/anonymous-user-svg.svg");
+        account.setUserName("admin@gmail.com");
+        account.setPhoneNumber("+380966355878");
+        account.setRole(UserRole.ROLE_ADMIN);
+        account.setHasWatchedGreetingsMessage(true);
+        account.setRegistrationDate(Timestamp.valueOf(LocalDateTime.now()));
+        mainService.saveAccount(account);
     }
 }
