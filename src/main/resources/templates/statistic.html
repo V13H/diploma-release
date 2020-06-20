@@ -63,10 +63,10 @@
         ><i class="material-icons left">laptop</i>Admin dashboard</a></li>
         <li><a href="/settings" class="white-text"><i class="material-icons left white-text">settings</i>Settings</a>
         </li>
-        <li class="active"><a href="/statistic" class="white-text" th:if="${!isAdmin}">
+        <li class="active"><a href="/statistic" class="white-text">
             <i class="material-icons left white-text">equalizer</i>Statistic</a></li>
         <li>
-            <a href="/faq" class="white-text">
+            <a href="/faq" class="white-text" th:if="${!isAdmin}">
                 <i class="material-icons left white-text">help_outline</i>
                 FAQ</a>
         </li>
@@ -110,10 +110,10 @@
                 ><i class="material-icons left white-text">laptop</i>Admin dashboard</a></li>
                 <li><a class="white-text" href="/settings"><i class="material-icons left white-text">settings</i>Settings</a>
                 </li>
-                <li class="active"><a href="/statistic" class="white-text" th:if="${!isAdmin}">
+                <li class="active"><a href="/statistic" class="white-text">
                     <i class="material-icons left white-text">equalizer</i>Statistic</a></li>
                 <li>
-                    <a href="/faq" class="white-text">
+                    <a href="/faq" class="white-text" th:if="${!isAdmin}">
                         <i class="material-icons left white-text">help_outline</i>
                         FAQ</a>
                 </li>
