@@ -42,7 +42,7 @@ public class PersistenceAppDataConfig {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         HashMap<String, Object> properties = new HashMap<>();
-//        properties.put("hibernate.dialect", environment.getProperty("hibernate.dialect"));
+        properties.put("hibernate.dialect", environment.getProperty("hibernate.dialect"));
         properties.put("hibernate.hbm2ddl.auto", "update");
         em.setJpaPropertyMap(properties);
         return em;
