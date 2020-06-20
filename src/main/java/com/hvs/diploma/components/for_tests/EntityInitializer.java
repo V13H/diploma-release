@@ -1,7 +1,6 @@
 package com.hvs.diploma.components.for_tests;
 
 import com.hvs.diploma.entities.Account;
-import com.hvs.diploma.entities.AccountSettings;
 import com.hvs.diploma.entities.Task;
 import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.enums.TaskStatus;
@@ -38,9 +37,7 @@ public class EntityInitializer {
     }
 
     private Account initUser(String email, String phone, UserRole role) {
-        AccountSettings settings = new AccountSettings("priorityValue", "ascending");
         Account account = new Account();
-        settings.setAccount(account);
         account.setEmail(email);
         account.setPassword("$2y$12$EVY0bHxVz2Q9NyVlnij9/.B0gdsmb0AR0GF29vhOsiTRYtn0exlr6");
         account.setPictureUrl("/img/anonymous-user-svg.svg");

@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 
 import java.util.HashMap;
@@ -22,7 +21,6 @@ public class AccountDTO {
     private String confirmPassword;
     private String phoneNumber;
     private String userName;
-    org.slf4j.Logger logger = LoggerFactory.getLogger(AccountDTO.class);
 
 
     public static Account getAccount(OAuth2AuthenticationToken token) {

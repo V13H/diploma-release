@@ -3,9 +3,13 @@ package com.hvs.diploma.services.data_access_services;
 import com.hvs.diploma.components.CurrentAccount;
 import com.hvs.diploma.components.SortAndFilterParams;
 import com.hvs.diploma.components.TaskStatistic;
+import com.hvs.diploma.dto.TaskDTO;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.entities.Task;
 import com.hvs.diploma.enums.TaskStatus;
+import com.hvs.diploma.services.notification_services.InfoMessagesService;
+import com.hvs.diploma.services.notification_services.TurboSmsService;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,12 +22,18 @@ import java.util.List;
 public class MainService {
     private final TaskService taskService;
     private final AccountService accountService;
+    private final TurboSmsService turboSmsService;
+    private final InfoMessagesService infoMessagesService;
 
 
     @Autowired
-    public MainService(TaskService taskService, AccountService accountService) {
+    public MainService(TaskService taskService, AccountService accountService,
+                       TurboSmsService turboSmsService, InfoMessagesService infoMessagesService) {
         this.taskService = taskService;
         this.accountService = accountService;
+        this.turboSmsService = turboSmsService;
+        this.infoMessagesService = infoMessagesService;
+
     }
 
 
@@ -42,22 +52,9 @@ public class MainService {
     }
 
 
-    public List<Account> findAllAccounts() {
-        return accountService.findAllAccounts();
-    }
-
     @Transactional
     public void updateAccount(CurrentAccount currentAccount) {
         saveAccount(currentAccount.getAccountEntity());
-    }
-
-    public List<Task> getAllUndoneTasksForAccount(Account account, Pageable pageable) {
-        return taskService.getAllUndoneTasksForAccount(account, pageable);
-    }
-
-
-    public long countTasksByStatusIsNot(Account account, TaskStatus status) {
-        return taskService.countTasksByStatusIsNot(account, status);
     }
 
 
@@ -69,10 +66,6 @@ public class MainService {
             return taskService.getAllUndoneTasksForAccount(owner, pageable);
         }
 
-    }
-
-    public Task findTaskById(Long id) {
-        return taskService.findTaskById(id);
     }
 
 
@@ -100,11 +93,6 @@ public class MainService {
     }
 
 
-    public void markTaskAsDone(Long id) {
-        taskService.markTaskAsDoneById(id);
-    }
-
-
     public void retry(Long taskId, java.util.Date newDeadline) {
         taskService.retry(taskId, newDeadline);
     }
@@ -123,10 +111,6 @@ public class MainService {
         return accountService.findAccountById(id);
     }
 
-    public long countTasksByOwnerAndStatus(Account owner, TaskStatus status) {
-        return taskService.countTasksByStatus(owner, status);
-    }
-
     public long getUsersCount() {
         return accountService.getUsersCount();
     }
@@ -137,10 +121,47 @@ public class MainService {
 
     public TaskStatistic getTaskStatistic(CurrentAccount currentAccount) {
         if (taskService.countTasksByOwner(currentAccount.getAccountEntity()) > 0) {
-            return taskService.getTaskStat(currentAccount.getAccountEntity());
+            TaskStatistic taskStat = taskService.getTaskStat(currentAccount.getAccountEntity());
+            long notificationsCount = turboSmsService.countSmsByPhone(currentAccount.getPhoneNumber());
+            taskStat.setNotificationsCount(notificationsCount);
+            return taskStat;
         } else {
             return null;
         }
 
     }
+
+    public double getSmsCreditsBalance() {
+        return turboSmsService.getBalance();
+    }
+
+    public long countSmsByPhone(String phoneNumber) {
+        return turboSmsService.countSmsByPhone(phoneNumber);
+    }
+
+    public String getNoStatDataMessage() {
+        return infoMessagesService.getNoStatDataMessage();
+    }
+
+    public Task findTaskById(Long taskId) {
+        return taskService.findTaskById(taskId);
+    }
+
+    public void markTaskAsDoneById(Long id) {
+        taskService.markTaskAsDoneById(id);
+    }
+
+    @SneakyThrows
+    public void sendSmsNotification(TaskDTO taskDTO) {
+        turboSmsService.sendSmsNotification(taskDTO);
+    }
+
+    public String getEmptyListMessage(Account account) {
+        return infoMessagesService.getEmptyListMessage(account);
+    }
+
+    public String getGreetingsMessage(Account account) {
+        return infoMessagesService.getGreetingsMessage(account);
+    }
+
 }

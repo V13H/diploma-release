@@ -5,13 +5,9 @@ import com.hvs.diploma.dao.sms.TurboSmsMessageRepository;
 import com.hvs.diploma.dto.TaskDTO;
 import com.hvs.diploma.turbo_sms.TurboSmsMessage;
 import com.hvs.diploma.turbo_sms.TurboSmsMessageBuilder;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.text.ParseException;
-import java.util.List;
 
 @Service
 public class TurboSmsService {
@@ -19,7 +15,6 @@ public class TurboSmsService {
     private final InfoMessagesService messagesService;
     private final TurboSmsMessageRepository turboSmsMessageRepository;
     private static final String DEFAULT_SIGN = "Faceless";
-    org.slf4j.Logger logger = LoggerFactory.getLogger(TurboSmsService.class);
 
     @Autowired
     public TurboSmsService(TurboSmsMessageRepository turboSmsMessageRepository, CurrentAccount currentAccount, InfoMessagesService messagesService) {
@@ -29,7 +24,7 @@ public class TurboSmsService {
     }
 
     @Transactional
-    public void sendSmsNotification(TaskDTO taskDTO) throws ParseException {
+    public void sendSmsNotification(TaskDTO taskDTO) {
         String notificationMessage = messagesService.buildTaskNotificationMessage(taskDTO);
         TurboSmsMessageBuilder builder = new TurboSmsMessageBuilder();
         TurboSmsMessage message = builder.sign(DEFAULT_SIGN)
@@ -43,17 +38,11 @@ public class TurboSmsService {
     @Transactional(readOnly = true)
     public Double getBalance() {
         TurboSmsMessage lastMessage = turboSmsMessageRepository.findTopByOrderByIdDesc();
-        logger.warn(lastMessage.toString());
         return lastMessage.getBalance();
     }
 
     @Transactional(readOnly = true)
-    public List<TurboSmsMessage> findAll() {
-        return turboSmsMessageRepository.findAll();
-    }
-
-    @Transactional(readOnly = true)
-    public long countByPhone(String phone) {
+    public long countSmsByPhone(String phone) {
         return turboSmsMessageRepository.countTurboSmsMessageByNumberContains(phone);
     }
 }

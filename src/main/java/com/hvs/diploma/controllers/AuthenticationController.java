@@ -7,7 +7,6 @@ import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.enums.UserRole;
 import com.hvs.diploma.services.data_access_services.MainService;
 import com.hvs.diploma.services.validation_services.form_validators.LoginFormValidator;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -24,7 +23,6 @@ public class AuthenticationController {
     private final MainService mainService;
     private final LoginFormValidator loginFormValidator;
     private final CurrentAccount currentAccount;
-    org.slf4j.Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
     @Autowired
     private EntityInitializer initializer;
 

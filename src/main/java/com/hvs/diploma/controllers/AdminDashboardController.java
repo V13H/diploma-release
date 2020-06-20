@@ -3,9 +3,7 @@ package com.hvs.diploma.controllers;
 import com.hvs.diploma.components.CurrentAccount;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.services.data_access_services.MainService;
-import com.hvs.diploma.services.notification_services.TurboSmsService;
 import com.hvs.diploma.util.PageableHelper;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -20,14 +18,11 @@ import java.util.List;
 @RequestMapping("/admin")
 public class AdminDashboardController {
     private final CurrentAccount account;
-    private final TurboSmsService turboSmsService;
     private final MainService mainService;
-    org.slf4j.Logger logger = LoggerFactory.getLogger(AdminDashboardController.class);
 
     @Autowired
-    public AdminDashboardController(CurrentAccount account, TurboSmsService turboSmsService, MainService mainService) {
+    public AdminDashboardController(CurrentAccount account, MainService mainService) {
         this.account = account;
-        this.turboSmsService = turboSmsService;
         this.mainService = mainService;
     }
 
@@ -43,10 +38,9 @@ public class AdminDashboardController {
         int pagesCount = PageableHelper.getPagesCount(usersCount, size);
         int pageParam = PageableHelper.checkPageParam(page, usersCount, size);
         List<Account> users = mainService.findUserAccounts(PageRequest.of(pageParam, size));
-        model.addAttribute("balance", turboSmsService.getBalance());
+        model.addAttribute("balance", mainService.getSmsCreditsBalance());
         model.addAttribute("usersCount", usersCount);
         model.addAttribute("tasksCount", tasksCount);
-        model.addAttribute("messages", turboSmsService.findAll());
         model.addAttribute("users", users);
         model.addAttribute("page", pageParam);
         model.addAttribute("pagesCount", pagesCount);
@@ -60,7 +54,7 @@ public class AdminDashboardController {
         long notificationsCount = 0;
         boolean hasPhone = accountById.getPhoneNumber() != null;
         if (hasPhone) {
-            notificationsCount = turboSmsService.countByPhone(accountById.getPhoneNumber());
+            notificationsCount = mainService.countSmsByPhone(accountById.getPhoneNumber());
         }
         model.addAttribute("account", accountById);
         model.addAttribute("hasPhone", hasPhone);

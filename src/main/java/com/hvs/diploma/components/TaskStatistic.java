@@ -15,6 +15,7 @@ public class TaskStatistic {
     private long activeTasksCount;
     private long doneTasksCount;
     private long expiredTasksCount;
+    private long notificationsCount;
     private double successRate;
     private String progressBarColorToTemplate;
 

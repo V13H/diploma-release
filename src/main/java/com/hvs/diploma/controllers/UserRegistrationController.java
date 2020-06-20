@@ -5,14 +5,15 @@ import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.services.data_access_services.MainService;
 import com.hvs.diploma.services.validation_services.form_validators.RegistrationFormValidator;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,8 +30,6 @@ public class UserRegistrationController {
     private final RegistrationFormValidator validator;
     private final BCryptPasswordEncoder encoder;
     private final MainService mainService;
-    org.slf4j.Logger logger = LoggerFactory.getLogger(UserRegistrationController.class);
-//    private final TurboSmsMessageRepository repository;
 
     @Autowired
     public UserRegistrationController(MainService mainService, BCryptPasswordEncoder encoder, RegistrationFormValidator validator, CurrentAccount currentAccount) {
@@ -38,11 +37,6 @@ public class UserRegistrationController {
         this.encoder = encoder;
         this.validator = validator;
         this.currentAccount = currentAccount;
-    }
-
-    @InitBinder
-    protected void initBinder(WebDataBinder binder) {
-        binder.setValidator(validator);
     }
 
     @GetMapping()

@@ -5,7 +5,6 @@ import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.services.data_access_services.MainService;
 import com.hvs.diploma.services.validation_services.account_dto_validators.ConfirmPasswordValidator;
 import com.hvs.diploma.services.validation_services.account_dto_validators.MobilePhoneNumberValidator;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -25,7 +24,6 @@ public class SettingsController {
     private final ConfirmPasswordValidator passwordValidator;
     private final MainService mainService;
     private final BCryptPasswordEncoder passwordEncoder;
-    org.slf4j.Logger logger = LoggerFactory.getLogger(SettingsController.class);
 
     @Autowired
     public SettingsController(CurrentAccount currentAccount, MobilePhoneNumberValidator phoneNumberValidator, ConfirmPasswordValidator passwordValidator, MainService mainService, BCryptPasswordEncoder passwordEncoder) {
@@ -39,7 +37,6 @@ public class SettingsController {
     @GetMapping("/settings")
     public String getSettingsPage(Model model, @RequestParam(required = false, defaultValue = "0") Integer resultCode,
                                   @RequestParam(required = false, name = "attr") String updatedAttribute) {
-        logger.warn(currentAccount.toString());
         //adds to model information whether account has password and phone number
         addNotificationsAndPasswordAttributes(model);
         if (resultCode == 1 && updatedAttribute != null) {
@@ -60,12 +57,10 @@ public class SettingsController {
             addNotificationsAndPasswordAttributes(model);
             return "settings";
         } else {
-            logger.warn(accountDTO.toString());
             String newPassword = accountDTO.getConfirmPassword();
             String encodedPassword = passwordEncoder.encode(newPassword);
             currentAccount.setPassword(encodedPassword);
             mainService.updateAccount(currentAccount);
-            logger.warn("updated: " + currentAccount.toString());
             return "redirect:/settings?resultCode=1&attr=passwordAttr";
         }
     }

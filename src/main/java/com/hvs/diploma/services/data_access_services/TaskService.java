@@ -9,7 +9,7 @@ import com.hvs.diploma.enums.TaskDeadlines;
 import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.enums.TaskStatus;
 import com.hvs.diploma.util.DateTimeHelper;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,14 +20,12 @@ import java.util.List;
 @Service
 public class TaskService {
     private final TaskRepository taskRepository;
-    org.slf4j.Logger logger = LoggerFactory.getLogger(TaskService.class);
+
+    @Autowired
     public TaskService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
-    @Transactional(readOnly = true)
-    public List<Task> getAllTasksForAccount(Account account, Pageable pageable) {
-        return taskRepository.findAllByOwner(account, pageable);
-    }
+
     @Transactional(readOnly = true)
     public List<Task> getTasksByFilterParameters(Account owner, Pageable pageable,
                                                  SortAndFilterParams params) {

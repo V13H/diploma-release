@@ -9,9 +9,7 @@ import com.hvs.diploma.enums.TaskDeadlines;
 import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.enums.TaskStatus;
 import com.hvs.diploma.services.data_access_services.MainService;
-import com.hvs.diploma.services.notification_services.InfoMessagesService;
 import com.hvs.diploma.util.PageableHelper;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -26,9 +24,7 @@ import java.util.List;
 
 @Controller
 public class TaskAppearanceController {
-    org.slf4j.Logger logger = LoggerFactory.getLogger(TaskAppearanceController.class);
     private final MainService mainService;
-    private final InfoMessagesService infoMessagesService;
     //'session' scoped component which stores Account instance for each session
     private final CurrentAccount currentAccount;
     //'session' scoped component which stores sort and filter params for each session;
@@ -36,12 +32,10 @@ public class TaskAppearanceController {
 
     @Autowired
     public TaskAppearanceController(MainService mainService, CurrentAccount currentAccount,
-                                    SortAndFilterParams sortAndFilterParams,
-                                    InfoMessagesService infoMessagesService) {
+                                    SortAndFilterParams sortAndFilterParams) {
         this.mainService = mainService;
         this.currentAccount = currentAccount;
         this.sortAndFilterParams = sortAndFilterParams;
-        this.infoMessagesService = infoMessagesService;
     }
 
 
@@ -56,7 +50,6 @@ public class TaskAppearanceController {
         if (!currentAccount.isTasksDeadlinesChecked()) {
             checkDeadlines();
         }
-        logger.warn("dates null:" + (sortAndFilterParams.getDeadlines() == null));
         count = mainService.countTasks(account, sortAndFilterParams);
         page = PageableHelper.checkPageParam(page, count, size);
         tasks = mainService.getTasks(account,
@@ -66,8 +59,8 @@ public class TaskAppearanceController {
         currentAccount.setTaskStatistic(taskStatistic);
         long pagesCount = PageableHelper.getPagesCount(count, size);
         String sortByToDisplay = sortAndFilterParams.getSortByToDisplay();
-        String emptyListMessage = infoMessagesService.getEmptyListMessage(account);
-        String greetingsMessage = infoMessagesService.getGreetingsMessage(currentAccount.getAccountEntity());
+        String emptyListMessage = mainService.getEmptyListMessage(account);
+        String greetingsMessage = mainService.getGreetingsMessage(currentAccount.getAccountEntity());
         boolean setAddButtonPulse = emptyListMessage.equals("You don`t have tasks yet");
         model.addAttribute("greetingsMessage", greetingsMessage);
         model.addAttribute("filterParamsExists", sortAndFilterParams.isFilterParamsSpecified());

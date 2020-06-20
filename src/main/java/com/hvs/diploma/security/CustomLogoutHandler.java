@@ -2,9 +2,9 @@ package com.hvs.diploma.security;
 
 import com.hvs.diploma.components.CurrentAccount;
 import com.hvs.diploma.entities.Account;
-import com.hvs.diploma.services.data_access_services.AccountService;
+import com.hvs.diploma.services.data_access_services.MainService;
 import lombok.SneakyThrows;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
@@ -17,12 +17,12 @@ import java.time.LocalDateTime;
 @Service
 public class CustomLogoutHandler implements LogoutHandler {
     private final CurrentAccount currentAccount;
-    private final AccountService accountService;
-    org.slf4j.Logger logger = LoggerFactory.getLogger(CustomLogoutHandler.class);
+    private final MainService mainService;
 
-    public CustomLogoutHandler(CurrentAccount currentAccount, AccountService accountService) {
+    @Autowired
+    public CustomLogoutHandler(CurrentAccount currentAccount, MainService mainService) {
         this.currentAccount = currentAccount;
-        this.accountService = accountService;
+        this.mainService = mainService;
     }
 
     @SneakyThrows
@@ -31,10 +31,9 @@ public class CustomLogoutHandler implements LogoutHandler {
 //        currentAccount.setLastSeen(LocalDateTime.now());
 //        accountService.saveAccount(currentAccount.getAccountEntity());
         long id = currentAccount.getAccountEntity().getId();
-        Account accountById = accountService.findAccountById(id);
-        logger.warn("logout: " + accountById.toString());
+        Account accountById = mainService.findAccountById(id);
         accountById.setLastSeen(Timestamp.valueOf(LocalDateTime.now()));
-        accountService.saveAccount(accountById);
+        mainService.saveAccount(accountById);
         request.logout();
     }
 }

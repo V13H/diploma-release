@@ -8,8 +8,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class InfoMessagesService {
+    private final TaskService taskService;
     @Autowired
-    private TaskService taskService;
+    public InfoMessagesService(TaskService taskService) {
+        this.taskService = taskService;
+    }
+
     public String getGreetingsMessage(Account account) {
         if (!account.hasWatchedGreetingsMessage()) {
             return "Greetings," + account.getUserName() + ".We are glad to see you here." +

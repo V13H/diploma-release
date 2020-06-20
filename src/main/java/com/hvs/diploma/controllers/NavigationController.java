@@ -5,8 +5,8 @@ import com.hvs.diploma.components.TaskStatistic;
 import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.dto.TaskDTO;
 import com.hvs.diploma.enums.TaskPriority;
-import com.hvs.diploma.services.data_access_services.TaskService;
-import com.hvs.diploma.services.notification_services.InfoMessagesService;
+import com.hvs.diploma.services.data_access_services.MainService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,14 +14,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class NavigationController {
-    private final TaskService taskService;
+    private final MainService mainService;
     private final CurrentAccount currentAccount;
-    private final InfoMessagesService infoMessagesService;
 
-    public NavigationController(CurrentAccount currentAccount, TaskService taskService, InfoMessagesService infoMessagesService) {
+    @Autowired
+    public NavigationController(CurrentAccount currentAccount, MainService mainService) {
         this.currentAccount = currentAccount;
-        this.taskService = taskService;
-        this.infoMessagesService = infoMessagesService;
+        this.mainService = mainService;
     }
 
     @GetMapping("/login")
@@ -40,14 +39,14 @@ public class NavigationController {
     public String getStatisticPage(Model model) {
         addBasicDataToModel(model);
         if (currentAccount.getTaskStatistic() == null) {
-            model.addAttribute("message", infoMessagesService.getNoStatDataMessage());
+            model.addAttribute("message", mainService.getNoStatDataMessage());
         }
         return "statistic";
     }
 
     @GetMapping("/retry")
     public String showRestartTaskForm(@RequestParam Long taskId, Model model) {
-        TaskDTO taskDTO = taskService.findTaskById(taskId).toDTO();
+        TaskDTO taskDTO = mainService.findTaskById(taskId).toDTO();
         //setting deadline to null just to not display it in template
         taskDTO.setDeadline(null);
         model.addAttribute("taskDTO", taskDTO);
@@ -72,7 +71,7 @@ public class NavigationController {
     }
 
     private void addBasicDataToModel(Model model) {
-        TaskStatistic taskStatistic = currentAccount.getTaskStatistic();
+        TaskStatistic taskStatistic = mainService.getTaskStatistic(currentAccount);
         model.addAttribute("account", currentAccount);
         model.addAttribute("stat", taskStatistic);
         model.addAttribute("isAdmin", currentAccount.isAdmin());

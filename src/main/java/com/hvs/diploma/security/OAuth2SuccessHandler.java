@@ -5,7 +5,6 @@ import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.enums.UserRole;
 import com.hvs.diploma.services.data_access_services.MainService;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -20,7 +19,6 @@ import java.io.IOException;
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final MainService mainService;
     private final CurrentAccount currentAccount;
-    org.slf4j.Logger logger = LoggerFactory.getLogger(OAuth2SuccessHandler.class);
 
     @Autowired
     public OAuth2SuccessHandler(MainService mainService, CurrentAccount currentAccount) {
@@ -38,7 +36,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         Account accountBySocialId = mainService.findAccountBySocialId(socialId);
         if (accountBySocialId == null) {
             mainService.saveAccount(account);
-            logger.warn("Saved: " + account.toString());
 
         } else {
             account = accountBySocialId;
