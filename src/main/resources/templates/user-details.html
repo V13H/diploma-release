@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css"
+          integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/body-backgrounds.css">
+    <link rel="icon" href="/img/favicon.ico" type="img/ico">
+    <link rel="stylesheet" href="/css/body-backgrounds.css">
+</head>
+<body>
+<header>
+    <nav>
+        <div class="nav-wrapper teal">
+            <a href="/admin/" class="ml-20px">
+                <i class="material-icons left">arrow_back</i>
+            </a>
+        </div>
+    </nav>
+</header>
+<main>
+
+    <div class="container">
+        <div class="row">
+            <div class="col s12 l6">
+                <p class="bold-txt" th:text="'Id: '+${account.id}">Id:</p>
+                <hr>
+                <p class="bold-txt" th:text="'Name: '+${account.userName}">Name:</p>
+                <hr>
+                <p class="bold-txt" th:text="'Email: '+${account.email}">Email:</p>
+                <hr>
+                <p class="bold-txt" th:text="'Phone: '+${account.phoneNumber}">Phone:</p>
+                <hr>
+                <p class="bold-txt" th:text="'Last seen: '+${account.lastSeen}">Last seen:</p>
+                <hr>
+                <p class="bold-txt" th:text="'Tasks created: '+${tasksCount}">Tasks created:</p>
+                <hr>
+                <p class="bold-txt" th:text="'Joined: '+${account.registrationDate}">Joined:</p>
+                <hr>
+                <p class="bold-txt" th:text="'Notifications received: '+${notificationsCount}">Notifications
+                    received:</p>
+                <hr>
+            </div>
+        </div>
+    </div>
+
+</main>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src="/js/scripts.js"></script>
+</body>
+</html>
