@@ -14,6 +14,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
 
 @Configuration
 @EnableJpaRepositories(
@@ -40,10 +41,10 @@ public class PersistenceAppDataConfig {
         em.setPackagesToScan("com.hvs.diploma.entities");
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
-//        HashMap<String, Object> properties = new HashMap<>();
-//        properties.put("hibernate.dialect", environment.getProperty("hibernate.dialect"));
-//        properties.put("hibernate.hbm2ddl.auto", "update");
-//        em.setJpaPropertyMap(properties);
+        HashMap<String, Object> properties = new HashMap<>();
+        properties.put("hibernate.dialect", environment.getProperty("hibernate.dialect"));
+        properties.put("hibernate.hbm2ddl.auto", "update");
+        em.setJpaPropertyMap(properties);
         return em;
     }
 
