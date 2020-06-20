@@ -51,14 +51,14 @@
                                         <span class="helper-text red-text"></span>
                                     </div>
                                 </div>
-                                <div class="col s12 l4 xl4">
+                                <div class="col s6 m6 l5 xl4">
                                     <div class="input-field ">
                                         <input type="text" th:field="*{deadline}" class="datepicker"
                                                placeholder="New deadline date">
                                         <span class="helper-text red-text" th:errors="*{deadline}"></span>
                                     </div>
                                 </div>
-                                <div class="col s12 l4 xl4">
+                                <div class="col s6 m6 l5 xl4">
                                     <div class="input-field ">
                                         <input type="text" class="timepicker" placeholder="Notify me via SMS at:"
                                                th:if="${notificationsEnabled}" th:field="*{notificationTime}">

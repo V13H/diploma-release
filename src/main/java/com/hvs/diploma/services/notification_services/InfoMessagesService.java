@@ -2,10 +2,14 @@ package com.hvs.diploma.services.notification_services;
 
 import com.hvs.diploma.dto.TaskDTO;
 import com.hvs.diploma.entities.Account;
+import com.hvs.diploma.services.data_access_services.TaskService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class InfoMessagesService {
+    @Autowired
+    private TaskService taskService;
     public String getGreetingsMessage(Account account) {
         if (!account.hasWatchedGreetingsMessage()) {
             return "Greetings," + account.getUserName() + ".We are glad to see you here." +
@@ -17,10 +21,18 @@ public class InfoMessagesService {
         }
     }
 
+    public String getEmptyListMessage(Account account) {
+        return taskService.countTasksByOwner(account) > 0 ? "Tasks not found" : "You don`t have tasks yet";
+    }
+
     public String buildTaskNotificationMessage(TaskDTO taskDTO) {
         return "Greetings from \"You can do it\"\n" +
                 "Don`t forget about your task for today: " +
                 "" + taskDTO.getDescription() + "\n";
+    }
+
+    public String getNoStatDataMessage() {
+        return "You don`t have any tasks yet.Therefore,there is no statistic to show";
     }
 
 }

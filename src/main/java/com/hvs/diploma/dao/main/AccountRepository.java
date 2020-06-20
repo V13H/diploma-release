@@ -17,4 +17,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     long countAccountsByRole(UserRole role);
 
     List<Account> findAccountsByRoleIsNot(UserRole role, Pageable pageable);
+
+    Account findAccountById(Long id);
 }

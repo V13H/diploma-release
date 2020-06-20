@@ -1,9 +1,9 @@
 package com.hvs.diploma.controllers;
 
 import com.hvs.diploma.components.CurrentAccount;
+import com.hvs.diploma.components.TaskStatistic;
 import com.hvs.diploma.dto.TaskDTO;
 import com.hvs.diploma.entities.Task;
-import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.services.data_access_services.MainService;
 import com.hvs.diploma.services.data_access_services.TaskService;
 import com.hvs.diploma.services.notification_services.InfoMessagesService;
@@ -62,26 +62,16 @@ public class TaskActionController {
     public void markAsDone(@RequestParam Long id, @RequestParam Integer page,
                            HttpServletResponse response) throws IOException {
         taskService.markTaskAsDoneById(id);
+        updateStat();
+
         response.sendRedirect("/?page=" + page);
     }
 
-    @GetMapping("/retry")
-    public String showRestartTaskForm(@RequestParam Long taskId, Model model) {
-        TaskDTO taskDTO = taskService.findTaskById(taskId).toDTO();
-        //setting deadline to null just to not display it in template
-        taskDTO.setDeadline(null);
-        model.addAttribute("taskDTO", taskDTO);
-        model.addAttribute("notificationsEnabled", currentAccount.hasPhoneNumber());
-        TaskPriority taskPriority = TaskPriority.valueOf(taskDTO.getPriority());
-        //The attributes below are added to model because I want to
-        // display priority badge at right-top corner of card.
-        //Badge`s color depends on TaskPriority,therefore we need to pass css class to template
-        //to set badge`s color and title dynamically
-        model.addAttribute("priority", taskPriority.getValueToTemplate());
-        model.addAttribute("priorityBadgeColor", taskPriority.getCssClass());
-        return "restart-task";
-
+    private void updateStat() {
+        TaskStatistic updatedStat = mainService.getTaskStatistic(currentAccount);
+        currentAccount.setTaskStatistic(updatedStat);
     }
+
 
     @PostMapping("/retry")
     public String restartTask(@Valid @ModelAttribute("taskDTO") TaskDTO taskDTO, Model model,
@@ -95,6 +85,7 @@ public class TaskActionController {
         } else {
             //getting Task by id and updating it`s deadline
             mainService.retry(taskDTO.getId(), taskDTO.getDeadlineDate());
+            updateStat();
             if (notificationTimeExists(taskDTO)) {
                 turboSmsService.sendSmsNotification(taskDTO);
             }
@@ -102,12 +93,6 @@ public class TaskActionController {
         }
     }
 
-    @GetMapping("/add-task")
-    public String getAddNewTaskForm(Model model) {
-        model.addAttribute("taskDTO", new TaskDTO());
-        model.addAttribute("notificationsEnabled", currentAccount.hasPhoneNumber());
-        return "add-task";
-    }
 
     @PostMapping("/add-task")
     public String addTask(@Valid @ModelAttribute("taskDTO") TaskDTO taskDTO,

@@ -14,8 +14,6 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 @Component
 @SuppressWarnings(value = "deprecated")
@@ -55,12 +53,12 @@ public class EntityInitializer {
         return account;
     }
 
-    private void initTasks(Account account) {
+    private void initTasks(Account account, TaskStatus more, TaskStatus less) {
         for (int i = 1; i <= 5; i++) {
             Task task = new Task();
             task.setOwner(account);
             setRandomPriority(i, task);
-            task.setStatus(TaskStatus.ACTIVE);
+            task.setStatus(less);
             task.setTaskDescription("Task #" + i);
             task.setCreationDate(Date.valueOf(LocalDate.now()));
             task.setDeadline(DateTimeHelper.today());
@@ -70,28 +68,30 @@ public class EntityInitializer {
             Task task = new Task();
             task.setOwner(account);
             setRandomPriority(i, task);
-            task.setStatus(TaskStatus.ACTIVE);
+            task.setStatus(more);
             task.setTaskDescription("Task #" + i);
             task.setCreationDate(Date.valueOf(LocalDate.now()));
             task.setDeadline(DateTimeHelper.tomorrow());
             mainService.saveTask(task);
         }
-        for (int i = 19; i <= 24; i++) {
+        for (int i = 19; i <= 34; i++) {
             Task task = new Task();
             task.setOwner(account);
             setRandomPriority(i, task);
-            task.setStatus(TaskStatus.ACTIVE);
+            task.setStatus(more);
             task.setTaskDescription("Task #" + i + "Some kind of description");
             task.setCreationDate(Date.valueOf(LocalDate.now()));
-            task.setDeadline(new GregorianCalendar(2020, Calendar.MAY, DateTimeHelper.tomorrow().getDay() + i).getTime());
+            task.setDeadline(Date.valueOf(LocalDate.of(2020, 5, 22)));
             mainService.saveTask(task);
         }
     }
 
     public void initData() {
         Account user = initUser("junior@gmail.com", "+380961212049", UserRole.ROLE_COMMON_USER);
+        Account user2 = initUser("junior2@gmail.com", "+380966355878", UserRole.ROLE_COMMON_USER);
         Account admin = initUser("admin@gmail.com", null, UserRole.ROLE_ADMIN);
-        initTasks(user);
+        initTasks(user, TaskStatus.DONE, TaskStatus.EXPIRED);
+        initTasks(user2, TaskStatus.EXPIRED, TaskStatus.DONE);
         for (int i = 1; i < 11; i++) {
             String email = "user" + i + "@gmail.com";
             initUser(email, null, UserRole.ROLE_COMMON_USER);

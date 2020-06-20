@@ -9,10 +9,6 @@ public class PageableHelper {
     private PageableHelper() {
     }
 
-    public static int checkPageParameter(int page) {
-        return Math.max(page, 0);
-    }
-
     public static Pageable getPageable(int page, long count, int size, SortAndFilterParams params) {
         Sort.Direction direction = params.getSortOrder()
                 .equalsIgnoreCase("Ascending") ? Sort.Direction.ASC : Sort.Direction.DESC;

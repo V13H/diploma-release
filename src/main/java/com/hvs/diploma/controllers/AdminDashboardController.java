@@ -2,11 +2,11 @@ package com.hvs.diploma.controllers;
 
 import com.hvs.diploma.components.CurrentAccount;
 import com.hvs.diploma.entities.Account;
-import com.hvs.diploma.services.data_access_services.AccountService;
-import com.hvs.diploma.services.data_access_services.TaskService;
+import com.hvs.diploma.services.data_access_services.MainService;
 import com.hvs.diploma.services.notification_services.TurboSmsService;
 import com.hvs.diploma.util.PageableHelper;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,15 +21,14 @@ import java.util.List;
 public class AdminDashboardController {
     private final CurrentAccount account;
     private final TurboSmsService turboSmsService;
-    private final AccountService accountService;
-    private final TaskService taskService;
+    private final MainService mainService;
     org.slf4j.Logger logger = LoggerFactory.getLogger(AdminDashboardController.class);
 
-    public AdminDashboardController(CurrentAccount account, TurboSmsService turboSmsService, AccountService accountService, TaskService taskService) {
+    @Autowired
+    public AdminDashboardController(CurrentAccount account, TurboSmsService turboSmsService, MainService mainService) {
         this.account = account;
         this.turboSmsService = turboSmsService;
-        this.accountService = accountService;
-        this.taskService = taskService;
+        this.mainService = mainService;
     }
 
     @GetMapping("/")
@@ -38,21 +37,35 @@ public class AdminDashboardController {
         //adding account to the model just to display username
         // and avatar in hamburger menu for small screens
         model.addAttribute("account", account);
-        long usersCount = accountService.getUsersCount();
+        long usersCount = mainService.getUsersCount();
+        long tasksCount = mainService.getTasksCount();
         int size = 10;
         int pagesCount = PageableHelper.getPagesCount(usersCount, size);
         int pageParam = PageableHelper.checkPageParam(page, usersCount, size);
-        List<Account> users = accountService.findUserAccounts(PageRequest.of(pageParam, size));
-        logger.warn(users.toString());
-        logger.warn("page: " + page);
-        logger.warn("page: " + pageParam);
+        List<Account> users = mainService.findUserAccounts(PageRequest.of(pageParam, size));
         model.addAttribute("balance", turboSmsService.getBalance());
         model.addAttribute("usersCount", usersCount);
+        model.addAttribute("tasksCount", tasksCount);
         model.addAttribute("messages", turboSmsService.findAll());
         model.addAttribute("users", users);
-        model.addAttribute("tasksCount", taskService.countAllTasks());
         model.addAttribute("page", pageParam);
         model.addAttribute("pagesCount", pagesCount);
         return "admin";
+    }
+
+    @GetMapping("/details")
+    public String getUserDetailsPage(@RequestParam Long id, Model model) {
+        Account accountById = mainService.findAccountById(id);
+        long tasksCount = mainService.countTasksByOwner(accountById);
+        long notificationsCount = 0;
+        boolean hasPhone = accountById.getPhoneNumber() != null;
+        if (hasPhone) {
+            notificationsCount = turboSmsService.countByPhone(accountById.getPhoneNumber());
+        }
+        model.addAttribute("account", accountById);
+        model.addAttribute("hasPhone", hasPhone);
+        model.addAttribute("tasksCount", tasksCount);
+        model.addAttribute("notificationsCount", notificationsCount);
+        return "user-details";
     }
 }

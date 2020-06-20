@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Title of the document</title>
+    <title>Registration</title>
     <!-- Material Icon CDN -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Materialize CSS CDN -->
@@ -14,9 +14,12 @@
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css"
           integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
-    <link rel="icon" href="/img/favicon.ico" type="img/ico">
+    <!-- <link rel="icon" href="/img/favicon.ico" type="img/ico">
     <link rel="stylesheet" href="/css/main-body-background.css">
-    <link rel="stylesheet" href="/css/body-backgrounds.css">
+    <link rel="stylesheet" href="/css/body-backgrounds.css"> -->
+    <link rel="icon" href="../static/img/favicon.ico" type="img/ico">
+    <link rel="stylesheet" href="../static/css/main-body-background.css">
+    <link rel="stylesheet" href="../static/css/body-backgrounds.css">
     <!-- Used as an example only to position the footer at the end of the page.
   You can delete these styles or move it to your custom css file -->
 </head>
@@ -31,58 +34,72 @@
     </nav>
 </header>
 <main>
-    <div class="container mt-5vh">
+    <!-- <div class="container mt-5vh"> -->
         <div class="row">
-            <div class="col s10 m8 l5 xl5 offset-s1 offset-m2 offset-l3 offset-xl3 card rnd-c-10 card-content">
-                <h4 class="subheader center">Registration form</h4>
-                <form action="/register/createAccount" class="m-30px" th:object="${accountDTO}" method="post">
-                    <div class="input-field">
-                        <input type="email" th:field="*{email}" id="email" name="email">
-                        <label for="email">Email*</label>
-                        <span class="helper-text red-text" th:errors="*{email}"></span>
-                    </div>
-                    <div class="input-field">
-                        <input type="text" id="name" th:field="*{userName}" name="userName">
-                        <label for="name">User name</label>
-                        <span class="helper-text red-text" th:errors="*{userName}"></span>
-                    </div>
-                    <div class="input-field">
-                        <input type="tel" th:field="*{phoneNumber}" id="phone" name="phone">
-                        <label for="phone">Phone number*</label>
-                        <span class="helper-text red-text" th:errors="*{phoneNumber}"></span>
-                    </div>
-                    <div class="input-field ">
-                        <input type="password" th:field="*{password}" id="password" name="password">
-                        <label for="password">Password*</label>
-                        <span class="helper-text red-text" th:errors="*{password}"></span>
-                    </div>
-                    <div class="input-field">
-                        <input type="password" th:field="*{confirmPassword}" name="confirmPass" id="confirmPass">
-                        <label for="confirmPass">Confirm password*</label>
-                        <span class="helper-text red-text" th:errors="*{confirmPassword}"></span>
-                    </div>
-                    <div class="row mt-5vh">
-                        <div class="col s12">
-                            <button type="submit" class="col s12 waves-effect waves-light btn m-30px">Create account
-                            </button>
+            <div class="col s12 m10 l8 rnd-c-10 offset-m1">
+                <div class="card">
+                    <div class="card-content">
+                        <span class="card-title">Registration form</span>
+                        <div class="row">
+                            <form action="/register/createAccount" id="createAccount"
+                                  class="m-30px" th:object="${accountDTO}" method="post">
+
+                                <div class="col s12 m6">
+                                    <div class="input-field">
+                                        <i class="material-icons prefix">person</i>
+                                        <input type="text" id="name" th:field="*{userName}" name="userName">
+                                        <label for="name">User name</label>
+                                        <span class="helper-text red-text" th:errors="*{userName}"></span>
+                                    </div>
+                                    <div class="input-field">
+                                        <i class="material-icons prefix">email</i>
+                                        <input type="email" th:field="*{email}" id="email" name="email">
+                                        <label for="email">Email*</label>
+                                        <span class="helper-text red-text" th:errors="*{email}"></span>
+                                    </div>
+                                    <div class="input-field">
+                                        <i class="material-icons prefix">local_phone</i>
+                                        <input type="tel" th:field="*{phoneNumber}" id="phone" name="phone">
+                                        <label for="phone">Phone number*</label>
+                                        <span class="helper-text red-text" th:errors="*{phoneNumber}"></span>
+                                    </div>
+                                </div>
+                                <div class="col s12 m6">
+                                    <div class="input-field ">
+                                        <i class="material-icons prefix">lock_outline</i>
+                                        <input type="password" th:field="*{password}" id="password" name="password">
+                                        <label for="password">Password*</label>
+                                        <span class="helper-text red-text" th:errors="*{password}"></span>
+                                    </div>
+                                    <div class="input-field">
+                                        <i class="material-icons prefix">lock</i>
+                                        <input type="password" th:field="*{confirmPassword}" name="confirmPass"
+                                               id="confirmPass">
+                                        <label for="confirmPass">Confirm password*</label>
+                                        <span class="helper-text red-text" th:errors="*{confirmPassword}"></span>
                         </div>
                     </div>
-                </form>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card-action">
+                        <a type="submit" formaction="createAccount"
+                           class="waves-effect btn waves-light">Create account</a>
+                    </div>
+                </div>
             </div>
+
         </div>
 
-    </div>
+    <!-- </div> -->
 </main>
+
 
 <!-- jQuery CDN -->
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"
         integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 <!-- Materialize JS CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-<!--<script>-->
-<!--$("document").ready(function(){-->
-<!--$(".button-collapse").sideNav();-->
-<!--});-->
-<!--</script>-->
+
 </body>
 </html>

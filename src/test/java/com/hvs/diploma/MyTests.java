@@ -1,5 +1,6 @@
 package com.hvs.diploma;
 
+import com.hvs.diploma.components.TaskStatistic;
 import com.hvs.diploma.services.validation_services.task_dto_validators.TimeValidator;
 import com.hvs.diploma.util.DateTimeHelper;
 import org.junit.jupiter.api.Test;
@@ -70,5 +71,16 @@ class MyTests {
             Double random = Math.random() * 10000;
             System.out.println(i + 1 + ": " + random.intValue());
         }
+    }
+
+    @Test
+    void succRateTest() {
+        TaskStatistic statistic = new TaskStatistic();
+        statistic.setTotalTasksCount(10);
+        statistic.setDoneTasksCount(6);
+        System.out.println(statistic.toString());
+        statistic.setTotalTasksCount(100);
+        statistic.setDoneTasksCount(33);
+        System.out.println(statistic.toString());
     }
 }

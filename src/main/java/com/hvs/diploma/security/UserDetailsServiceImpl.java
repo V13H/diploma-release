@@ -33,8 +33,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         Set<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority(account.getRole().toString()));
-        logger.warn("udsi: loadUserByUsername called");
-        logger.warn("udsi: loadUserByUsername called" + authorities.toString());
         return new User(account.getEmail(), account.getPassword(), authorities);
     }
 }

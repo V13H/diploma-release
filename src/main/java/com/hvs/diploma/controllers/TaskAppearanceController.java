@@ -2,6 +2,7 @@ package com.hvs.diploma.controllers;
 
 import com.hvs.diploma.components.CurrentAccount;
 import com.hvs.diploma.components.SortAndFilterParams;
+import com.hvs.diploma.components.TaskStatistic;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.entities.Task;
 import com.hvs.diploma.enums.TaskDeadlines;
@@ -9,10 +10,6 @@ import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.enums.TaskStatus;
 import com.hvs.diploma.services.data_access_services.MainService;
 import com.hvs.diploma.services.notification_services.InfoMessagesService;
-import com.hvs.diploma.services.notification_services.TurboSmsService;
-import com.hvs.diploma.services.validation_services.form_validators.TaskFormValidator;
-import com.hvs.diploma.services.validation_services.task_dto_validators.DeadlineValidator;
-import com.hvs.diploma.services.validation_services.task_dto_validators.TimeValidator;
 import com.hvs.diploma.util.PageableHelper;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +35,9 @@ public class TaskAppearanceController {
     private final SortAndFilterParams sortAndFilterParams;
 
     @Autowired
-    public TaskAppearanceController(TaskFormValidator addTaskFormValidator, MainService mainService, CurrentAccount currentAccount,
-                                    SortAndFilterParams sortAndFilterParams, DeadlineValidator deadlineValidator, InfoMessagesService infoMessagesService, TurboSmsService turboSmsService, TimeValidator timeValidator) {
+    public TaskAppearanceController(MainService mainService, CurrentAccount currentAccount,
+                                    SortAndFilterParams sortAndFilterParams,
+                                    InfoMessagesService infoMessagesService) {
         this.mainService = mainService;
         this.currentAccount = currentAccount;
         this.sortAndFilterParams = sortAndFilterParams;
@@ -48,37 +46,29 @@ public class TaskAppearanceController {
 
 
     @GetMapping("/")
-    public String getHomePage(Model model, @RequestParam(required = false, defaultValue = "0") Integer page) {
-        logger.warn("currentAccount: " + currentAccount.toString());
+    public String getTasksPage(Model model, @RequestParam(required = false, defaultValue = "0") Integer page) {
+
         int size = 5;
         long count;
         List<Task> tasks;
         Account account = currentAccount.getAccountEntity();
-        //looking for tasks with expired deadlines and updating their status
+//        looking for tasks with expired deadlines and updating their status
         if (!currentAccount.isTasksDeadlinesChecked()) {
             checkDeadlines();
         }
-        logger.warn(sortAndFilterParams.toString());
-        //checking filter parameters and getting tasks from db
-        if (!sortAndFilterParams.isFilterParamsSpecified()) {
-            count = mainService.countTasksByStatusIsNot(account, TaskStatus.DONE);
-            page = PageableHelper.checkPageParam(page, count, size);
-            tasks = mainService.getAllUndoneTasksForAccount(account, getPageable(count, size, page));
-        } else {
-            count = mainService.countTasksByFilterParams(account,
-                    sortAndFilterParams.getPriorities(), sortAndFilterParams.getStatuses(), sortAndFilterParams.getDeadlines());
-            page = PageableHelper.checkPageParam(page, count, size);
-            tasks = mainService.getTasksByFilterParameters(account,
-                    getPageable(count, size, page),
-                    sortAndFilterParams.getPriorities(), sortAndFilterParams.getStatuses(), sortAndFilterParams.getDeadlines());
-        }
+        logger.warn("dates null:" + (sortAndFilterParams.getDeadlines() == null));
+        count = mainService.countTasks(account, sortAndFilterParams);
+        page = PageableHelper.checkPageParam(page, count, size);
+        tasks = mainService.getTasks(account,
+                getPageable(count, size, page), sortAndFilterParams);
 
+        TaskStatistic taskStatistic = mainService.getTaskStatistic(currentAccount);
+        currentAccount.setTaskStatistic(taskStatistic);
         long pagesCount = PageableHelper.getPagesCount(count, size);
         String sortByToDisplay = sortAndFilterParams.getSortByToDisplay();
-        String emptyListMessage = sortAndFilterParams.getEmptyListMessage(count);
+        String emptyListMessage = infoMessagesService.getEmptyListMessage(account);
         String greetingsMessage = infoMessagesService.getGreetingsMessage(currentAccount.getAccountEntity());
         boolean setAddButtonPulse = emptyListMessage.equals("You don`t have tasks yet");
-
         model.addAttribute("greetingsMessage", greetingsMessage);
         model.addAttribute("filterParamsExists", sortAndFilterParams.isFilterParamsSpecified());
         model.addAttribute("setPulse", setAddButtonPulse);
@@ -97,6 +87,7 @@ public class TaskAppearanceController {
         model.addAttribute("statuses", sortAndFilterParams.getStatuses());
         model.addAttribute("deadlines", sortAndFilterParams.getDeadlines());
         model.addAttribute("isAdmin", currentAccount.isAdmin());
+        model.addAttribute("stat", currentAccount.getTaskStatistic());
         return "index";
     }
 
@@ -124,6 +115,7 @@ public class TaskAppearanceController {
     public void removeFilterParam(HttpServletResponse response,
                                   @RequestParam String criterion, @RequestParam String value) throws IOException {
         sortAndFilterParams.removeFilterParameter(criterion, value);
+
         response.sendRedirect("/");
     }
 

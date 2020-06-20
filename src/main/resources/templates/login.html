@@ -24,25 +24,27 @@
     <div class="container mt-5vh">
         <div class="row">
             <section>
-                <div class="col s12 m10 l6 xl5">
+                <div class="col s12 m4 l5 xl5">
                     <h2 class="bold-txt white-text">You can do it!</h2>
                     <h5 class="subheader white-text">A pretty simple task manager</h5>
                     <h4 class="subheader white-text">Try it now!</h4>
                 </div>
             </section>
             <section>
-                <div class="col s12 m10 l6 xl5 offset-xl1">
+                <div class="col s12 m7 xl5 offset-xl1">
                     <div class="card rnd-c-10 ">
                         <div class="card-content">
                             <h5 class="subheader">Sign in</h5>
                             <form id="form" method="post" th:object="${accountDTO}">
                                 <div class="input-field">
+                                    <i class="material-icons prefix">email</i>
                                     <input type="email" th:value="${email}" th:field="*{email}" id="email" name="email">
                                     <label for="email">Email</label>
                                     <span class="helper-text red-text" th:errors="*{email}"
                                           th:text="${emailError}"></span>
                                 </div>
                                 <div class="input-field ">
+                                    <i class="material-icons prefix">lock_open</i>
                                     <input type="password" id="password" th:field="*{password}" name="password">
                                     <label for="password">Password</label>
                                     <span class="helper-text red-text text-darken-2" th:errors="*{password}"

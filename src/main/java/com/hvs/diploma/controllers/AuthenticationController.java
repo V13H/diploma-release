@@ -10,9 +10,7 @@ import com.hvs.diploma.services.validation_services.form_validators.LoginFormVal
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -20,7 +18,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
 
 @Controller
 public class AuthenticationController {
@@ -38,19 +35,11 @@ public class AuthenticationController {
         this.currentAccount = currentAccount;
     }
 
-
-    @GetMapping("/login")
-    public String getLoginPage(Model model) {
-        model.addAttribute("accountDTO", new AccountDTO());
-        return "login";
-    }
-
     @PostMapping("/signIn")
     public String signIn(@Valid @ModelAttribute("accountDTO") AccountDTO accountDTO,
                          BindingResult bindingResult,
                          HttpServletRequest request) throws ServletException {
         loginFormValidator.validate(accountDTO, bindingResult);
-        logger.warn("authContr signIn called: ");
         if (bindingResult.hasErrors()) {
             return "login";
         } else {
@@ -65,16 +54,6 @@ public class AuthenticationController {
 
         }
     }
-
-
-    @GetMapping("/users")
-    public String getUsersDataList(Model model) {
-        List<Account> allAccounts = mainService.findAllAccounts();
-        model.addAttribute("accounts", allAccounts);
-        return "users";
-    }
-
-
 
     @PostConstruct
     private void initTestData() {

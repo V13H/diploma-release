@@ -1,14 +1,13 @@
 package com.hvs.diploma.services.data_access_services;
 
 import com.hvs.diploma.components.CurrentAccount;
-import com.hvs.diploma.controllers.TaskAppearanceController;
+import com.hvs.diploma.components.SortAndFilterParams;
+import com.hvs.diploma.components.TaskStatistic;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.entities.Task;
-import com.hvs.diploma.enums.TaskDeadlines;
-import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.enums.TaskStatus;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +16,6 @@ import java.util.List;
 
 @Service
 public class MainService {
-    org.slf4j.Logger logger = LoggerFactory.getLogger(TaskAppearanceController.class);
     private final TaskService taskService;
     private final AccountService accountService;
 
@@ -63,12 +61,14 @@ public class MainService {
     }
 
 
-    public List<Task> getTasksByFilterParameters(Account owner, Pageable pageable,
-                                                 List<TaskPriority> priorities,
-                                                 List<TaskStatus> statuses,
-                                                 List<TaskDeadlines> dates) {
+    public List<Task> getTasks(Account owner, Pageable pageable,
+                               SortAndFilterParams params) {
+        if (params.isFilterParamsSpecified()) {
+            return taskService.getTasksByFilterParameters(owner, pageable, params);
+        } else {
+            return taskService.getAllUndoneTasksForAccount(owner, pageable);
+        }
 
-        return taskService.getTasksByFilterParameters(owner, pageable, priorities, statuses, dates);
     }
 
     public Task findTaskById(Long id) {
@@ -76,9 +76,12 @@ public class MainService {
     }
 
 
-    public long countTasksByFilterParams(Account owner, List<TaskPriority> priorities,
-                                         List<TaskStatus> statuses, List<TaskDeadlines> dates) {
-        return taskService.countTasksByFilterParams(owner, priorities, statuses, dates);
+    public long countTasks(Account owner, SortAndFilterParams params) {
+        if (params.isFilterParamsSpecified()) {
+            return taskService.countTasksByFilterParams(owner, params);
+        } else {
+            return taskService.countTasksByStatusIsNot(owner, TaskStatus.DONE);
+        }
     }
 
 
@@ -112,4 +115,32 @@ public class MainService {
     }
 
 
+    public List<Account> findUserAccounts(PageRequest pageRequest) {
+        return accountService.findUserAccounts(pageRequest);
+    }
+
+    public Account findAccountById(Long id) {
+        return accountService.findAccountById(id);
+    }
+
+    public long countTasksByOwnerAndStatus(Account owner, TaskStatus status) {
+        return taskService.countTasksByStatus(owner, status);
+    }
+
+    public long getUsersCount() {
+        return accountService.getUsersCount();
+    }
+
+    public long getTasksCount() {
+        return taskService.countAllTasks();
+    }
+
+    public TaskStatistic getTaskStatistic(CurrentAccount currentAccount) {
+        if (taskService.countTasksByOwner(currentAccount.getAccountEntity()) > 0) {
+            return taskService.getTaskStat(currentAccount.getAccountEntity());
+        } else {
+            return null;
+        }
+
+    }
 }

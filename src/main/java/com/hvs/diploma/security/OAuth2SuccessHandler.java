@@ -5,13 +5,13 @@ import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.enums.UserRole;
 import com.hvs.diploma.services.data_access_services.MainService;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -20,6 +20,7 @@ import java.io.IOException;
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final MainService mainService;
     private final CurrentAccount currentAccount;
+    org.slf4j.Logger logger = LoggerFactory.getLogger(OAuth2SuccessHandler.class);
 
     @Autowired
     public OAuth2SuccessHandler(MainService mainService, CurrentAccount currentAccount) {
@@ -30,15 +31,20 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest,
                                         HttpServletResponse httpServletResponse,
-                                        Authentication authentication) throws IOException, ServletException {
+                                        Authentication authentication) throws IOException {
         OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
-        AccountDTO accountDTO = new AccountDTO();
-        Account accountEntity = accountDTO.getAccount(token);
-        if (mainService.findAccountBySocialId(accountEntity.getSocialId()) == null) {
-            mainService.saveAccount(accountEntity);
+        Account account = AccountDTO.getAccount(token);
+        String socialId = account.getSocialId();
+        Account accountBySocialId = mainService.findAccountBySocialId(socialId);
+        if (accountBySocialId == null) {
+            mainService.saveAccount(account);
+            logger.warn("Saved: " + account.toString());
+
+        } else {
+            account = accountBySocialId;
         }
-        accountEntity.setRole(UserRole.ROLE_COMMON_USER);
-        currentAccount.setAccountEntity(accountEntity);
+        account.setRole(UserRole.ROLE_COMMON_USER);
+        currentAccount.setAccountEntity(account);
         httpServletResponse.sendRedirect("/");
     }
 }

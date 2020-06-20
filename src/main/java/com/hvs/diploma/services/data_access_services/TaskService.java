@@ -1,5 +1,7 @@
 package com.hvs.diploma.services.data_access_services;
 
+import com.hvs.diploma.components.SortAndFilterParams;
+import com.hvs.diploma.components.TaskStatistic;
 import com.hvs.diploma.dao.main.TaskRepository;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.entities.Task;
@@ -7,22 +9,18 @@ import com.hvs.diploma.enums.TaskDeadlines;
 import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.enums.TaskStatus;
 import com.hvs.diploma.util.DateTimeHelper;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Service
 public class TaskService {
-    private static final TaskStatus[] DEFAULT_STATUS_FILTER_PARAMS = new TaskStatus[]{TaskStatus.ACTIVE, TaskStatus.EXPIRED};
-    private static final TaskPriority[] DEFAULT_PRIORITY_FILTER_PARAMS = new TaskPriority[]
-            {TaskPriority.HIGH, TaskPriority.MEDIUM, TaskPriority.LOW};
-
     private final TaskRepository taskRepository;
-
+    org.slf4j.Logger logger = LoggerFactory.getLogger(TaskService.class);
     public TaskService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
@@ -32,53 +30,40 @@ public class TaskService {
     }
     @Transactional(readOnly = true)
     public List<Task> getTasksByFilterParameters(Account owner, Pageable pageable,
-                                                 List<TaskPriority> priorities,
-                                                 List<TaskStatus> statuses,
-                                                 List<TaskDeadlines> dates) {
-        if (parametersNotExists(priorities)) {
-            priorities = new ArrayList<>();
-            Collections.addAll(priorities, DEFAULT_PRIORITY_FILTER_PARAMS);
-        }
-        if (parametersNotExists(statuses)) {
-            statuses = new ArrayList<>();
-            Collections.addAll(statuses, DEFAULT_STATUS_FILTER_PARAMS);
-        }
-        if (parametersNotExists(dates)) {
+                                                 SortAndFilterParams params) {
+        List<TaskPriority> priorities = params.getNotNullPriorities();
+        List<Timestamp> deadlines = params.getNotNullDeadlines();
+        List<TaskStatus> statuses = params.getNotNullStatuses();
+
+        if (params.hasNoDeadlineParams()) {
             return taskRepository.findAllByOwnerAndPriorityInAndStatusIn(owner, priorities, statuses, pageable);
-        } else if (dateParamsContains(true, true, dates)) {
+        } else if (params.getDeadlines().contains(TaskDeadlines.THIS_WEEK)) {
+            Timestamp from = deadlines.get(0);
+            Timestamp to = deadlines.get(1);
             return taskRepository.findAllByOwnerAndPriorityInAndStatusInAndDeadlineBetween(owner, priorities,
-                    statuses, pageable, DateTimeHelper.firstDayOfCurrentWeek(), DateTimeHelper.tomorrow());
-        } else if (dateParamsContains(true, false, dates)) {
-            return taskRepository.findAllByOwnerAndPriorityInAndStatusInAndDeadlineBetween(owner, priorities,
-                    statuses, pageable, DateTimeHelper.firstDayOfCurrentWeek(), DateTimeHelper.lastDayOfCurrentWeek());
+                    statuses, pageable, from, to);
         } else {
             return taskRepository.findAllByOwnerAndPriorityInAndStatusInAndDeadlineIn(owner, priorities,
-                    statuses, TaskDeadlines.getValues(dates), pageable);
+                    statuses, deadlines, pageable);
         }
     }
-    @Transactional(readOnly = true)
-    public long countTasksByFilterParams(Account owner, List<TaskPriority> priorities,
-                                         List<TaskStatus> statuses, List<TaskDeadlines> dates) {
-        if (parametersNotExists(priorities)) {
-            priorities = new ArrayList<>();
-            Collections.addAll(priorities, DEFAULT_PRIORITY_FILTER_PARAMS);
-        }
-        if (parametersNotExists(statuses)) {
-            statuses = new ArrayList<>();
-            Collections.addAll(statuses, DEFAULT_STATUS_FILTER_PARAMS);
 
-        }
-        if (parametersNotExists(dates)) {
+    @Transactional(readOnly = true)
+    public long countTasksByFilterParams(Account owner, SortAndFilterParams params) {
+        List<TaskPriority> priorities = params.getNotNullPriorities();
+        List<TaskStatus> statuses = params.getNotNullStatuses();
+        List<Timestamp> deadlines = params.getNotNullDeadlines();
+        Timestamp from = deadlines.get(0);
+        Timestamp to = deadlines.get(1);
+
+        if (params.hasNoDeadlineParams()) {
             return taskRepository.countTasksByOwnerAndPriorityInAndStatusIn(owner, priorities, statuses);
-        } else if (dateParamsContains(true, true, dates)) {
+        } else if (params.getDeadlines().contains(TaskDeadlines.THIS_WEEK)) {
             return taskRepository.countTasksByOwnerAndPriorityInAndStatusInAndDeadlineBetween(owner, priorities,
-                    statuses, DateTimeHelper.firstDayOfCurrentWeek(), DateTimeHelper.tomorrow());
-        } else if (dateParamsContains(true, false, dates)) {
-            return taskRepository.countTasksByOwnerAndPriorityInAndStatusInAndDeadlineBetween(owner, priorities,
-                    statuses, DateTimeHelper.firstDayOfCurrentWeek(), DateTimeHelper.lastDayOfCurrentWeek());
+                    statuses, from, to);
         } else {
             return taskRepository.countTasksByOwnerAndPriorityInAndStatusInAndDeadlineIn(owner, priorities,
-                    statuses, TaskDeadlines.getValues(dates));
+                    statuses, deadlines);
         }
     }
     @Transactional
@@ -99,18 +84,25 @@ public class TaskService {
     public void markTaskAsDoneById(Long id) {
         Task tasksById = taskRepository.findTasksById(id);
         tasksById.setStatus(TaskStatus.DONE);
+        taskRepository.save(tasksById);
     }
     @Transactional
     public void retry(Long taskId, java.util.Date newDeadline) {
         Task task = taskRepository.findTasksById(taskId);
         task.setDeadline(newDeadline);
         task.setStatus(TaskStatus.ACTIVE);
+        taskRepository.save(task);
     }
     @Transactional
     public void checkDeadlines(Account account) {
-        List<Task> expiredTasks = taskRepository.findAllByOwnerAndDeadlineBefore(account, DateTimeHelper.today());
-        for (Task expiredTask : expiredTasks) {
-            expiredTask.setStatus(TaskStatus.EXPIRED);
+        List<Task> tasks = taskRepository.findAllByOwnerAndDeadlineBefore(account, DateTimeHelper.today());
+        if (tasks != null && tasks.size() > 0) {
+            for (Task task : tasks) {
+                if (task.getStatus() != TaskStatus.DONE) {
+                    task.setStatus(TaskStatus.EXPIRED);
+                    taskRepository.save(task);
+                }
+            }
         }
     }
 
@@ -134,13 +126,23 @@ public class TaskService {
         return taskRepository.count();
     }
 
-    private boolean dateParamsContains(boolean thisWeek, boolean tomorrow, List<TaskDeadlines> dates) {
-        boolean firstCondTrue = dates.contains(TaskDeadlines.THIS_WEEK) == thisWeek;
-        boolean secondCondTrue = dates.contains(TaskDeadlines.TOMORROW) == tomorrow;
-        return firstCondTrue && secondCondTrue;
+    @Transactional(readOnly = true)
+    public long countTasksByStatus(Account account, TaskStatus taskStatus) {
+        return taskRepository.countTaskByOwnerAndStatus(account, taskStatus);
     }
 
-    private boolean parametersNotExists(List filterParams) {
-        return filterParams == null || filterParams.isEmpty();
+    @Transactional
+    public TaskStatistic getTaskStat(Account account) {
+        TaskStatistic statistic = new TaskStatistic();
+        long totalTasksCount = taskRepository.countTasksByOwner(account);
+        long activeTasksCount = taskRepository.countTasksByOwnerAndStatus(account, TaskStatus.ACTIVE);
+        long doneTasksCount = taskRepository.countTasksByOwnerAndStatus(account, TaskStatus.DONE);
+        long expiredTasksCount = taskRepository.countTasksByOwnerAndStatus(account, TaskStatus.EXPIRED);
+        statistic.setActiveTasksCount(activeTasksCount);
+        statistic.setDoneTasksCount(doneTasksCount);
+        statistic.setExpiredTasksCount(expiredTasksCount);
+        statistic.setTotalTasksCount(totalTasksCount);
+        return statistic;
     }
+
 }

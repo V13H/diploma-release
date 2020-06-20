@@ -51,4 +51,9 @@ public class TurboSmsService {
     public List<TurboSmsMessage> findAll() {
         return turboSmsMessageRepository.findAll();
     }
+
+    @Transactional(readOnly = true)
+    public long countByPhone(String phone) {
+        return turboSmsMessageRepository.countTurboSmsMessageByNumberContains(phone);
+    }
 }

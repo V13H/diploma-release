@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 public class CurrentAccount {
     private Account accountEntity;
     private boolean isTasksDeadlinesChecked;
+    private TaskStatistic taskStatistic;
 
     public boolean hasPassword() {
         return accountEntity.getPassword() != null;

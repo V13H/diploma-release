@@ -36,8 +36,6 @@ public class Account {
     //so I decided to write this getters by myself
     @Getter(AccessLevel.NONE)
     private boolean hasWatchedGreetingsMessage = false;
-//    @OneToOne(mappedBy = "account",cascade = CascadeType.ALL)
-//    private AccountSettings settings = new AccountSettings();
 
 
     public static Account accountOfDTO(AccountDTO accountDTO) {
@@ -63,8 +61,9 @@ public class Account {
     @Override
     public String toString() {
         return "Account{" +
-                "userName='" + userName + '\'' +
-                ", role=" + role +
+                "id=" + id +
+                ", socialId='" + socialId + '\'' +
+                ", email='" + email + '\'' +
                 '}';
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
@@ -47,5 +48,11 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     void deleteTaskById(Long id);
 
     Task findTasksById(Long id);
+
+    long countTasksByOwnerAndStatus(Account account, TaskStatus status);
+
+    long countTasksByOwnerAndDeadlineLessThanAndStatus(Account owner, Date deadline, TaskStatus status);
+
+    long countTaskByOwnerAndStatus(Account account, TaskStatus status);
 
 }

@@ -16,6 +16,7 @@ import java.util.Map;
 @Setter
 @ToString
 public class AccountDTO {
+    private long id;
     private String email;
     private String password;
     private String confirmPassword;
@@ -23,7 +24,8 @@ public class AccountDTO {
     private String userName;
     org.slf4j.Logger logger = LoggerFactory.getLogger(AccountDTO.class);
 
-    public Account getAccount(OAuth2AuthenticationToken token) {
+
+    public static Account getAccount(OAuth2AuthenticationToken token) {
         Account account = new Account();
         switch (token.getAuthorizedClientRegistrationId()) {
             case "facebook":
@@ -40,7 +42,7 @@ public class AccountDTO {
     }
 
 
-    private Account getFacebookAuthBasedAccount(Map<String, Object> userAttributes) {
+    private static Account getFacebookAuthBasedAccount(Map<String, Object> userAttributes) {
 
         Account account = new Account();
         account.setUserName(userAttributes.get("name").toString().split(" ")[0]);
@@ -48,11 +50,10 @@ public class AccountDTO {
         String picUrl = (String) picParams.get("url");
         account.setPictureUrl(picUrl);
         account.setSocialId((String) userAttributes.get("id"));
-
         return account;
     }
 
-    private Account getGithubAuthBasedAccount(Map<String, Object> userAttributes) {
+    private static Account getGithubAuthBasedAccount(Map<String, Object> userAttributes) {
         Account account = new Account();
         if (userAttributes != null) {
             String name = (String) userAttributes.get("name");
@@ -68,7 +69,7 @@ public class AccountDTO {
         return account;
     }
 
-    private Account getGoogleAuthBasedAccount(Map<String, Object> userAttributes) {
+    private static Account getGoogleAuthBasedAccount(Map<String, Object> userAttributes) {
         Account account = new Account();
         account.setUserName((String) userAttributes.get("given_name"));
         account.setPictureUrl((String) userAttributes.get("picture"));

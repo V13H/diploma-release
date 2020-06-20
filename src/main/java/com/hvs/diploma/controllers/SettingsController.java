@@ -47,6 +47,8 @@ public class SettingsController {
         }
         model.addAttribute("accountDTO", currentAccount.getAccountEntity().toDTO());
         model.addAttribute("isAdmin", currentAccount.isAdmin());
+        model.addAttribute("stat", currentAccount.getTaskStatistic());
+        model.addAttribute("account", currentAccount.getAccountEntity());
         return "settings";
     }
 
@@ -55,7 +57,7 @@ public class SettingsController {
                                  BindingResult bindingResult) {
         passwordValidator.validate(accountDTO, bindingResult);
         if (bindingResult.hasErrors()) {
-            addHasPasswordAttrToModel(model);
+            addNotificationsAndPasswordAttributes(model);
             return "settings";
         } else {
             logger.warn(accountDTO.toString());
@@ -85,6 +87,9 @@ public class SettingsController {
     private void addNotificationsAndPasswordAttributes(Model model) {
         addHasPhoneAttrToModel(model);
         addHasPasswordAttrToModel(model);
+        model.addAttribute("account", currentAccount);
+        model.addAttribute("isAdmin", currentAccount.isAdmin());
+        model.addAttribute("stat", currentAccount.getTaskStatistic());
 
     }
 
@@ -95,6 +100,5 @@ public class SettingsController {
     private void addHasPhoneAttrToModel(Model model) {
         model.addAttribute("hasPhone", currentAccount.hasPhoneNumber());
     }
-    //TODO /change-password and enable-notifications functionality
 
 }

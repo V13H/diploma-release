@@ -18,8 +18,6 @@
             <div class="nav-wrapper teal">
                 <div class="container">
                     <img src="/img/check-white-green-svg.svg" class="brand-logo responsive-img logo" alt="">
-                    <a href="#!" class="brand-logo ml-9vh hide-on-med-and-down">
-                        You can do it!</a>
                     <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                     <ul class="right hide-on-med-and-down">
                         <li><a href="/"><i class="material-icons left">playlist_add_check</i>Tasks</a>
@@ -27,6 +25,9 @@
                         <li class="active"><a href="/admin-dashboard"><i class="material-icons left">
                             laptop</i>Admin dashboard</a></li>
                         <li><a href="/settings"><i class="material-icons left">settings</i>Settings</a></li>
+                        <li><a href="/statistic" class="white-text">
+                            <i class="material-icons left white-text">equalizer</i>Statistic</a></li>
+
                         <li><a href="/logout"><i class="material-icons left">exit_to_app</i>Logout</a></li>
                     </ul>
                 </div>
@@ -50,10 +51,13 @@
         </li>
         <li><a href="/" class="white-text"><i
                 class="material-icons left white-text">playlist_add_check</i>Tasks</a></li>
-        <li class="active"><a href="/admin-dashboard"><i class="material-icons left">
+        <li class="active"><a href="/admin/"><i class="material-icons left">
             laptop</i>Admin dashboard</a></li>
         <li><a href="/settings" class="white-text"><i class="material-icons left white-text">settings</i>Settings</a>
         </li>
+        <li><a href="/statistic" class="white-text">
+            <i class="material-icons left white-text">equalizer</i>Statistic</a></li>
+
         <li><a class="white-text" href="/logout"><i class="material-icons left white-text">exit_to_app</i>Logout</a>
         </li>
     </ul>
@@ -88,6 +92,7 @@
                                  alt="avatar" src="/img/anonymous-user-svg.svg">
                             <span class="bold-txt" th:text="${user.userName}"></span>
                             <p th:text="'Email:'+${user.email}"></p>
+                            <p th:text="'Last seen: '+${user.lastSeen}"></p>
                             <a class="secondary-content btn " th:href="@{/admin/details(id=${user.id})}">
                                 Details
                             </a>
@@ -105,34 +110,7 @@
         </div>
     </div>
 
-    <!--    <div class="container">-->
-    <!--        <div class="row">-->
-    <!--            <div class="col s12 m8 l4 xl4">-->
-    <!--                <p th:text="${'Turbo SMS cretids balance: '+balance}"></p>-->
-    <!--                <p th:text="${'Users registered: '+usersCount}"></p>-->
-    <!--            </div>-->
-    <!--            <div class="col s12 m8 l8 xl8">-->
-    <!--                <table>-->
-    <!--                    <thead>-->
-    <!--                    <tr>-->
-    <!--                        <th>Id</th>-->
-    <!--                        <th>Added</th>-->
-    <!--                        <th>Cost</th>-->
-    <!--                        <th>Balance</th>-->
-    <!--                    </tr>-->
-    <!--                    </thead>-->
-    <!--                    <tbody>-->
-    <!--                    <tr th:each="message:${messages}">-->
-    <!--                        <td th:text="${message.getId()}"></td>-->
-    <!--                        <td th:text="${message.getAdded()}"></td>-->
-    <!--                        <td th:text="${message.getCost()}"></td>-->
-    <!--                        <td th:text="${message.getBalance()}"></td>-->
-    <!--                    </tr>-->
-    <!--                    </tbody>-->
-    <!--                </table>-->
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--    </div>-->
+
 </main>
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"
         integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
