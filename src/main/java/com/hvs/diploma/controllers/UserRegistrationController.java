@@ -1,8 +1,9 @@
 package com.hvs.diploma.controllers;
 
-import com.hvs.diploma.components.CurrentAccount;
+import com.hvs.diploma.components.CurrentUser;
 import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.entities.Account;
+import com.hvs.diploma.enums.UserRole;
 import com.hvs.diploma.services.data_access_services.MainService;
 import com.hvs.diploma.services.validation_services.form_validators.RegistrationFormValidator;
 import org.slf4j.Logger;
@@ -28,18 +29,18 @@ import java.time.LocalDateTime;
 @Controller
 @RequestMapping("/register")
 public class UserRegistrationController {
-    private final CurrentAccount currentAccount;
+    private final CurrentUser currentUser;
     private final RegistrationFormValidator validator;
     private final BCryptPasswordEncoder encoder;
     private final MainService mainService;
     Logger logger = LoggerFactory.getLogger(UserRegistrationController.class);
 
     @Autowired
-    public UserRegistrationController(MainService mainService, BCryptPasswordEncoder encoder, RegistrationFormValidator validator, CurrentAccount currentAccount) {
+    public UserRegistrationController(MainService mainService, BCryptPasswordEncoder encoder, RegistrationFormValidator validator, CurrentUser currentUser) {
         this.mainService = mainService;
         this.encoder = encoder;
         this.validator = validator;
-        this.currentAccount = currentAccount;
+        this.currentUser = currentUser;
     }
 
     @GetMapping()
@@ -60,10 +61,10 @@ public class UserRegistrationController {
             account.setPassword(encoder.encode(accountDTO.getPassword()));
             account.setPictureUrl("/img/anonymous-user-svg.svg");
             account.setRegistrationDate(Timestamp.valueOf(LocalDateTime.now()));
+            account.setRole(UserRole.ROLE_COMMON_USER);
             mainService.saveAccount(account);
             model.addAttribute("account", account);
-            currentAccount.setAccountEntity(account);
-            logger.warn(currentAccount.toString());
+            currentUser.setAccount(account);
             request.login(account.getEmail(), accountDTO.getPassword());
             return "redirect:/";
         }

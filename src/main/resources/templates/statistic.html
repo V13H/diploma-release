@@ -17,113 +17,20 @@
 </head>
 <body class="cyan  cyan darken-4">
 <header>
-    <div class="navbar-fixed hide-on-large-only">
-        <nav class="nav-extended">
-            <div class="nav-wrapper teal">
-                <div class="container">
-                    <img src="/img/check-white-green-svg.svg" class="brand-logo responsive-img logo" alt="">
-                    <a href="#!" class="brand-logo ml-9vh hide-on-med-and-down">
-                        You can do it!</a>
-                    <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-
-                </div>
-            </div>
-        </nav>
-    </div>
+    <div th:insert="~{fragments/mobile-navbar::#mobile-navbar}"></div>
     <!--Side nav-->
-    <ul class="sidenav teal" id="mobile-demo">
-        <li>
-        <li>
-            <div class="user-view">
-                <div class="background cyan darken-3">
-                </div>
-                <div class="valign-wrapper">
-                    <img src="../static/img/anonymous-user-svg.svg" alt=""
-                         th:src="${account.pictureUrl}" class="responsive-image circle">
-                    <span class="white-text name ml-10px"
-                          th:text="${account.userName}">Username</span>
-                </div>
-                <div class="email white-text">
-                                <span th:text="${stat!=null}?'Success rate: '
-                                +${stat.successRate}+'%':'Success rate:'">Success rate:</span>
-                    <div class="progress white">
-                        <div class="determinate " style="width: 0%"
-                             th:style="${stat!=null}?'width: '+${stat.successRate}+'%'"
-                             th:classappend="${stat!=null}?${stat.progressBarColorToTemplate}"
-                        ></div>
-                    </div>
-                </div>
-
-            </div>
-        </li>
-        </li>
-        <li><a href="/" class="white-text"><i
-                class="material-icons left white-text">playlist_add_check</i>Tasks</a></li>
-        <li><a href="/admin/" th:if="${isAdmin}"
-        ><i class="material-icons left">laptop</i>Admin dashboard</a></li>
-        <li><a href="/settings" class="white-text"><i class="material-icons left white-text">settings</i>Settings</a>
-        </li>
-        <li class="active"><a href="/statistic" class="white-text">
-            <i class="material-icons left white-text">equalizer</i>Statistic</a></li>
-        <li>
-            <a href="/faq" class="white-text" th:if="${!isAdmin}">
-                <i class="material-icons left white-text">help_outline</i>
-                FAQ</a>
-        </li>
-        <li><a class="white-text" href="/logout"><i class="material-icons left white-text">exit_to_app</i>Logout</a>
-        </li>
-    </ul>
+    <div th:insert="~{fragments/mobile-sidenav::#mobile-demo}"></div>
 </header>
 <main>
     <!-- Main -->
 
     <div class="row">
         <div class="col m3 l4 xl3 hide-on-med-and-down">
-            <ul class="sidenav sidenav-fixed teal" id="main-sidenav">
-                <li>
-                    <div class="user-view">
-                        <div class="background cyan darken-3">
-                        </div>
-                        <div class="valign-wrapper">
-                            <img src="../static/img/anonymous-user-svg.svg" alt=""
-                                 th:src="${account.pictureUrl}" class="responsive-image circle">
-                            <span class="white-text name ml-10px"
-                                  th:text="${account.userName}">Username</span>
-                        </div>
-                        <div class="email white-text">
-                                <span th:text="${stat!=null}?'Success rate: '
-                                +${stat.successRate}+'%':'Success rate:'">Success rate:</span>
-                            <div class="progress white">
-                                <div class="determinate " style="width: 0%"
-                                     th:style="${stat!=null}?'width: '+${stat.successRate}+'%'"
-                                     th:classappend="${stat!=null}?${stat.progressBarColorToTemplate}"
-                                ></div>
-                            </div>
-                        </div>
-
-                    </div>
-                </li>
-
-                <li><a href="/" class="white-text"><i
-                        class="material-icons left white-text">playlist_add_check</i>Tasks</a></li>
-                <li><a class="white-text" href="/admin/" th:if="${isAdmin}"
-                ><i class="material-icons left white-text">laptop</i>Admin dashboard</a></li>
-                <li><a class="white-text" href="/settings"><i class="material-icons left white-text">settings</i>Settings</a>
-                </li>
-                <li class="active"><a href="/statistic" class="white-text">
-                    <i class="material-icons left white-text">equalizer</i>Statistic</a></li>
-                <li>
-                    <a href="/faq" class="white-text" th:if="${!isAdmin}">
-                        <i class="material-icons left white-text">help_outline</i>
-                        FAQ</a>
-                </li>
-                <li><a class="white-text" href="/logout"><i class="material-icons left white-text">exit_to_app</i>Logout</a>
-                </li>
-            </ul>
+            <div th:insert="~{fragments/main-sidenav::#main-sidenav}"></div>
         </div>
         <div class="col s8 m8 l4 offset-s2 offset-m2 white-text mt-5vh"
              th:if="${stat!=null}">
-            <h5 th:text="${stat!=null}?'Total task: '+${stat.totalTasksCount}"></h5>
+            <h5 th:text="${stat!=null}?'Total task: '+${stat.notActiveTasksCount}"></h5>
             <hr>
             <h5 th:text="${stat!=null}?'Tasks done: '+${stat.doneTasksCount}"></h5>
             <hr>

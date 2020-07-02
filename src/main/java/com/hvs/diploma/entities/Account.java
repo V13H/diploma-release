@@ -9,13 +9,13 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
+@Table(name = "account")
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +32,9 @@ public class Account {
     private Timestamp lastSeen;
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Task> tasks = new ArrayList<>();
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<AccountAchievement> accountAchievements = new HashSet<>();
+
     //Excluded getter for field below because Lombok generates weird getter`s names
     //so I decided to write this getters by myself
     @Getter(AccessLevel.NONE)
@@ -54,16 +57,48 @@ public class Account {
         accountDTO.setPhoneNumber(this.phoneNumber);
         return accountDTO;
     }
+
     public boolean hasWatchedGreetingsMessage() {
         return hasWatchedGreetingsMessage;
     }
 
+    public void addAchievement(Achievement achievement) {
+        AccountAchievement accountAchievement = new AccountAchievement(this, achievement);
+        accountAchievements.add(accountAchievement);
+//        achievement.getAccounts().add(accountAchievement);
+    }
+
+    public List<Achievement> getAchievements() {
+        List<Achievement> achievements = new ArrayList<>();
+        if (accountAchievements != null) {
+            for (AccountAchievement accountAchievement : accountAchievements) {
+                achievements.add(accountAchievement.getAchievement());
+            }
+            return achievements;
+        } else {
+            return null;
+        }
+    }
     @Override
     public String toString() {
         return "Account{" +
                 "id=" + id +
-                ", socialId='" + socialId + '\'' +
-                ", email='" + email + '\'' +
+                ", userName='" + userName + '\'' +
+                ", achievements=" + accountAchievements +
                 '}';
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Account)) return false;
+        Account account = (Account) o;
+        return id == account.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

@@ -1,6 +1,6 @@
 package com.hvs.diploma.services.data_access_services;
 
-import com.hvs.diploma.components.CurrentAccount;
+import com.hvs.diploma.components.CurrentUser;
 import com.hvs.diploma.dao.main.AccountRepository;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.enums.UserRole;
@@ -42,8 +42,8 @@ public class AccountService {
     }
 
     @Transactional
-    public void updateAccount(CurrentAccount currentAccount) {
-        saveAccount(currentAccount.getAccountEntity());
+    public void updateAccount(CurrentUser currentUser) {
+        saveAccount(currentUser.getAccount());
     }
 
     public Account findAccountByPhone(String phoneNumber) {

@@ -1,10 +1,11 @@
 package com.hvs.diploma.services.data_access_services;
 
-import com.hvs.diploma.components.CurrentAccount;
+import com.hvs.diploma.components.CurrentUser;
 import com.hvs.diploma.components.SortAndFilterParams;
 import com.hvs.diploma.components.TaskStatistic;
 import com.hvs.diploma.dto.TaskDTO;
 import com.hvs.diploma.entities.Account;
+import com.hvs.diploma.entities.Achievement;
 import com.hvs.diploma.entities.Task;
 import com.hvs.diploma.enums.TaskStatus;
 import com.hvs.diploma.services.notification_services.InfoMessagesService;
@@ -16,7 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class MainService {
@@ -24,16 +27,17 @@ public class MainService {
     private final AccountService accountService;
     private final TurboSmsService turboSmsService;
     private final InfoMessagesService infoMessagesService;
+    private final AchievementService achievementService;
 
 
     @Autowired
     public MainService(TaskService taskService, AccountService accountService,
-                       TurboSmsService turboSmsService, InfoMessagesService infoMessagesService) {
+                       TurboSmsService turboSmsService, InfoMessagesService infoMessagesService, AchievementService achievementService) {
         this.taskService = taskService;
         this.accountService = accountService;
         this.turboSmsService = turboSmsService;
         this.infoMessagesService = infoMessagesService;
-
+        this.achievementService = achievementService;
     }
 
 
@@ -53,15 +57,16 @@ public class MainService {
 
 
     @Transactional
-    public void updateAccount(CurrentAccount currentAccount) {
-        saveAccount(currentAccount.getAccountEntity());
+    public void updateAccount(CurrentUser currentUser) {
+        saveAccount(currentUser.getAccount());
     }
 
 
     public List<Task> getTasks(Account owner, Pageable pageable,
                                SortAndFilterParams params) {
         if (params.isFilterParamsSpecified()) {
-            return taskService.getTasksByFilterParameters(owner, pageable, params);
+            return taskService.getTasksByFilterParameters(owner, pageable,
+                    params.getPriorities(), params.getStatuses(), params.getDeadlines());
         } else {
             return taskService.getAllUndoneTasksForAccount(owner, pageable);
         }
@@ -71,7 +76,8 @@ public class MainService {
 
     public long countTasks(Account owner, SortAndFilterParams params) {
         if (params.isFilterParamsSpecified()) {
-            return taskService.countTasksByFilterParams(owner, params);
+            return taskService.countTasksByFilterParams(owner, params.getPriorities(),
+                    params.getStatuses(), params.getDeadlines());
         } else {
             return taskService.countTasksByStatusIsNot(owner, TaskStatus.DONE);
         }
@@ -119,16 +125,27 @@ public class MainService {
         return taskService.countAllTasks();
     }
 
-    public TaskStatistic getTaskStatistic(CurrentAccount currentAccount) {
-        if (taskService.countTasksByOwner(currentAccount.getAccountEntity()) > 0) {
-            TaskStatistic taskStat = taskService.getTaskStat(currentAccount.getAccountEntity());
-            long notificationsCount = turboSmsService.countSmsByPhone(currentAccount.getPhoneNumber());
-            taskStat.setNotificationsCount(notificationsCount);
-            return taskStat;
-        } else {
-            return null;
-        }
+    public TaskStatistic getTaskStatistic(CurrentUser currentUser) {
+        TaskStatistic taskStat = taskService.getTaskStat(currentUser.getAccount());
+        long notificationsCount = turboSmsService.countSmsByPhone(currentUser.getPhoneNumber());
+        taskStat.setNotificationsCount(notificationsCount);
+        return taskStat;
+    }
 
+    public List<Achievement> getAllAchievements() {
+        return achievementService.findAll();
+    }
+
+    public Achievement getAchievementByTitle(String title) {
+        return achievementService.findByTitle(title);
+    }
+
+    public Set<Achievement> getAchievementsByTitleIsNot(String titleToIgnore) {
+        return achievementService.findAllByTitleIsNot(titleToIgnore);
+    }
+
+    public void saveAchievement(Achievement achievement) {
+        achievementService.save(achievement);
     }
 
     public double getSmsCreditsBalance() {
@@ -149,6 +166,10 @@ public class MainService {
 
     public void markTaskAsDoneById(Long id) {
         taskService.markTaskAsDoneById(id);
+    }
+
+    public long countTasksByDeadlineAndStatus(Account account, Timestamp date, TaskStatus... statuses) {
+        return taskService.countTasksByOwnerAndDeadlineAndStatusIn(account, date, statuses);
     }
 
     @SneakyThrows

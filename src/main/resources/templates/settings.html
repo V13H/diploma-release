@@ -7,17 +7,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Settings</title>
-    <!-- Material Icon CDN -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Materialize CSS CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <!-- Your custom styles -->
-    <!-- <link rel="stylesheet" href="/css/style.css"> -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css"
           integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
-    <!-- <link rel="icon" href="/img/favicon.ico" type="img/ico">
-    <link rel="stylesheet" href="css/body-backgrounds.css"> -->
-    <link rel="icon" href="../static/img/favicon.ico" type="img/ico">
+    <link rel="icon" href="/img/favicon.ico" type="img/ico">
     <link rel="stylesheet" href="/css/body-backgrounds.css">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/body-backgrounds.css">
@@ -25,106 +19,14 @@
 </head>
 <body class="blackboard-texture-bg">
 <header>
-    <div class="navbar-fixed hide-on-large-only">
-        <nav class="nav-extended">
-            <div class="nav-wrapper teal">
-                <div class="container">
-                    <img src="/img/check-white-green-svg.svg" class="brand-logo responsive-img logo" alt="">
-                    <a href="#!" class="brand-logo ml-9vh hide-on-med-and-down">
-                        You can do it!</a>
-                    <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-
-                </div>
-            </div>
-        </nav>
-    </div>
-    <ul class="sidenav teal" id="mobile-demo">
-        <li>
-            <div class="user-view">
-                <div class="background cyan darken-3">
-                </div>
-                <div class="valign-wrapper">
-                    <img src="../static/img/anonymous-user-svg.svg" alt=""
-                         th:src="${account.pictureUrl}" class="responsive-image circle">
-                    <span class="white-text name ml-10px"
-                          th:text="${account.userName}">Username</span>
-                </div>
-                <div class="email white-text">
-                                <span th:text="${stat!=null}?'Success rate: '
-                                +${stat.successRate}+'%':'Success rate:'">Success rate:</span>
-                    <div class="progress white">
-                        <div class="determinate " style="width: 0%"
-                             th:style="${stat!=null}?'width: '+${stat.successRate}+'%'"
-                             th:classappend="${stat!=null}?${stat.progressBarColorToTemplate}"
-                        ></div>
-                    </div>
-                </div>
-
-            </div>
-        </li>
-        <li><a href="/" class="white-text"><i
-                class="material-icons left white-text">playlist_add_check</i>Tasks</a></li>
-        <li><a href="/admin/" th:if="${isAdmin}"
-        ><i class="material-icons left">laptop</i>Admin dashboard</a></li>
-        <li class="active"><a href="/settings" class="white-text"><i class="material-icons left white-text">settings</i>Settings</a>
-        </li>
-        <li><a href="/statistic" class="white-text">
-            <i class="material-icons left white-text">equalizer</i>Statistic</a></li>
-        <li>
-            <a href="/faq" class="white-text" th:if="${!isAdmin}">
-                <i class="material-icons left white-text">help_outline</i>
-                FAQ</a>
-        </li>
-        <li><a class="white-text" href="/logout"><i class="material-icons left white-text">exit_to_app</i>Logout</a>
-        </li>
-    </ul>
+    <div th:insert="~{fragments/mobile-navbar::#mobile-navbar}"></div>
+    <!--Side nav-->
+    <div th:insert="~{fragments/mobile-sidenav::#mobile-demo}"></div>
 </header>
 <main>
     <div class="row">
         <div class="col m3 hide-on-med-and-down">
-            <ul class="sidenav sidenav-fixed teal" id="main-sidenav">
-                <li>
-                    <div class="user-view">
-                        <div class="background cyan darken-3">
-                        </div>
-                        <div class="valign-wrapper">
-                            <img src="../static/img/anonymous-user-svg.svg" alt=""
-                                 th:src="${account.pictureUrl}" class="responsive-image circle">
-                            <span class="white-text name ml-10px"
-                                  th:text="${account.userName}">Username</span>
-                        </div>
-                        <div class="email white-text">
-                                <span th:text="${stat!=null}?'Success rate: '
-                                +${stat.successRate}+'%':'Success rate:'">Success rate:</span>
-                            <div class="progress white">
-                                <div class="determinate " style="width: 0%"
-                                     th:style="${stat!=null}?'width: '+${stat.successRate}+'%'"
-                                     th:classappend="${stat!=null}?${stat.progressBarColorToTemplate}"
-                                ></div>
-                            </div>
-                        </div>
-
-                    </div>
-                </li>
-
-                <li><a href="/" class="white-text"><i
-                        class="material-icons left white-text">playlist_add_check</i>Tasks</a></li>
-                <li><a class="white-text" href="/admin/" th:if="${isAdmin}"
-                ><i class="material-icons left white-text">laptop</i>Admin dashboard</a></li>
-                <li class="active"><a class="white-text" href="/settings"><i class="material-icons left white-text">settings</i>Settings</a>
-                </li>
-                <li><a href="/statistic" class="white-text">
-                    <i class="material-icons left white-text">equalizer</i>Statistic</a></li>
-                <li>
-                    <a href="/faq" class="white-text" th:if="${!isAdmin}">
-                        <i class="material-icons left white-text">help_outline</i>
-                        FAQ</a>
-                </li>
-                <li><a class="white-text" href="/logout"><i class="material-icons left white-text">exit_to_app</i>Logout</a>
-                </li>
-            </ul>
-
-
+            <div th:insert="~{fragments/main-sidenav::#main-sidenav}"></div>
         </div>
         <div class="col s12 l8">
             <div class="col s12 m6 " th:if="${hasPassword}">
@@ -151,8 +53,6 @@
                         </form>
                     </div>
                     <div class="card-action">
-                        <!--                        <button type="submit" formaction="updatePassword" class="waves-effect waves-light btn">save-->
-                        <!--                        </button>-->
                         <label for="updPassw" class="waves-effect waves-light btn">save
                         </label>
                     </div>

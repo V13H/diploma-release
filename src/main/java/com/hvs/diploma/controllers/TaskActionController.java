@@ -1,13 +1,17 @@
 package com.hvs.diploma.controllers;
 
-import com.hvs.diploma.components.CurrentAccount;
+import com.hvs.diploma.components.AchievementsProcessor;
+import com.hvs.diploma.components.CurrentUser;
 import com.hvs.diploma.components.TaskStatistic;
 import com.hvs.diploma.dto.TaskDTO;
 import com.hvs.diploma.entities.Task;
+import com.hvs.diploma.enums.TaskStatus;
 import com.hvs.diploma.services.data_access_services.MainService;
 import com.hvs.diploma.services.validation_services.form_validators.TaskFormValidator;
 import com.hvs.diploma.services.validation_services.task_dto_validators.DeadlineValidator;
 import com.hvs.diploma.services.validation_services.task_dto_validators.TimeValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,17 +28,20 @@ import java.text.ParseException;
 
 @Controller
 public class TaskActionController {
-    private final CurrentAccount currentAccount;
+    private final CurrentUser currentUser;
     private final MainService mainService;
     private final DeadlineValidator deadlineValidator;
     private final TimeValidator timeValidator;
     private final TaskFormValidator addTaskFormValidator;
+    @Autowired
+    private AchievementsProcessor achievementsProcessor;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    public TaskActionController(CurrentAccount currentAccount, MainService mainService,
+    public TaskActionController(CurrentUser currentUser, MainService mainService,
                                 DeadlineValidator deadlineValidator, TimeValidator timeValidator,
                                 TaskFormValidator addTaskFormValidator) {
-        this.currentAccount = currentAccount;
+        this.currentUser = currentUser;
         this.mainService = mainService;
         this.deadlineValidator = deadlineValidator;
         this.timeValidator = timeValidator;
@@ -44,7 +51,6 @@ public class TaskActionController {
     @GetMapping("/delete")
     public void delete(@RequestParam Long id, @RequestParam Integer page,
                        HttpServletResponse response) throws IOException {
-
         mainService.deleteTask(id);
         response.sendRedirect("/?page=" + page);
     }
@@ -54,13 +60,16 @@ public class TaskActionController {
                            HttpServletResponse response) throws IOException {
         mainService.markTaskAsDoneById(id);
         updateStat();
+        achievementsProcessor.process();
 
         response.sendRedirect("/?page=" + page);
     }
-
     private void updateStat() {
-        TaskStatistic updatedStat = mainService.getTaskStatistic(currentAccount);
-        currentAccount.setTaskStatistic(updatedStat);
+        TaskStatistic updatedStat = mainService.getTaskStatistic(currentUser);
+        updatedStat.calculateSuccessRate();
+        currentUser.setTaskStatistic(updatedStat);
+        logger.warn(updatedStat.toString());
+
     }
 
 
@@ -71,7 +80,7 @@ public class TaskActionController {
         deadlineValidator.validate(taskDTO, bindingResult);
         timeValidator.validate(taskDTO, bindingResult);
         if (bindingResult.hasErrors()) {
-            model.addAttribute("notificationsEnabled", currentAccount.hasPhoneNumber());
+            model.addAttribute("notificationsEnabled", currentUser.hasPhoneNumber());
             return "restart-task";
         } else {
             //getting Task by id and updating it`s deadline
@@ -96,11 +105,14 @@ public class TaskActionController {
         } else {
             taskDTO.setPriority(group1);
             Task task = taskDTO.buildTaskInstance();
-            task.setOwner(currentAccount.getAccountEntity());
+            task.setOwner(currentUser.getAccount());
+            task.setStatus(TaskStatus.ACTIVE);
             mainService.saveTask(task);
             if (notificationTimeExists(taskDTO)) {
                 mainService.sendSmsNotification(taskDTO);
             }
+            updateStat();
+            achievementsProcessor.checkLiftOffReq(currentUser.getAccount());
             return "redirect:/";
         }
     }

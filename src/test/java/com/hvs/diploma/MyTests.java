@@ -76,10 +76,10 @@ class MyTests {
     @Test
     void succRateTest() {
         TaskStatistic statistic = new TaskStatistic();
-        statistic.setTotalTasksCount(10);
+        statistic.setNotActiveTasksCount(10);
         statistic.setDoneTasksCount(6);
         System.out.println(statistic.toString());
-        statistic.setTotalTasksCount(100);
+        statistic.setNotActiveTasksCount(100);
         statistic.setDoneTasksCount(33);
         System.out.println(statistic.toString());
     }

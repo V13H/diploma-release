@@ -16,7 +16,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findAllByOwnerAndDeadlineBefore(Account account, Timestamp date);
 
-    List<Task> findAllByOwnerAndStatusIsNot(Account owner, TaskStatus status, Pageable pageable);
+    List<Task> findAllByOwnerAndStatusIsNotIn(Account owner, Pageable pageable, TaskStatus... statuses);
 
     List<Task> findAllByOwnerAndPriorityInAndStatusInAndDeadlineIn(Account owner,
                                                                    List<TaskPriority> priorities,
@@ -55,4 +55,11 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     long countTaskByOwnerAndStatus(Account account, TaskStatus status);
 
+    long countTasksByOwnerAndStatusAndDeadlineBetween(Account owner, TaskStatus status, Date deadline, Date deadline2);
+
+    long countTasksByOwnerAndStatusIn(Account account, TaskStatus... taskStatuses);
+
+    long countTasksByOwnerAndPriorityIn(Account account, TaskPriority... taskPriorities);
+
+    long countTasksByOwnerAndDeadlineAndStatusIn(Account owner, Date deadline, TaskStatus... statuses);
 }

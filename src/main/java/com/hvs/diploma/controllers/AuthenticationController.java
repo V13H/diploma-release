@@ -1,11 +1,15 @@
 package com.hvs.diploma.controllers;
 
-import com.hvs.diploma.components.CurrentAccount;
+import com.hvs.diploma.components.CurrentUser;
 import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.entities.Account;
+import com.hvs.diploma.entities.Task;
+import com.hvs.diploma.enums.TaskPriority;
+import com.hvs.diploma.enums.TaskStatus;
 import com.hvs.diploma.enums.UserRole;
 import com.hvs.diploma.services.data_access_services.MainService;
 import com.hvs.diploma.services.validation_services.form_validators.LoginFormValidator;
+import com.hvs.diploma.util.DateTimeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,19 +22,23 @@ import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 
 @Controller
 public class AuthenticationController {
     private final MainService mainService;
     private final LoginFormValidator loginFormValidator;
-    private final CurrentAccount currentAccount;
+    private final CurrentUser currentUser;
     Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
+
     @Autowired
-    public AuthenticationController(MainService mainService, LoginFormValidator loginFormValidator, CurrentAccount currentAccount) {
+    public AuthenticationController(MainService mainService, LoginFormValidator loginFormValidator, CurrentUser currentUser) {
         this.mainService = mainService;
         this.loginFormValidator = loginFormValidator;
-        this.currentAccount = currentAccount;
+        this.currentUser = currentUser;
     }
 
     @PostMapping("/signIn")
@@ -43,8 +51,8 @@ public class AuthenticationController {
         } else {
             request.login(accountDTO.getEmail(), accountDTO.getPassword());
             Account accountByEmail = mainService.findAccountByEmail(accountDTO.getEmail());
-            currentAccount.setAccountEntity(accountByEmail);
-            logger.warn(currentAccount.toString());
+            currentUser.setAccount(accountByEmail);
+            logger.warn(currentUser.toString());
             if (accountByEmail.getRole().equals(UserRole.ROLE_ADMIN)) {
                 return "redirect:/admin/";
             } else {
@@ -55,16 +63,55 @@ public class AuthenticationController {
     }
 
     @PostConstruct
-    private void initAdminAccount() {
-//        Account account = new Account();
-//        account.setEmail("admin@gmail.com");
-//        account.setPassword("$2y$12$EVY0bHxVz2Q9NyVlnij9/.B0gdsmb0AR0GF29vhOsiTRYtn0exlr6");
-//        account.setPictureUrl("/img/anonymous-user-svg.svg");
-//        account.setUserName("admin@gmail.com");
-//        account.setPhoneNumber("+380966355878");
-//        account.setRole(UserRole.ROLE_ADMIN);
-//        account.setHasWatchedGreetingsMessage(true);
-//        account.setRegistrationDate(Timestamp.valueOf(LocalDateTime.now()));
-//        mainService.saveAccount(account);
+    private void initData() {
+        Account admin = initAccount(UserRole.ROLE_ADMIN, "admin@gmail.com");
+        Account userAcc = initAccount(UserRole.ROLE_COMMON_USER, "junior@gmail.com");
+        Account userAcc2 = initAccount(UserRole.ROLE_COMMON_USER, "user@gmail.com");
+
+        mainService.saveAccount(admin);
+        mainService.saveAccount(userAcc);
+        mainService.saveAccount(userAcc2);
+        for (int i = 1; i < 10; i++) {
+            Task task = new Task();
+            task.setDeadline(DateTimeHelper.today());
+            task.setPriority(TaskPriority.HIGH);
+            task.setStatus(TaskStatus.ACTIVE);
+            task.setTaskDescription("Task №" + i);
+            task.setOwner(userAcc);
+            mainService.saveTask(task);
+        }
+        Task task2 = new Task();
+        Calendar instance = Calendar.getInstance();
+        instance.set(2020, 7, 1);
+        task2.setDeadline(instance.getTime());
+        task2.setPriority(TaskPriority.HIGH);
+        task2.setStatus(TaskStatus.EXPIRED);
+        task2.setTaskDescription("Task №" + 11);
+        task2.setOwner(userAcc);
+        mainService.saveTask(task2);
+
+        for (int i = 0; i < 20; i++) {
+            Task task = new Task();
+            task.setDeadline(DateTimeHelper.today());
+            task.setPriority(TaskPriority.HIGH);
+            task.setStatus(TaskStatus.ACTIVE);
+            task.setTaskDescription("Task №" + i);
+            task.setOwner(userAcc2);
+            mainService.saveTask(task);
+        }
+
+    }
+
+    public static Account initAccount(UserRole role, String email) {
+        Account account = new Account();
+        account.setEmail(email);
+        account.setPassword("$2y$12$EVY0bHxVz2Q9NyVlnij9/.B0gdsmb0AR0GF29vhOsiTRYtn0exlr6");
+        account.setPictureUrl("/img/anonymous-user-svg.svg");
+        account.setUserName("Beasley");
+        account.setRole(role);
+        account.setHasWatchedGreetingsMessage(true);
+        account.setRegistrationDate(Timestamp.valueOf(LocalDateTime.now()));
+
+        return account;
     }
 }

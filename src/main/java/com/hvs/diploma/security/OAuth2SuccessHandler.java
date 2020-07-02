@@ -1,6 +1,6 @@
 package com.hvs.diploma.security;
 
-import com.hvs.diploma.components.CurrentAccount;
+import com.hvs.diploma.components.CurrentUser;
 import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.enums.UserRole;
@@ -18,12 +18,12 @@ import java.io.IOException;
 @Component
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final MainService mainService;
-    private final CurrentAccount currentAccount;
+    private final CurrentUser currentUser;
 
     @Autowired
-    public OAuth2SuccessHandler(MainService mainService, CurrentAccount currentAccount) {
+    public OAuth2SuccessHandler(MainService mainService, CurrentUser currentUser) {
         this.mainService = mainService;
-        this.currentAccount = currentAccount;
+        this.currentUser = currentUser;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             account = accountBySocialId;
         }
         account.setRole(UserRole.ROLE_COMMON_USER);
-        currentAccount.setAccountEntity(account);
+        currentUser.setAccount(account);
         httpServletResponse.sendRedirect("/");
     }
 }

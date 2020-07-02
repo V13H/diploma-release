@@ -1,6 +1,6 @@
 package com.hvs.diploma.controllers;
 
-import com.hvs.diploma.components.CurrentAccount;
+import com.hvs.diploma.components.CurrentUser;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.services.data_access_services.MainService;
 import com.hvs.diploma.util.PageableHelper;
@@ -17,11 +17,11 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin")
 public class AdminDashboardController {
-    private final CurrentAccount account;
+    private final CurrentUser account;
     private final MainService mainService;
 
     @Autowired
-    public AdminDashboardController(CurrentAccount account, MainService mainService) {
+    public AdminDashboardController(CurrentUser account, MainService mainService) {
         this.account = account;
         this.mainService = mainService;
     }

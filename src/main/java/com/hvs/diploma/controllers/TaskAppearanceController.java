@@ -1,6 +1,6 @@
 package com.hvs.diploma.controllers;
 
-import com.hvs.diploma.components.CurrentAccount;
+import com.hvs.diploma.components.CurrentUser;
 import com.hvs.diploma.components.SortAndFilterParams;
 import com.hvs.diploma.components.TaskStatistic;
 import com.hvs.diploma.entities.Account;
@@ -10,6 +10,8 @@ import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.enums.TaskStatus;
 import com.hvs.diploma.services.data_access_services.MainService;
 import com.hvs.diploma.util.PageableHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -26,28 +28,30 @@ import java.util.List;
 public class TaskAppearanceController {
     private final MainService mainService;
     //'session' scoped component which stores Account instance for each session
-    private final CurrentAccount currentAccount;
+    private final CurrentUser currentUser;
     //'session' scoped component which stores sort and filter params for each session;
     private final SortAndFilterParams sortAndFilterParams;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
 
     @Autowired
-    public TaskAppearanceController(MainService mainService, CurrentAccount currentAccount,
+    public TaskAppearanceController(MainService mainService, CurrentUser currentUser,
                                     SortAndFilterParams sortAndFilterParams) {
         this.mainService = mainService;
-        this.currentAccount = currentAccount;
+        this.currentUser = currentUser;
         this.sortAndFilterParams = sortAndFilterParams;
     }
 
-
     @GetMapping("/")
-    public String getTasksPage(Model model, @RequestParam(required = false, defaultValue = "0") Integer page) {
+    public String getTasksPage(Model model,
+                               @RequestParam(required = false, defaultValue = "0") Integer page) {
 
         int size = 5;
         long count;
         List<Task> tasks;
-        Account account = currentAccount.getAccountEntity();
+        Account account = currentUser.getAccount();
 //        looking for tasks with expired deadlines and updating their status
-        if (!currentAccount.isTasksDeadlinesChecked()) {
+        if (!currentUser.isDeadlinesChecked()) {
             checkDeadlines();
         }
         count = mainService.countTasks(account, sortAndFilterParams);
@@ -55,12 +59,17 @@ public class TaskAppearanceController {
         tasks = mainService.getTasks(account,
                 getPageable(count, size, page), sortAndFilterParams);
 
-        TaskStatistic taskStatistic = mainService.getTaskStatistic(currentAccount);
-        currentAccount.setTaskStatistic(taskStatistic);
+        if (currentUser.getTaskStatistic() == null) {
+            TaskStatistic taskStatistic = mainService.getTaskStatistic(currentUser);
+            if (taskStatistic != null) {
+                taskStatistic.calculateSuccessRate();
+                currentUser.setTaskStatistic(taskStatistic);
+            }
+        }
         long pagesCount = PageableHelper.getPagesCount(count, size);
         String sortByToDisplay = sortAndFilterParams.getSortByToDisplay();
         String emptyListMessage = mainService.getEmptyListMessage(account);
-        String greetingsMessage = mainService.getGreetingsMessage(currentAccount.getAccountEntity());
+        String greetingsMessage = mainService.getGreetingsMessage(currentUser.getAccount());
         boolean setAddButtonPulse = emptyListMessage.equals("You don`t have tasks yet");
         model.addAttribute("greetingsMessage", greetingsMessage);
         model.addAttribute("filterParamsExists", sortAndFilterParams.isFilterParamsSpecified());
@@ -75,19 +84,22 @@ public class TaskAppearanceController {
         model.addAttribute("page", page);
         model.addAttribute("tasks", tasks);
         model.addAttribute("sortBy", sortByToDisplay);
+        model.addAttribute("tasksSelected", true);
         model.addAttribute("order", sortAndFilterParams.getSortOrder());
         model.addAttribute("priorities", sortAndFilterParams.getPriorities());
         model.addAttribute("statuses", sortAndFilterParams.getStatuses());
         model.addAttribute("deadlines", sortAndFilterParams.getDeadlines());
-        model.addAttribute("isAdmin", currentAccount.isAdmin());
-        model.addAttribute("stat", currentAccount.getTaskStatistic());
+        model.addAttribute("isAdmin", currentUser.isAdmin());
+        model.addAttribute("stat", currentUser.getTaskStatistic());
+        model.addAttribute("newAchievements", currentUser.getNewAchievements());
+
         return "index";
     }
 
     //if task`s deadline > DateHelper.today() sets it`s status to EXPIRED
     private void checkDeadlines() {
-        mainService.checkDeadlines(currentAccount.getAccountEntity());
-        currentAccount.setTasksDeadlinesChecked(true);
+        mainService.checkDeadlines(currentUser.getAccount());
+        currentUser.setDeadlinesChecked(true);
     }
 
     //sets sort parameters to SortAndFilterParams instance
@@ -133,8 +145,8 @@ public class TaskAppearanceController {
     @GetMapping("/modal-dismiss")
     public void dismissGreetingsModal(@RequestParam(required = false, defaultValue = "/") String redirectEndpoint,
                                       HttpServletResponse response) throws IOException {
-        currentAccount.getAccountEntity().setHasWatchedGreetingsMessage(true);
-        mainService.saveAccount(currentAccount.getAccountEntity());
+        currentUser.getAccount().setHasWatchedGreetingsMessage(true);
+        mainService.saveAccount(currentUser.getAccount());
         response.sendRedirect(redirectEndpoint);
     }
 

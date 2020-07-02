@@ -1,6 +1,6 @@
 package com.hvs.diploma.security;
 
-import com.hvs.diploma.components.CurrentAccount;
+import com.hvs.diploma.components.CurrentUser;
 import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.services.data_access_services.MainService;
 import lombok.SneakyThrows;
@@ -16,12 +16,12 @@ import java.time.LocalDateTime;
 
 @Service
 public class CustomLogoutHandler implements LogoutHandler {
-    private final CurrentAccount currentAccount;
+    private final CurrentUser currentUser;
     private final MainService mainService;
 
     @Autowired
-    public CustomLogoutHandler(CurrentAccount currentAccount, MainService mainService) {
-        this.currentAccount = currentAccount;
+    public CustomLogoutHandler(CurrentUser currentUser, MainService mainService) {
+        this.currentUser = currentUser;
         this.mainService = mainService;
     }
 
@@ -30,7 +30,7 @@ public class CustomLogoutHandler implements LogoutHandler {
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 //        currentAccount.setLastSeen(LocalDateTime.now());
 //        accountService.saveAccount(currentAccount.getAccountEntity());
-        long id = currentAccount.getAccountEntity().getId();
+        long id = currentUser.getAccount().getId();
         Account accountById = mainService.findAccountById(id);
         accountById.setLastSeen(Timestamp.valueOf(LocalDateTime.now()));
         mainService.saveAccount(accountById);

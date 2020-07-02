@@ -11,24 +11,29 @@ import java.math.RoundingMode;
 @Setter
 @ToString
 public class TaskStatistic {
-    private long totalTasksCount;
+    private long notActiveTasksCount;
     private long activeTasksCount;
     private long doneTasksCount;
     private long expiredTasksCount;
     private long notificationsCount;
+    private long restartedAndDoneTasksCount;
+    private long highPriorityTasksCount;
+    private long mediumPriorityTasksCount;
+    private long lowPriorityTasksCount;
     private double successRate;
     private String progressBarColorToTemplate;
 
-    public TaskStatistic() {
 
+    public TaskStatistic() {
     }
 
-    public BigDecimal getSuccessRate() {
-        double succRate = (double) doneTasksCount / totalTasksCount * 100;
-        BigDecimal res = new BigDecimal(succRate).setScale(2, RoundingMode.HALF_DOWN);
-        successRate = res.doubleValue();
-        setProgressBarColor(successRate);
-        return res;
+    public void calculateSuccessRate() {
+        if (notActiveTasksCount > 0) {
+            double succRate = (double) doneTasksCount / notActiveTasksCount * 100;
+            BigDecimal res = new BigDecimal(succRate).setScale(2, RoundingMode.HALF_DOWN);
+            successRate = res.doubleValue();
+            setProgressBarColor(successRate);
+        }
     }
 
     private void setProgressBarColor(Double successRate) {
@@ -40,5 +45,10 @@ public class TaskStatistic {
             progressBarColorToTemplate = "red";
         }
     }
+
+    public void setRestartedAndDoneTasksCount(long count) {
+        restartedAndDoneTasksCount = count;
+    }
+
 
 }

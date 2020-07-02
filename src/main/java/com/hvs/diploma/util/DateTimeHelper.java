@@ -29,15 +29,17 @@ public class DateTimeHelper {
         DayOfWeek lastDay = DayOfWeek.SUNDAY;
         LocalDate now = LocalDate.now();
         int daysToAdd = lastDay.getValue() - now.getDayOfWeek().getValue();
-        int lastDayOfCurrentWeekValue = now.getDayOfMonth() + daysToAdd;
-        return Timestamp.valueOf(LocalDate.of(now.getYear(), now.getMonth(), lastDayOfCurrentWeekValue).atStartOfDay());
+        LocalDate lastDayOfCurrentWeek = now.plusDays(daysToAdd);
+        return Timestamp.valueOf(lastDayOfCurrentWeek.atStartOfDay());
     }
 
     public static Timestamp firstDayOfCurrentWeek() {
         LocalDate now = LocalDate.now();
         DayOfWeek dayOfWeek = now.getDayOfWeek();
         DayOfWeek firstDay = DayOfWeek.MONDAY;
-        return Timestamp.valueOf(now.minusDays(dayOfWeek.getValue() - firstDay.getValue()).atStartOfDay());
+        int daysToSubtract = dayOfWeek.getValue() - firstDay.getValue();
+        LocalDate firstDayOfCurrentWeek = now.minusDays(daysToSubtract);
+        return Timestamp.valueOf(firstDayOfCurrentWeek.atStartOfDay());
     }
 
     public static SimpleDateFormat simpleDateFormat() {
