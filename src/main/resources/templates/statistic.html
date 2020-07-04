@@ -15,7 +15,7 @@
 
 
 </head>
-<body class="cyan  cyan darken-4">
+<body class="blackboard-texture-bg">
 <header>
     <div th:insert="~{fragments/mobile-navbar::#mobile-navbar}"></div>
     <!--Side nav-->
@@ -28,16 +28,57 @@
         <div class="col m3 l4 xl3 hide-on-med-and-down">
             <div th:insert="~{fragments/main-sidenav::#main-sidenav}"></div>
         </div>
-        <div class="col s8 m8 l4 offset-s2 offset-m2 white-text mt-5vh"
-             th:if="${stat!=null}">
-            <h5 th:text="${stat!=null}?'Total task: '+${stat.notActiveTasksCount}"></h5>
-            <hr>
-            <h5 th:text="${stat!=null}?'Tasks done: '+${stat.doneTasksCount}"></h5>
-            <hr>
-            <h5 th:text="${stat!=null}?'Total failed: '+${stat.expiredTasksCount}"></h5>
-            <hr>
-            <h5 th:text="${stat!=null}?'Notifications received: '+${stat.notificationsCount}"></h5>
-            <hr>
+        <!--        <div class="col s8 m8 l4 offset-s2 offset-m2 white-text mt-5vh"-->
+        <!--             th:if="${stat!=null}">-->
+        <!--            <h5 th:text="${stat!=null}?'Total task: '+${stat.notActiveTasksCount}"></h5>-->
+        <!--            <hr>-->
+        <!--            <h5 th:text="${stat!=null}?'Tasks done: '+${stat.doneTasksCount}"></h5>-->
+        <!--            <hr>-->
+        <!--            <h5 th:text="${stat!=null}?'Total failed: '+${stat.expiredTasksCount}"></h5>-->
+        <!--            <hr>-->
+        <!--            <h5 th:text="${stat!=null}?'Notifications received: '+${stat.notificationsCount}"></h5>-->
+        <!--            <hr>-->
+        <!--        </div>-->
+        <div class="col s10 m8 l4 offset-s1 offset-m2 mt-5vh">
+            <div th:if="${stat!=null}" class="card-panel">
+                <h4>Statistic:</h4>
+                <table>
+                    <tbody>
+                    <tr>
+                        <td>Total tasks count:</td>
+                        <td class="bold-txt" th:text="${stat.notActiveTasksCount+stat.activeTasksCount}"></td>
+                    </tr>
+                    <tr>
+                        <td>Tasks done:</td>
+                        <td class="bold-txt" th:text="${stat.doneTasksCount}"></td>
+                    </tr>
+                    <tr>
+                        <td>Tasks failed:</td>
+                        <td class="bold-txt" th:text="${stat.expiredTasksCount}"></td>
+                    </tr>
+                    <tr>
+                        <td>High priority tasks:</td>
+                        <td class="bold-txt" th:text="${stat.highPriorityTasksCount}"></td>
+                    </tr>
+                    <tr>
+                        <td>Medium priority tasks:</td>
+                        <td class="bold-txt" th:text="${stat.mediumPriorityTasksCount}"></td>
+                    </tr>
+                    <tr>
+                        <td>Low priority tasks:</td>
+                        <td class="bold-txt" th:text="${stat.lowPriorityTasksCount}"></td>
+                    </tr>
+                    <tr>
+                        <td>Notifications received:</td>
+                        <td class="bold-txt" th:text="${stat.notificationsCount}"></td>
+                    </tr>
+                    <tr>
+                        <td>Achievements unlocked:</td>
+                        <td class="bold-txt" th:text="${stat.achievementsUnlocked}+'/'+10"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <h5 class="bold-txt white-text mt-5vh" th:if="${stat==null}" th:text="${message}"></h5>
     </div>

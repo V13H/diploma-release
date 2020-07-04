@@ -18,11 +18,15 @@ import java.util.Set;
 
 @Component
 public class AchievementsProcessor {
-    @Autowired
-    private MainService mainService;
-    @Autowired
-    private CurrentUser currentUser;
+    private final MainService mainService;
+    private final CurrentUser currentUser;
     private Logger logger = LoggerFactory.getLogger(AchievementsProcessor.class);
+
+    @Autowired
+    public AchievementsProcessor(MainService mainService, CurrentUser currentUser) {
+        this.mainService = mainService;
+        this.currentUser = currentUser;
+    }
 
     @PostConstruct
     void initAchieves() {
@@ -37,14 +41,14 @@ public class AchievementsProcessor {
         Achievement veteranAchievement = AchievementData.VETERAN.getAchievement();
         Achievement spartanAchievement = AchievementData.SPARTAN.getAchievement();
         Achievement guruAchievement = AchievementData.GURU.getAchievement();
-        mainService.saveAchievement(accuracy);
-        mainService.saveAchievement(aimingHigh);
-        mainService.saveAchievement(comeback);
-        mainService.saveAchievement(disciplineAchievement);
-        mainService.saveAchievement(firstWinAchievement);
-        mainService.saveAchievement(marathonAchievement);
         mainService.saveAchievement(startAchievement);
+        mainService.saveAchievement(firstWinAchievement);
+        mainService.saveAchievement(accuracy);
+        mainService.saveAchievement(disciplineAchievement);
+        mainService.saveAchievement(aimingHigh);
+        mainService.saveAchievement(marathonAchievement);
         mainService.saveAchievement(stepByStepAchievement);
+        mainService.saveAchievement(comeback);
         mainService.saveAchievement(veteranAchievement);
         mainService.saveAchievement(spartanAchievement);
         mainService.saveAchievement(guruAchievement);
@@ -62,22 +66,8 @@ public class AchievementsProcessor {
             checkStepByStep(account);
             checkVeteranReq(account);
             checkSpartanReq(account);
-
             checkGuruReq(account);
-            logger.warn(account.getAccountAchievements().toString());
         }
-    }
-
-    public void unlockAll() {
-//        Account accountEntity = currentUser.getAccountEntity();
-//        if(accountEntity.getEmail().equalsIgnoreCase("user@gmail.com")){
-//            List<Achievement> all = achievementRepository.findAll();
-//            for (Achievement achievement : all) {
-//                accountEntity.addAchievement(achievement);
-//            }
-//            mainService.saveAccount(accountEntity);
-//            currentUser.incrementNewAchievementsCount();
-//        }
     }
 
 
@@ -87,7 +77,7 @@ public class AchievementsProcessor {
             TaskStatistic taskStatistic = currentUser.getTaskStatistic();
             long expiredTasksCount = taskStatistic.getExpiredTasksCount();
             long doneTasksCount = taskStatistic.getDoneTasksCount();
-            if (expiredTasksCount == 0 && doneTasksCount == 1) {
+            if (expiredTasksCount == 0 && doneTasksCount >= 2) {
                 account.addAchievement(accuracy);
                 mainService.saveAccount(account);
                 currentUser.incrementNewAchievementsCount();
@@ -99,9 +89,9 @@ public class AchievementsProcessor {
         Achievement discipline = mainService.getAchievementByTitle("Discipline");
         if (hasNotAchievement(account, discipline)) {
             TaskStatistic taskStatistic = currentUser.getTaskStatistic();
-            double successRate = 75.0;
+            double successRate = taskStatistic.getSuccessRate();
             long doneTasksCount = taskStatistic.getDoneTasksCount();
-            if (doneTasksCount == 2 && successRate > 74.9) {
+            if (doneTasksCount == 3 && successRate > 74.9) {
                 account.addAchievement(discipline);
                 mainService.saveAccount(account);
                 currentUser.incrementNewAchievementsCount();
@@ -126,7 +116,7 @@ public class AchievementsProcessor {
         Achievement aimingHigh = mainService.getAchievementByTitle("Aiming high");
         if (hasNotAchievement(account, aimingHigh)) {
             TaskStatistic taskStatistic = currentUser.getTaskStatistic();
-            if (taskStatistic.getHighPriorityTasksCount() >= 3) {
+            if (taskStatistic.getHighPriorityTasksCount() >= 2) {
                 account.addAchievement(aimingHigh);
                 currentUser.incrementNewAchievementsCount();
                 mainService.saveAccount(account);
@@ -152,7 +142,7 @@ public class AchievementsProcessor {
             TaskStatistic taskStatistic = currentUser.getTaskStatistic();
             long doneTasksCount = taskStatistic.getDoneTasksCount();
             long expiredTasksCount = taskStatistic.getExpiredTasksCount();
-            if (doneTasksCount >= 5 && expiredTasksCount == 0) {
+            if (doneTasksCount >= 7 && expiredTasksCount == 0) {
                 account.addAchievement(spartan);
                 currentUser.incrementNewAchievementsCount();
                 mainService.saveAccount(account);
@@ -191,7 +181,7 @@ public class AchievementsProcessor {
             long notActiveTasksCount = taskStatistic.getNotActiveTasksCount();
             long activeTasksCount = taskStatistic.getActiveTasksCount();
             long totalTasksCount = activeTasksCount + notActiveTasksCount;
-            if (totalTasksCount > 7 && hasAllAchievements(account, true)) {
+            if (totalTasksCount > 10 && hasAllAchievements(account, true)) {
                 account.addAchievement(guru);
                 currentUser.incrementNewAchievementsCount();
                 mainService.saveAccount(account);
@@ -218,7 +208,7 @@ public class AchievementsProcessor {
                     DateTimeHelper.today(), TaskStatus.ACTIVE, TaskStatus.RESTARTED_ACTIVE);
             long doneDailyTasks = mainService.countTasksByDeadlineAndStatus(account, DateTimeHelper.today(),
                     TaskStatus.DONE, TaskStatus.RESTARTED_DONE);
-            if (doneDailyTasks >= 5 && activeDailyTasks == 0) {
+            if (doneDailyTasks >= 3 && activeDailyTasks == 0) {
                 account.addAchievement(marathon);
                 currentUser.incrementNewAchievementsCount();
                 mainService.saveAccount(account);

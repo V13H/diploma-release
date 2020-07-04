@@ -20,6 +20,7 @@ public class TaskStatistic {
     private long highPriorityTasksCount;
     private long mediumPriorityTasksCount;
     private long lowPriorityTasksCount;
+    private int achievementsUnlocked;
     private double successRate;
     private String progressBarColorToTemplate;
 

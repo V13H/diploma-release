@@ -57,7 +57,6 @@ public class AccountService {
     public List<Account> findUserAccounts(Pageable pageable) {
         return accountRepository.findAccountsByRoleIsNot(UserRole.ROLE_ADMIN, pageable);
     }
-
     public Account findAccountById(long id) {
         return accountRepository.findAccountById(id);
     }

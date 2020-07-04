@@ -2,6 +2,7 @@ package com.hvs.diploma.services.data_access_services;
 
 import com.hvs.diploma.dao.main.AchievementRepository;
 import com.hvs.diploma.entities.Achievement;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,8 +16,8 @@ public class AchievementService {
         this.achievementRepository = achievementRepository;
     }
 
-    List<Achievement> findAll() {
-        return achievementRepository.findAll();
+    List<Achievement> findAll(Sort sort) {
+        return achievementRepository.findAll(sort);
     }
 
     public long countAll() {

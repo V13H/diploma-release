@@ -14,7 +14,7 @@
     <link rel="icon" href="/img/favicon.ico" type="img/ico">
 
 </head>
-<body class=" cyan darken-4">
+<body class="blackboard-texture-bg">
 <header>
     <div th:insert="~{fragments/mobile-navbar::#mobile-navbar}"></div>
     <!--Side nav-->
@@ -34,13 +34,30 @@
                         <div class="card-content">
                             <div class="row">
                                 <div class="col s3">
-                                    <img class="responsive-image" width="100px" height="100px"
+                                    <img class="responsive-image " width="100px" height="100px"
                                          th:src="${object.achievement.pictureUrl}"
                                          src="/img/rocket.jpg">
                                 </div>
                                 <div class="col s6">
                                     <h5 class="bold-txt" th:text="${object.achievement.title}">Title</h5>
                                     <span th:text="${object.achievement.description}">Description</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li th:if="${lockedAch!=null}" th:each="achievement:${lockedAch}">
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="row ach-locked">
+                                <div class="col s3">
+                                    <img class="responsive-image " width="100px" height="100px"
+                                         th:src="${achievement.pictureUrl}"
+                                         src="/img/rocket.jpg">
+                                </div>
+                                <div class="col s6">
+                                    <h5 class="bold-txt" th:text="${achievement.title}">Title</h5>
+                                    <span th:text="${achievement.description}">Description</span>
                                 </div>
                             </div>
                         </div>

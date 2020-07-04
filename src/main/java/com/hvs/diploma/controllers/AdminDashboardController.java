@@ -62,4 +62,5 @@ public class AdminDashboardController {
         model.addAttribute("notificationsCount", notificationsCount);
         return "user-details";
     }
+
 }

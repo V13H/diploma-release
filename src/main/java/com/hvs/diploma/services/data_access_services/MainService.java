@@ -14,6 +14,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -128,12 +129,14 @@ public class MainService {
     public TaskStatistic getTaskStatistic(CurrentUser currentUser) {
         TaskStatistic taskStat = taskService.getTaskStat(currentUser.getAccount());
         long notificationsCount = turboSmsService.countSmsByPhone(currentUser.getPhoneNumber());
+        int achievementsUnlocked = currentUser.getAccount().getAchievements().size();
+        taskStat.setAchievementsUnlocked(achievementsUnlocked);
         taskStat.setNotificationsCount(notificationsCount);
         return taskStat;
     }
 
     public List<Achievement> getAllAchievements() {
-        return achievementService.findAll();
+        return achievementService.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
     public Achievement getAchievementByTitle(String title) {
@@ -154,10 +157,6 @@ public class MainService {
 
     public long countSmsByPhone(String phoneNumber) {
         return turboSmsService.countSmsByPhone(phoneNumber);
-    }
-
-    public String getNoStatDataMessage() {
-        return infoMessagesService.getNoStatDataMessage();
     }
 
     public Task findTaskById(Long taskId) {

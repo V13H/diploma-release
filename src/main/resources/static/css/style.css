@@ -140,6 +140,10 @@ h5 {
     background: white url("../img/done.jpg") no-repeat top center;
 }
 
+.ach-locked {
+    opacity: 0.4;
+}
+
 
 
 

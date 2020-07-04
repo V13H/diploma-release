@@ -1,5 +1,9 @@
 package com.hvs.diploma.enums;
 
+import org.springframework.beans.factory.annotation.Value;
+
+import java.util.Map;
+
 public enum TaskPriority {
     HIGH("High priority", "red", 3),
     MEDIUM("Medium priority", "forestgreen", 2),
@@ -7,6 +11,8 @@ public enum TaskPriority {
     private String valueToTemplate;
     private String cssClassToAppend;
     private int priorityValue;
+    @Value("#{${ui.priority.valuesMap}}")
+    private Map<String, String> valuesMap;
 
     TaskPriority(String displayValueToTemplate, String cssClassToAppend, int priorityValue) {
         this.valueToTemplate = displayValueToTemplate;

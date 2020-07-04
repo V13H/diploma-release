@@ -64,13 +64,11 @@ public class AuthenticationController {
 
     @PostConstruct
     private void initData() {
-        Account admin = initAccount(UserRole.ROLE_ADMIN, "admin@gmail.com");
-        Account userAcc = initAccount(UserRole.ROLE_COMMON_USER, "junior@gmail.com");
-        Account userAcc2 = initAccount(UserRole.ROLE_COMMON_USER, "user@gmail.com");
+        Account admin = initAccount(UserRole.ROLE_ADMIN, "admin@gmail.com", "Admin");
+        Account userAcc = initAccount(UserRole.ROLE_COMMON_USER, "junior@gmail.com", "Junior");
 
         mainService.saveAccount(admin);
         mainService.saveAccount(userAcc);
-        mainService.saveAccount(userAcc2);
         for (int i = 1; i < 10; i++) {
             Task task = new Task();
             task.setDeadline(DateTimeHelper.today());
@@ -90,24 +88,15 @@ public class AuthenticationController {
         task2.setOwner(userAcc);
         mainService.saveTask(task2);
 
-        for (int i = 0; i < 20; i++) {
-            Task task = new Task();
-            task.setDeadline(DateTimeHelper.today());
-            task.setPriority(TaskPriority.HIGH);
-            task.setStatus(TaskStatus.ACTIVE);
-            task.setTaskDescription("Task №" + i);
-            task.setOwner(userAcc2);
-            mainService.saveTask(task);
-        }
 
     }
 
-    public static Account initAccount(UserRole role, String email) {
+    private static Account initAccount(UserRole role, String email, String userName) {
         Account account = new Account();
         account.setEmail(email);
         account.setPassword("$2y$12$EVY0bHxVz2Q9NyVlnij9/.B0gdsmb0AR0GF29vhOsiTRYtn0exlr6");
         account.setPictureUrl("/img/anonymous-user-svg.svg");
-        account.setUserName("Beasley");
+        account.setUserName(userName);
         account.setRole(role);
         account.setHasWatchedGreetingsMessage(true);
         account.setRegistrationDate(Timestamp.valueOf(LocalDateTime.now()));

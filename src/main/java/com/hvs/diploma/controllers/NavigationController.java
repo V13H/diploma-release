@@ -4,6 +4,7 @@ import com.hvs.diploma.components.CurrentUser;
 import com.hvs.diploma.dto.AccountDTO;
 import com.hvs.diploma.dto.TaskDTO;
 import com.hvs.diploma.entities.AccountAchievement;
+import com.hvs.diploma.entities.Achievement;
 import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.services.data_access_services.MainService;
 import com.hvs.diploma.util.ModelAttrsHelper;
@@ -13,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Set;
 @Controller
 public class NavigationController {
@@ -41,9 +43,6 @@ public class NavigationController {
     @GetMapping("/statistic")
     public String getStatisticPage(Model model) {
         ModelAttrsHelper.addBasicDataToModel(model, currentUser);
-        if (currentUser.getTaskStatistic() == null) {
-            model.addAttribute("message", mainService.getNoStatDataMessage());
-        }
         model.addAttribute("statSelected", true);
         return "statistic";
     }
@@ -65,11 +64,13 @@ public class NavigationController {
 
     @GetMapping("/achievements")
     public String getAchievementsPage(Model model) {
-        Set<AccountAchievement> achievements = currentUser.getAccount().getAccountAchievements();
+        Set<AccountAchievement> userAchievements = currentUser.getAccount().getAccountAchievements();
         currentUser.resetNewAchievementsCount();
-        model.addAttribute("accAch", achievements);
+        List<Achievement> allAchievements = mainService.getAllAchievements();
+        allAchievements.removeAll(currentUser.getAccount().getAchievements());
+        model.addAttribute("accAch", userAchievements);
+        model.addAttribute("lockedAch", allAchievements);
         model.addAttribute("achievementsSelected", true);
-//        addBasicDataToModel(model);
         ModelAttrsHelper.addBasicDataToModel(model, currentUser);
         return "achievements";
     }
@@ -97,6 +98,5 @@ public class NavigationController {
         model.addAttribute("notificationsEnabled", currentUser.hasPhoneNumber());
         return "add-task";
     }
-
 
 }

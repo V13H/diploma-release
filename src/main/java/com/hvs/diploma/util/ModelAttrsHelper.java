@@ -32,10 +32,15 @@ public class ModelAttrsHelper {
         addHasPhoneAttr(model, currentUser);
     }
 
+    public static void addNewAchievementsAttr(Model model, CurrentUser currentUser) {
+        model.addAttribute("newAchievements", currentUser.getNewAchievements());
+    }
+
     public static void addBasicDataToModel(Model model, CurrentUser currentUser) {
         addAccountAttr(model, currentUser);
         addStatAttr(model, currentUser);
         addIsAdminAttr(model, currentUser);
+        addNewAchievementsAttr(model, currentUser);
     }
 
 

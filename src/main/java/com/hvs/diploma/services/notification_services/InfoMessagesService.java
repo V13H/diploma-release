@@ -35,8 +35,4 @@ public class InfoMessagesService {
                 "" + taskDTO.getDescription() + "\n";
     }
 
-    public String getNoStatDataMessage() {
-        return "You don`t have any tasks yet.Therefore,there is no statistic to show";
-    }
-
 }
