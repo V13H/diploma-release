@@ -2,6 +2,7 @@ package com.hvs.diploma.enums;
 
 import com.hvs.diploma.entities.Achievement;
 
+//Main purpose of this class is to simplify Achievements initialization
 public enum AchievementData {
     START("3..2..1..lift off!",
             "You have successfully added your first task",

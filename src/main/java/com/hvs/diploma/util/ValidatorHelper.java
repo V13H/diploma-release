@@ -2,6 +2,7 @@ package com.hvs.diploma.util;
 
 import org.springframework.validation.Errors;
 
+//Checks whether field empty or not
 public class ValidatorHelper {
     private ValidatorHelper() {
     }

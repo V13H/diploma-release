@@ -5,6 +5,7 @@ import com.hvs.diploma.entities.Account;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
+//Builder just to make it easy to instantiate TurboSmsMessage
 public class TurboSmsMessageBuilder {
     private TurboSmsMessage message = new TurboSmsMessage();
 

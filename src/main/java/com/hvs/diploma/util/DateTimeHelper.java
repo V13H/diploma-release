@@ -7,6 +7,7 @@ import java.time.*;
 import java.util.Calendar;
 import java.util.Locale;
 
+//Helper class for getting frequently used dates
 public class DateTimeHelper {
     private static final String TIME_PATTERN = "^[0-9]{2}[:][0-9]{2}";
     private static final String DATE_PATTERN = "^[0-9]{2}[.][0-9]{2}[.][0-9]{4}";

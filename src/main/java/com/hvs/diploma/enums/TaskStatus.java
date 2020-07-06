@@ -6,7 +6,7 @@ public enum TaskStatus {
     DONE("done-bg"),
     RESTARTED_ACTIVE(""),
     RESTARTED_DONE("done-bg");
-
+    //defines task card`s background in the template
     private String cssClassToAppend;
 
     TaskStatus(String cssClassToAppend) {

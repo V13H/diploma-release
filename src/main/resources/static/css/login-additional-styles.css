@@ -5,3 +5,7 @@
 .col.s6 > .btn {
     width: 70%;
 }
+
+.btn-block {
+    width: 100%;
+}

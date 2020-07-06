@@ -20,10 +20,6 @@ public class AchievementService {
         return achievementRepository.findAll(sort);
     }
 
-    public long countAll() {
-        return achievementRepository.count();
-    }
-
     Achievement findByTitle(String title) {
         return achievementRepository.findAchievementByTitle(title);
     }

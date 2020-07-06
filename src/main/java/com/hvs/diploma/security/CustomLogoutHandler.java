@@ -28,8 +28,6 @@ public class CustomLogoutHandler implements LogoutHandler {
     @SneakyThrows
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-//        currentAccount.setLastSeen(LocalDateTime.now());
-//        accountService.saveAccount(currentAccount.getAccountEntity());
         long id = currentUser.getAccount().getId();
         Account accountById = mainService.findAccountById(id);
         accountById.setLastSeen(Timestamp.valueOf(LocalDateTime.now()));

@@ -10,8 +10,6 @@ import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.enums.TaskStatus;
 import com.hvs.diploma.services.data_access_services.MainService;
 import com.hvs.diploma.util.PageableHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -31,7 +29,6 @@ public class TaskAppearanceController {
     private final CurrentUser currentUser;
     //'session' scoped component which stores sort and filter params for each session;
     private final SortAndFilterParams sortAndFilterParams;
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     @Autowired

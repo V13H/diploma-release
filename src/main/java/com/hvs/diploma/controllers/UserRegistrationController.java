@@ -6,8 +6,6 @@ import com.hvs.diploma.entities.Account;
 import com.hvs.diploma.enums.UserRole;
 import com.hvs.diploma.services.data_access_services.MainService;
 import com.hvs.diploma.services.validation_services.form_validators.RegistrationFormValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -33,7 +31,6 @@ public class UserRegistrationController {
     private final RegistrationFormValidator validator;
     private final BCryptPasswordEncoder encoder;
     private final MainService mainService;
-    Logger logger = LoggerFactory.getLogger(UserRegistrationController.class);
 
     @Autowired
     public UserRegistrationController(MainService mainService, BCryptPasswordEncoder encoder, RegistrationFormValidator validator, CurrentUser currentUser) {

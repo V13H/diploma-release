@@ -10,8 +10,6 @@ import com.hvs.diploma.services.data_access_services.MainService;
 import com.hvs.diploma.services.validation_services.form_validators.TaskFormValidator;
 import com.hvs.diploma.services.validation_services.task_dto_validators.DeadlineValidator;
 import com.hvs.diploma.services.validation_services.task_dto_validators.TimeValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,19 +31,18 @@ public class TaskActionController {
     private final DeadlineValidator deadlineValidator;
     private final TimeValidator timeValidator;
     private final TaskFormValidator addTaskFormValidator;
-    @Autowired
-    private AchievementsProcessor achievementsProcessor;
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final AchievementsProcessor achievementsProcessor;
 
     @Autowired
     public TaskActionController(CurrentUser currentUser, MainService mainService,
                                 DeadlineValidator deadlineValidator, TimeValidator timeValidator,
-                                TaskFormValidator addTaskFormValidator) {
+                                TaskFormValidator addTaskFormValidator, AchievementsProcessor achievementsProcessor) {
         this.currentUser = currentUser;
         this.mainService = mainService;
         this.deadlineValidator = deadlineValidator;
         this.timeValidator = timeValidator;
         this.addTaskFormValidator = addTaskFormValidator;
+        this.achievementsProcessor = achievementsProcessor;
     }
 
     @GetMapping("/delete")
@@ -68,7 +65,6 @@ public class TaskActionController {
         TaskStatistic updatedStat = mainService.getTaskStatistic(currentUser);
         updatedStat.calculateSuccessRate();
         currentUser.setTaskStatistic(updatedStat);
-        logger.warn(updatedStat.toString());
 
     }
 

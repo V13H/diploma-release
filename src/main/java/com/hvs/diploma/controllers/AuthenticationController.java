@@ -10,8 +10,6 @@ import com.hvs.diploma.enums.UserRole;
 import com.hvs.diploma.services.data_access_services.MainService;
 import com.hvs.diploma.services.validation_services.form_validators.LoginFormValidator;
 import com.hvs.diploma.util.DateTimeHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -31,7 +29,6 @@ public class AuthenticationController {
     private final MainService mainService;
     private final LoginFormValidator loginFormValidator;
     private final CurrentUser currentUser;
-    Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
 
     @Autowired
@@ -52,7 +49,6 @@ public class AuthenticationController {
             request.login(accountDTO.getEmail(), accountDTO.getPassword());
             Account accountByEmail = mainService.findAccountByEmail(accountDTO.getEmail());
             currentUser.setAccount(accountByEmail);
-            logger.warn(currentUser.toString());
             if (accountByEmail.getRole().equals(UserRole.ROLE_ADMIN)) {
                 return "redirect:/admin/";
             } else {
@@ -100,7 +96,6 @@ public class AuthenticationController {
         account.setRole(role);
         account.setHasWatchedGreetingsMessage(true);
         account.setRegistrationDate(Timestamp.valueOf(LocalDateTime.now()));
-
         return account;
     }
 }

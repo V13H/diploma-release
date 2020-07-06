@@ -3,6 +3,7 @@ package com.hvs.diploma.util;
 import com.hvs.diploma.components.CurrentUser;
 import org.springframework.ui.Model;
 
+//Helper class for adding common model attributes
 public class ModelAttrsHelper {
     private ModelAttrsHelper() {
     }

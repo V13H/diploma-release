@@ -5,6 +5,8 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "vovagolev")
+//This class created accordingly to the Turbosms.ua docs
+//details at https://turbosms.ua/sql.html
 public class TurboSmsMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

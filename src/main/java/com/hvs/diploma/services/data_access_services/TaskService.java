@@ -31,10 +31,6 @@ public class TaskService {
     }
 
     @Transactional(readOnly = true)
-    public List<Task> getAllTasksForAccount(Account account, Pageable pageable) {
-        return taskRepository.findAllByOwner(account, pageable);
-    }
-    @Transactional(readOnly = true)
     public List<Task> getTasksByFilterParameters(Account owner, Pageable pageable,
                                                  List<TaskPriority> priorities,
                                                  List<TaskStatus> statuses,

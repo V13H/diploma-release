@@ -7,8 +7,6 @@ import com.hvs.diploma.enums.AchievementData;
 import com.hvs.diploma.enums.TaskStatus;
 import com.hvs.diploma.services.data_access_services.MainService;
 import com.hvs.diploma.util.DateTimeHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +18,6 @@ import java.util.Set;
 public class AchievementsProcessor {
     private final MainService mainService;
     private final CurrentUser currentUser;
-    private Logger logger = LoggerFactory.getLogger(AchievementsProcessor.class);
 
     @Autowired
     public AchievementsProcessor(MainService mainService, CurrentUser currentUser) {
@@ -220,7 +217,6 @@ public class AchievementsProcessor {
     private boolean hasAllAchievements(Account account, boolean excludeFinalAchievement) {
         Set<Achievement> achievements = mainService.getAchievementsByTitleIsNot("Guru");
         Set<AccountAchievement> usersAchievements = currentUser.getAccount().getAccountAchievements();
-        logger.warn("all ach: " + achievements.size() + "  userAch: " + usersAchievements.size());
         if (excludeFinalAchievement) {
             return usersAchievements.size() == (achievements.size() - 1);
         } else {
@@ -229,7 +225,6 @@ public class AchievementsProcessor {
     }
 
     private boolean hasNotAchievement(Account account, Achievement achievement) {
-        logger.warn("Has not " + achievement.getTitle() + " : " + !account.getAchievements().contains(achievement));
         return !account.getAchievements().contains(achievement);
     }
 
