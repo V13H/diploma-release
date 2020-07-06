@@ -297,7 +297,7 @@
                                th:if="${task.status eq T(com.hvs.diploma.enums.TaskStatus).ACTIVE or
                                task.status eq T(com.hvs.diploma.enums.TaskStatus).RESTARTED_ACTIVE}"
                                th:href="'/delete?id='+${task.id}+'&page='+${#lists.size(tasks)>1?page:(page-1)}"
-                               class="btn rnd-c waves-effect m-5 hoverable red ml-20px">
+                               class="btn rnd-c waves-effect hoverable red d-b-m">
                                 <i class="material-icons left">delete</i>
                                 Delete</a>
 
