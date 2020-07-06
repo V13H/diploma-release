@@ -285,19 +285,19 @@
                                th:if="${task.status eq T(com.hvs.diploma.enums.TaskStatus).ACTIVE or
                                task.status eq T(com.hvs.diploma.enums.TaskStatus).RESTARTED_ACTIVE}"
                                th:href="'/mark-as-done?id='+${task.id}+'&page='+${#lists.size(tasks)>1?page:(page-1)}"
-                               class="btn rnd-c waves-effect hoverable green">
+                               class="btn rnd-c waves-effect hoverable green m-5">
                                 <i class="material-icons left">check</i>
-                                Mark as done</a>
+                                Done</a>
                             <a th:href="@{/retry(taskId=${task.id})}"
                                th:if="${task.status eq T(com.hvs.diploma.enums.TaskStatus).EXPIRED}"
-                               class="modal-trigger btn rnd-c waves-effect hoverable blue">
+                               class="modal-trigger btn rnd-c waves-effect hoverable blue m-5">
                                 <i class="material-icons left">replay</i>
                                 Retry</a>
                             <a href="#"
                                th:if="${task.status eq T(com.hvs.diploma.enums.TaskStatus).ACTIVE or
                                task.status eq T(com.hvs.diploma.enums.TaskStatus).RESTARTED_ACTIVE}"
                                th:href="'/delete?id='+${task.id}+'&page='+${#lists.size(tasks)>1?page:(page-1)}"
-                               class="btn rnd-c waves-effect hoverable red ml-20px">
+                               class="btn rnd-c waves-effect m-5 hoverable red ml-20px">
                                 <i class="material-icons left">delete</i>
                                 Delete</a>
 
