@@ -103,6 +103,7 @@ public class TaskActionController {
             Task task = taskDTO.buildTaskInstance();
             task.setOwner(currentUser.getAccount());
             task.setStatus(TaskStatus.ACTIVE);
+
             mainService.saveTask(task);
             if (notificationTimeExists(taskDTO)) {
                 mainService.sendSmsNotification(taskDTO);

@@ -38,7 +38,10 @@ public class Task {
     public String toString() {
         return "Task{" +
                 "id=" + id +
+                ", creationDate=" + creationDate +
+                ", deadline=" + deadline +
                 ", priority=" + priority +
+                ", priorityValue=" + priorityValue +
                 ", status=" + status +
                 '}';
     }

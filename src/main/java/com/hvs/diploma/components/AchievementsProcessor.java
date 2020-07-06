@@ -23,31 +23,6 @@ public class AchievementsProcessor {
         this.currentUser = currentUser;
     }
 
-//    @PostConstruct
-//    void initAchieves() {
-//        Achievement accuracy = AchievementData.ACCURACY.getAchievement();
-//        Achievement aimingHigh = AchievementData.AIMING_HIGH.getAchievement();
-//        Achievement comeback = AchievementData.COMEBACK.getAchievement();
-//        Achievement disciplineAchievement = AchievementData.DISCIPLINE.getAchievement();
-//        Achievement firstWinAchievement = AchievementData.FIRST_WIN.getAchievement();
-//        Achievement marathonAchievement = AchievementData.MARATHON.getAchievement();
-//        Achievement startAchievement = AchievementData.START.getAchievement();
-//        Achievement stepByStepAchievement = AchievementData.STEP_BY_STEP.getAchievement();
-//        Achievement veteranAchievement = AchievementData.VETERAN.getAchievement();
-//        Achievement spartanAchievement = AchievementData.SPARTAN.getAchievement();
-//        Achievement guruAchievement = AchievementData.GURU.getAchievement();
-//        mainService.saveAchievement(startAchievement);
-//        mainService.saveAchievement(firstWinAchievement);
-//        mainService.saveAchievement(accuracy);
-//        mainService.saveAchievement(disciplineAchievement);
-//        mainService.saveAchievement(aimingHigh);
-//        mainService.saveAchievement(marathonAchievement);
-//        mainService.saveAchievement(stepByStepAchievement);
-//        mainService.saveAchievement(comeback);
-//        mainService.saveAchievement(veteranAchievement);
-//        mainService.saveAchievement(spartanAchievement);
-//        mainService.saveAchievement(guruAchievement);
-//    }
 
     public void process() {
         Account account = currentUser.getAccount();

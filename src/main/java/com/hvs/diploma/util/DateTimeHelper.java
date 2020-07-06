@@ -49,6 +49,7 @@ public class DateTimeHelper {
     }
 
     public static boolean hasValidFormat(String value, String pattern) {
+
         return value.matches(pattern);
     }
 

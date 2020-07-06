@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
-import java.time.ZoneId;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -20,8 +19,8 @@ public class YouCanDoItApplication {
     @Bean
     public LocaleResolver localeResolver() {
         SessionLocaleResolver localeResolver = new SessionLocaleResolver();
-        localeResolver.setDefaultTimeZone(TimeZone.getTimeZone(ZoneId.of("Europe/Kiev")));
         localeResolver.setDefaultLocale(Locale.US);
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Kiev"));
         return localeResolver;
     }
 

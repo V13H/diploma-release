@@ -4,6 +4,8 @@ import com.hvs.diploma.entities.Task;
 import com.hvs.diploma.enums.TaskPriority;
 import com.hvs.diploma.util.DateTimeHelper;
 import lombok.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -18,6 +20,7 @@ public class TaskDTO {
     private String deadline;
     private long id;
     private String notificationTime;
+    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @SneakyThrows
     public Task buildTaskInstance() {
@@ -28,9 +31,10 @@ public class TaskDTO {
             task.setPriority(TaskPriority.valueOf(priority));
             task.setPriorityValue(TaskPriority.valueOf(priority).getPriorityValue());
         }
-        if (fieldNotNull(notificationTime)) {
+        if (fieldNotNull(notificationTime) && !notificationTime.isEmpty()) {
             task.setNotificationDate(DateTimeHelper.buildTimestampInstance(deadline, notificationTime));
         }
+        logger.warn(task.toString());
         return task;
     }
 

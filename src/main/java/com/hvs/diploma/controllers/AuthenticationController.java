@@ -49,45 +49,6 @@ public class AuthenticationController {
 
         }
     }
-//
-//    @PostConstruct
-//    private void initData() {
-//        Account admin = initAccount(UserRole.ROLE_ADMIN, "admin@gmail.com", "Admin");
-//        Account userAcc = initAccount(UserRole.ROLE_COMMON_USER, "junior@gmail.com", "Junior");
-//
-//        mainService.saveAccount(admin);
-//        mainService.saveAccount(userAcc);
-//        for (int i = 1; i < 10; i++) {
-//            Task task = new Task();
-//            task.setDeadline(DateTimeHelper.today());
-//            task.setPriority(TaskPriority.HIGH);
-//            task.setStatus(TaskStatus.ACTIVE);
-//            task.setTaskDescription("Task №" + i);
-//            task.setOwner(userAcc);
-//            mainService.saveTask(task);
-//        }
-//        Task task2 = new Task();
-//        Calendar instance = Calendar.getInstance();
-//        instance.set(2020, 7, 1);
-//        task2.setDeadline(instance.getTime());
-//        task2.setPriority(TaskPriority.HIGH);
-//        task2.setStatus(TaskStatus.EXPIRED);
-//        task2.setTaskDescription("Task №" + 11);
-//        task2.setOwner(userAcc);
-//        mainService.saveTask(task2);
-//
-//
-//    }
-//
-//    private static Account initAccount(UserRole role, String email, String userName) {
-//        Account account = new Account();
-//        account.setEmail(email);
-//        account.setPassword("$2y$12$EVY0bHxVz2Q9NyVlnij9/.B0gdsmb0AR0GF29vhOsiTRYtn0exlr6");
-//        account.setPictureUrl("/img/anonymous-user-svg.svg");
-//        account.setUserName(userName);
-//        account.setRole(role);
-//        account.setHasWatchedGreetingsMessage(true);
-//        account.setRegistrationDate(Timestamp.valueOf(LocalDateTime.now()));
-//        return account;
-//    }
+
+
 }

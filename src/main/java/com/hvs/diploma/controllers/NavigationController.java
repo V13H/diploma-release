@@ -14,7 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 @Controller
 public class NavigationController {
@@ -66,7 +66,7 @@ public class NavigationController {
     public String getAchievementsPage(Model model) {
         Set<AccountAchievement> userAchievements = currentUser.getAccount().getAccountAchievements();
         currentUser.resetNewAchievementsCount();
-        List<Achievement> allAchievements = mainService.getAllAchievements();
+        Set<Achievement> allAchievements = new HashSet<>(mainService.getAllAchievements());
         allAchievements.removeAll(currentUser.getAccount().getAchievements());
         model.addAttribute("accAch", userAchievements);
         model.addAttribute("lockedAch", allAchievements);
